@@ -1,0 +1,94 @@
+/* Reset marginesów */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* General */
+body {
+	font-family: monospace;
+}
+
+main {
+	display: flex;
+}
+aside {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	padding: 2rem;
+	background-color: lightgrey;
+	height: 100vh;
+	font-size: 1.25rem;
+	color: grey;
+}
+#content form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 2rem;
+}
+#content form * {
+	font-size: 1.5rem;
+}
+
+nav {
+	background-color:blue;
+	padding: 2rem;
+}
+nav > ul {
+	gap: 2em;
+	display: flex;
+	list-style-type: none;
+}
+
+li a {
+	color: white;
+	font-size: 1.5rem;
+}
+li a:hover {
+    color: lightgray;
+}
+
+#content {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+/* Filemanager */
+#content > table {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: 1.25rem;
+	text-align: center;
+	color:blue;
+}
+#content > table th {
+	background-color: cornflowerblue;
+	color: white;
+	padding: 0.5em 2em;
+}
+#content > table input[type="submit"] {
+	background-color: transparent;
+	border: none;
+	color: blue;
+	padding: 0;
+	text-decoration: underline;
+	cursor: pointer;
+	font-family: monospace;
+	font-size: 1em;
+}
+
+/* info */
+.info:first-child {
+	margin-top: 2rem;
+}
+.info > span {
+	margin: 0 2rem;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: blue;
+}

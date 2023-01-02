@@ -1,0 +1,32 @@
+<tr>
+	<td>{{id}}</td>
+	<td><img width="64" src="gfx/{{extension}}"></td>
+    <td>{{name}}</td>
+    <td>{{size}}</td>
+    <td>{{type}}</td>
+    <td>
+        <form action="/show" method="get">
+            <input type="hidden" name="id" value="{{id}}">
+            <input type="submit" value="SHOW">
+        </form>
+    </td>
+    <td>
+        <form action="/info" method="get">
+            <input type="hidden" name="id" value="{{id}}">
+            <input type="submit" value="INFO">
+        </form>
+    </td>
+    <td>
+        <form action="/download" method="get">
+            <input type="hidden" name="id" value="{{id}}">
+            <input type="submit" value="DOWNLOAD">
+        </form>
+    </td>
+    <td>
+        <form action="/delete" method="get">
+            <input type="hidden" name="id" value="{{id}}">
+            <input type="submit" value="DELETE">
+        </form>
+    </td>
+    
+</tr>

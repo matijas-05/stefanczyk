@@ -1,0 +1,23 @@
+<aside>
+	<p>filemanager</p>
+	<a href="/reset">USUŃ DANE O PLIKACH Z TABLICY</a>
+</aside>
+
+<div id="content">
+	<table>
+		<thead>
+			<th>id</th>
+			<th>obraz</th>
+			<th>name</th>
+			<th>size</th>
+			<th>type</th>
+			<th>-</th>
+			<th>-</th>
+			<th>-</th>
+			<th>-</th>
+		</thead>
+		{{#each db}}
+		{{> file}}
+		{{/each}}
+	</table>
+</div>
