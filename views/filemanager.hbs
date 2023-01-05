@@ -1,0 +1,14 @@
+<aside>
+	<button id="new-folder-btn">nowy folder</button>
+	<button id="new-file-btn">nowy plik tekstowy</button>
+	<form enctype="multipart/form-data" method="POST" action="/upload">
+		<input type="file" name="upload" style="display: none;" id="upload" multiple required>
+		<input type="button" value="" id="upload-btn" onclick="document.getElementById('upload').click();" />
+		<p>[wybierz...]</p>
+		<input type="button" value="OK" id="ok-btn" onclick="document.getElementById('submit').click();" />
+		<input type="submit" id="submit" style="display: none;" value="Upload">
+	</form>
+</aside>
+<div id="content">
+	Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia eius molestiae maxime labore ad recusandae numquam reprehenderit suscipit vitae dolorum aliquam quae, sint voluptas dicta natus repellat eos facilis tempore.
+</div>

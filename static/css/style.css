@@ -1,0 +1,87 @@
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	font-size: 1.25rem;
+	font-family: sans-serif;
+	height: 100vh;
+}
+nav {
+	width: 100vw;
+	background: url("../gfx/pattern.webp");
+	background-position: right;
+	padding: 2rem 4rem;
+
+	color: white;
+	font-weight: 700;
+}
+main {
+	display: flex;
+	height: 100%;
+}
+aside {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	height: 100%;
+	gap: 0.5rem;
+	padding: 1rem;
+	background-color: lightgrey;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+button {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 0.5rem;
+	background-color: gold;
+	font-size: 1rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+#content {
+	padding: 1rem;
+}
+form[action="/upload"] {
+	display: flex;
+	align-items: center;
+}
+form[action="/upload"] > input[type="button"] {
+	border: 0;
+	width: 3rem;
+	height: 3rem;
+	cursor: pointer;
+}
+form[action="/upload"] > #upload-btn {
+	background: url("../gfx/upload_arrow.png") orange no-repeat center;
+	border: 0.5rem solid orange;
+	background-size: contain;
+	border-top-left-radius: 25%;
+	border-bottom-left-radius: 25%;
+}
+form[action="/upload"] > #ok-btn {
+	color: white;
+	background-color: darkslateblue;
+	background-size: contain;
+	border-top-right-radius: 25%;
+	border-bottom-right-radius: 25%;
+}
+form[action="/upload"] > p {
+	background-color: gold;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	padding: 0 0.5rem;
+	font-size: 1rem;
+}
