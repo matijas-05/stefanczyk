@@ -6,13 +6,13 @@ const path = require("path");
 const formidable = require("formidable");
 const fs = require("fs");
 
-const db = readDB() || [];
+const db = readDB() ?? [];
 
-app.set("views", path.join(__dirname, "views")); // ustalamy katalog views
+app.set("views", path.join(__dirname, "views"));
 app.engine(
 	"hbs",
 	hbs({ extname: ".hbs", defaultLayout: "main.hbs", partialsDir: "views/partials" })
-); // domyślny layout, potem można go zmienić
+);
 app.set("view engine", "hbs");
 
 app.use(express.static("static"));
@@ -20,7 +20,7 @@ app.use(express.static("static"));
 app.post("/", (req, res) => {
 	const form = formidable({});
 	form.keepExtensions = true;
-	form.uploadDir = __dirname + "/upload/"; // folder do zapisu zdjęcia
+	form.uploadDir = __dirname + "/upload/";
 	form.multiples = true;
 	form.parse(req, (err, fields, files) => {
 		if (files.upload.length) {
@@ -58,14 +58,11 @@ app.post("/", (req, res) => {
 	});
 });
 app.get("/", (req, res) => {
-	res.render("upload.hbs"); // nie podajemy ścieżki tylko nazwę pliku
-	// res.render('index.hbs', { layout: "main.hbs" }); // opcjonalnie podajemy konkretny layout dla tego widoku
+	res.render("upload.hbs");
 });
 
 app.get("/filemanager", (req, res) => {
-	// console.log(...db);
-	res.render("filemanager.hbs", { db }); // nie podajemy ścieżki tylko nazwę pliku
-	// res.render('index.hbs', { layout: "main.hbs" }); // opcjonalnie podajemy konkretny layout dla tego widoku
+	res.render("filemanager.hbs", { db });
 });
 
 app.get("/show", (req, res) => {
@@ -75,9 +72,7 @@ app.get("/show", (req, res) => {
 
 app.get("/info", (req, res) => {
 	const file = db.filter(file => file.id === parseInt(req.query.id))[0];
-	// console.log(file);
-	res.render("info.hbs", { file }); // nie podajemy ścieżki tylko nazwę pliku
-	// res.render('index.hbs', { layout: "main.hbs" }); // opcjonalnie podajemy konkretny layout dla tego widoku
+	res.render("info.hbs", { file });
 });
 
 app.get("/delete", (req, res) => {
@@ -86,6 +81,7 @@ app.get("/delete", (req, res) => {
 	db.splice(index, 1);
 	writeDB();
 	res.render("filemanager.hbs", { db });
+	res.redirect("/filemanager");
 });
 
 app.get("/download", (req, res) => {
@@ -97,12 +93,13 @@ app.get("/reset", (req, res) => {
 	db.length = 0;
 	writeDB();
 	res.render("filemanager.hbs", { db });
-	// console.log(db);
+	res.redirect("/filemanager");
 });
 
 app.listen(PORT, () => {
 	console.log("start serwera na porcie " + PORT);
 });
+
 function writeDB() {
 	fs.writeFileSync("db.json", JSON.stringify(db, null, 2));
 }
