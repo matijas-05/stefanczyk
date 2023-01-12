@@ -2,13 +2,89 @@
 	<button id="new-folder-btn">nowy folder</button>
 	<button id="new-file-btn">nowy plik tekstowy</button>
 	<form enctype="multipart/form-data" method="POST" action="/upload">
-		<input type="file" name="upload" style="display: none;" id="upload" multiple required>
+		<input type="file" name="upload" style="display: none;" id="upload" multiple required />
 		<input type="button" value="" id="upload-btn" onclick="document.getElementById('upload').click();" />
 		<p>[wybierz...]</p>
 		<input type="button" value="OK" id="ok-btn" onclick="document.getElementById('submit').click();" />
-		<input type="submit" id="submit" style="display: none;" value="Upload">
+		<input type="submit" id="submit" style="display: none;" value="Upload" />
 	</form>
 </aside>
 <div id="content">
-	Lorem ipsum dolor sit amet consectetur adipisicing elit. Mollitia eius molestiae maxime labore ad recusandae numquam reprehenderit suscipit vitae dolorum aliquam quae, sint voluptas dicta natus repellat eos facilis tempore.
+	<div id="folders">
+		{{#each folders}}
+			<div class="folder">
+				<div class="header">
+					<img src="gfx/folder.png" width="64" alt="">
+					<a href="/deleteFolder?name={{this}}">x</a>
+				</div>
+
+				<p>{{this}}</p>
+			</div>
+		{{/each}}
+	</div>
+	<div id="files">
+		{{#each files}}
+			<div class="file">
+				<div class="header">
+					<img src="gfx/files/{{icon}}.png" width="64" alt="">
+					<a href="/deleteFile?name={{name}}">x</a>
+				</div>
+
+				<p>{{name}}</p>
+			</div>
+		{{/each}}
+	</div>
 </div>
+
+<div id="new-folder-modal" class="modal" style="display: none;">
+	<form action="/newFolder" method="get">
+		<label for="name">Nazwa folderu</label>
+		<input type="text" name="name" placeholder="nazwa folderu" required />
+
+		<div>
+			<input type="submit" value="OK" id="new-folder-submit" style="display: none;" />
+			<input type="button" value="OK" onclick="document.getElementById('new-folder-submit').click();" />
+			<input type="button" value="Cancel" id="new-folder-cancel">
+		</div>
+	</form>
+</div>
+
+<div id="new-file-modal" class="modal" style="display: none;">
+	<form action="/newFile" method="get">
+		<label for="name">Nazwa pliku tekstowego</label>
+		<input type="text" name="name" placeholder="nazwa pliku" required />
+
+		<div>
+			<input type="submit" value="OK" id="new-file-submit" style="display: none;" />
+			<input type="button" value="OK" onclick="document.getElementById('new-file-submit').click();" />
+			<input type="button" value="Cancel" id="new-file-cancel">
+		</div>
+	</form>
+</div>
+
+<script>
+	// Folder
+	const newFolderBtn = document.getElementById('new-folder-btn');
+	const newFolderModal = document.getElementById('new-folder-modal');
+	const newFolderCancel = document.getElementById('new-folder-cancel');
+
+	newFolderBtn.addEventListener('click', () => {
+		newFolderModal.style.display = 'block';
+	});
+	newFolderCancel.addEventListener('click', () => {
+		newFolderModal.style.display = 'none';
+	});
+
+	// File
+	const newFileBtn = document.getElementById('new-file-btn');
+	const newFileModal = document.getElementById('new-file-modal');
+	const newFileCancel = document.getElementById('new-file-cancel');
+
+	newFileBtn.addEventListener('click', () => {
+		newFileModal.style.display = 'block';
+	});
+	newFileCancel.addEventListener('click', () => {
+		newFileModal.style.display = 'none';
+	});
+
+</script>
