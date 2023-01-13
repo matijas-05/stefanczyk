@@ -36,7 +36,7 @@
 	</div>
 </div>
 
-<div id="new-folder-modal" class="modal" style="display: none;">
+<dialog id="new-folder-modal" class="modal">
 	<form action="/newFolder" method="get">
 		<label for="name">Nazwa folderu</label>
 		<input type="text" name="name" placeholder="nazwa folderu" required />
@@ -47,9 +47,9 @@
 			<input type="button" value="Cancel" id="new-folder-cancel">
 		</div>
 	</form>
-</div>
+</dialog>
 
-<div id="new-file-modal" class="modal" style="display: none;">
+<dialog id="new-file-modal" class="modal">
 	<form action="/newFile" method="get">
 		<label for="name">Nazwa pliku tekstowego</label>
 		<input type="text" name="name" placeholder="nazwa pliku" required />
@@ -60,7 +60,7 @@
 			<input type="button" value="Cancel" id="new-file-cancel">
 		</div>
 	</form>
-</div>
+</dialog>
 
 <script>
 	// Folder
@@ -68,23 +68,15 @@
 	const newFolderModal = document.getElementById('new-folder-modal');
 	const newFolderCancel = document.getElementById('new-folder-cancel');
 
-	newFolderBtn.addEventListener('click', () => {
-		newFolderModal.style.display = 'block';
-	});
-	newFolderCancel.addEventListener('click', () => {
-		newFolderModal.style.display = 'none';
-	});
+	newFolderBtn.onclick = () => newFolderModal.showModal();
+	newFolderCancel.onclick = () => newFolderModal.close();
 
 	// File
 	const newFileBtn = document.getElementById('new-file-btn');
 	const newFileModal = document.getElementById('new-file-modal');
 	const newFileCancel = document.getElementById('new-file-cancel');
 
-	newFileBtn.addEventListener('click', () => {
-		newFileModal.style.display = 'block';
-	});
-	newFileCancel.addEventListener('click', () => {
-		newFileModal.style.display = 'none';
-	});
+	newFileBtn.onclick = () => newFileModal.showModal();
+	newFileCancel.onclick = () => newFileModal.close();
 
 </script>
