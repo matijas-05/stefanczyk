@@ -72,15 +72,15 @@ form[action="/upload"] > #upload-btn {
 	background: url("../gfx/upload_arrow.png") orange no-repeat center;
 	border: 0.5rem solid orange;
 	background-size: contain;
-	border-top-left-radius: 25%;
-	border-bottom-left-radius: 25%;
+	border-top-left-radius: 0.5rem;
+	border-bottom-left-radius: 0.5rem;
 }
 form[action="/upload"] > #ok-btn {
 	color: white;
 	background-color: darkslateblue;
 	background-size: contain;
-	border-top-right-radius: 25%;
-	border-bottom-right-radius: 25%;
+	border-top-right-radius: 0.5rem;
+	border-bottom-right-radius: 0.5rem;
 }
 form[action="/upload"] > p {
 	background-color: gold;
