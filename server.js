@@ -36,7 +36,7 @@ app.post("/upload", (req, res) => {
 
 app.get("/newFolder", (req, res) => {
 	const name = req.query.name;
-	fs.mkdirSync(`./pliki/${name}`);
+	fs.mkdirSync(`./pliki/${name}`, { recursive: true });
 
 	res.render("filemanager.hbs", { ...getFiles() });
 	res.redirect("/");
