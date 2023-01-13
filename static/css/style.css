@@ -63,10 +63,10 @@ form[action="/upload"] {
 	align-items: center;
 }
 form[action="/upload"] > input[type="button"] {
-	border: 0;
-	width: 3rem;
+	width: 3.5rem;
 	height: 3rem;
 	cursor: pointer;
+	border-radius: 0;
 }
 form[action="/upload"] > #upload-btn {
 	background: url("../gfx/upload_arrow.png") orange no-repeat center;

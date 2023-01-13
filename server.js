@@ -25,15 +25,10 @@ app.post("/upload", (req, res) => {
 		keepExtensions: true
 	});
 
-	// form.on("fileBegin", file => {
-	// 	file.path = path.join(__dirname + "/pliki/", file.name);
-	// });
-	form.parse(req, (err, fields, files) => {
-		if (files.upload.length) {
-		} else {
-			// files.upload.path = path.join(__dirname, files.upload.name);
-		}
+	form.on("fileBegin", (_, file) => {
+		file.filepath = path.join(__dirname + "/pliki/", file.originalFilename);
 	});
+	form.parse(req, () => {});
 
 	res.render("filemanager.hbs", { ...getFiles() });
 	res.redirect("/");
