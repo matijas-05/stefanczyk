@@ -10,6 +10,12 @@
 	</form>
 </aside>
 <div id="content">
+	<nav>
+		{{#each path}}
+			<a href="/path?fullPath={{path}}">{{name}}</a> <span class="separator">/</span>
+		{{/each}}
+	</nav>
+
 	<div id="folders">
 		{{#each folders}}
 			<div class="folder">
@@ -18,7 +24,7 @@
 					<a href="/deleteFolder?name={{this}}">x</a>
 				</div>
 
-				<p>{{this}}</p>
+				<a href="/path?folder={{this}}">{{this}}</a>
 			</div>
 		{{/each}}
 	</div>

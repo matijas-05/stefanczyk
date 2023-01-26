@@ -1,12 +1,14 @@
 const express = require("express");
 const hbs = require("express-handlebars");
 const fs = require("fs");
-const path = require("path");
+const nodePath = require("path");
 const formidable = require("formidable");
+const Path = require("./path");
 
 const app = express();
+const fmPath = new Path(__dirname);
 
-app.set("views", path.join(__dirname, "views"));
+app.set("views", nodePath.join(__dirname, "views"));
 app.engine(
 	"hbs",
 	hbs({ extname: ".hbs", defaultLayout: "main.hbs", partialsDir: "views/partials" })
@@ -15,76 +17,98 @@ app.set("view engine", "hbs");
 app.use(express.static("static"));
 
 app.get("/", (req, res) => {
-	res.render("filemanager.hbs", { ...getFiles() });
+	const folder = req.query.folder;
+	if (folder) fmPath.cdInto(folder);
+
+	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 });
 
 app.post("/upload", (req, res) => {
 	const form = formidable({
 		multiples: true,
 		uploadDir: __dirname + "/pliki/",
-		keepExtensions: true
+		keepExtensions: true,
 	});
 
 	form.on("fileBegin", (_, file) => {
-		file.filepath = path.join(__dirname + "/pliki/", file.originalFilename);
+		file.filepath = nodePath.join(__dirname + "/pliki/", file.originalFilename);
 	});
 	form.parse(req, () => {});
 
-	res.render("filemanager.hbs", { ...getFiles() });
+	// res.render("filemanager.hbs", { ...getFiles() });
 	res.redirect("/");
 });
 
 app.get("/newFolder", (req, res) => {
 	const name = req.query.name;
-	fs.mkdirSync(`./pliki/${name}`, { recursive: true });
+	fs.mkdirSync(`${fmPath.getFullPath()}/${name}`, { recursive: true });
 
-	res.render("filemanager.hbs", { ...getFiles() });
+	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 	res.redirect("/");
 });
 app.get("/deleteFolder", (req, res) => {
 	const name = req.query.name;
-	fs.rmdirSync(`./pliki/${name}`, { recursive: true });
+	fs.rmdirSync(`${fmPath.getFullPath()}/${name}`, { recursive: true });
 
-	res.render("filemanager.hbs", { ...getFiles() });
+	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 	res.redirect("/");
 });
 
 app.get("/newFile", (req, res) => {
 	const name = req.query.name;
-	fs.writeFileSync(`./pliki/${name}.txt`, "");
+	fs.writeFileSync(`${fmPath.getFullPath()}/${name}.txt`, "");
 
-	res.render("filemanager.hbs", { ...getFiles() });
+	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 	res.redirect("/");
 });
 app.get("/deleteFile", (req, res) => {
 	const name = req.query.name;
-	fs.rmSync(`./pliki/${name}`, { force: true });
+	fs.rmSync(`${fmPath.getFullPath()}/${name}`, { force: true });
 
-	res.render("filemanager.hbs", { ...getFiles() });
+	res.render("filemanager.hbs", { ...getFiles(fmPath) });
+	res.redirect("/");
+});
+
+app.get("/path", (req, res) => {
+	if (req.query.folder) fmPath.cdInto(req.query.folder);
+	else if (req.query.fullPath) {
+		const newPath = req.query.fullPath.split("/");
+		newPath.shift();
+		newPath[0] = `/${newPath[0]}`;
+
+		fmPath.path = newPath;
+	}
+
 	res.redirect("/");
 });
 
 app.listen(3000, () => console.log("Uruchomiono serwer na porcie 3000"));
 
-function getFiles() {
+/**
+ *
+ * @param {Path} path
+ */
+function getFiles(path) {
+	const fullPath = path.getFullPath();
+
 	const folders = fs
-		.readdirSync("./pliki", { withFileTypes: true })
-		.filter(dirent => dirent.isDirectory())
-		.map(dirent => dirent.name);
+		.readdirSync(fullPath, { withFileTypes: true })
+		.filter((dirent) => dirent.isDirectory())
+		.map((dirent) => dirent.name);
 
 	const names = fs
-		.readdirSync("./pliki", { withFileTypes: true })
-		.filter(dirent => dirent.isFile())
-		.map(dirent => dirent.name);
+		.readdirSync(fullPath, { withFileTypes: true })
+		.filter((dirent) => dirent.isFile())
+		.map((dirent) => dirent.name);
 
-	const files = names.map(name => {
+	const files = names.map((name) => {
 		return {
 			name: name,
-			icon: getFileIcon(path.extname(name))
+			icon: getFileIcon(nodePath.extname(name)),
 		};
 	});
 
-	return { folders, files };
+	return { folders, files, path: path.getPathSegments() };
 
 	function getFileIcon(name) {
 		switch (name) {

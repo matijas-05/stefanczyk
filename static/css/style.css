@@ -13,7 +13,7 @@ body {
 	font-family: sans-serif;
 	height: 100vh;
 }
-nav {
+header {
 	width: 100vw;
 	background: url("../gfx/pattern.webp");
 	background-size: cover;
@@ -41,6 +41,10 @@ a {
 	text-decoration: none;
 	color: inherit;
 }
+a:hover {
+	text-decoration: underline;
+}
+
 button,
 input[type="button"] {
 	padding: 0.5rem 1rem;
@@ -143,4 +147,8 @@ form[action="/upload"] > p {
 	background: url("../gfx/pattern_blue.webp");
 	background-size: cover;
 	background-position: center;
+}
+
+.separator {
+	color: grey;
 }
