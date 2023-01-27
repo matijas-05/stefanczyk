@@ -10,6 +10,16 @@ class Game {
 			[1, 0, 1, 0, 1, 0, 1, 0],
 			[0, 1, 0, 1, 0, 1, 0, 1],
 		];
+		this.pawns = [
+			[0, 2, 0, 2, 0, 2, 0, 2],
+			[2, 0, 2, 0, 2, 0, 2, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 1, 0, 1, 0, 1, 0, 1],
+			[1, 0, 1, 0, 1, 0, 1, 0],
+		];
 
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(
@@ -18,7 +28,7 @@ class Game {
 			0.1,
 			10000
 		);
-		this.camera.position.set(300, 600, 1050);
+		this.camera.position.set(350, 600, 1050);
 		this.camera.rotateX(-Math.PI / 4);
 
 		const axesHelper = new THREE.AxesHelper(1000);
@@ -31,6 +41,7 @@ class Game {
 		document.getElementById("root").append(this.renderer.domElement);
 
 		this.drawCheckerboard();
+		this.drawCheckers();
 		this.render();
 	}
 
@@ -41,7 +52,7 @@ class Game {
 
 				const geometry = new THREE.BoxGeometry(100, 100, 100);
 				const material = new THREE.MeshBasicMaterial({
-					color: white ? 0xcccccc : 0x401708,
+					color: white ? 0xeed89c : 0x492d18,
 					side: THREE.DoubleSide,
 					map: new THREE.TextureLoader().load("../gfx/wood.png"),
 				});
@@ -49,6 +60,25 @@ class Game {
 				cube.position.set(x * 100, 0, y * 100);
 
 				this.scene.add(cube);
+			}
+		}
+	};
+	drawCheckers = () => {
+		for (let y = 0; y < this.pawns.length; y++) {
+			for (let x = 0; x < this.pawns[y].length; x++) {
+				const pawn = this.pawns[y][x];
+				if (pawn === 0) continue;
+
+				const geometry = new THREE.SphereGeometry(50, 32, 32);
+				const material = new THREE.MeshBasicMaterial({
+					color: pawn === 1 ? 0xe83f25 : 0xf8f8f8,
+					side: THREE.DoubleSide,
+					map: new THREE.TextureLoader().load("../gfx/wood.png"),
+				});
+				const sphere = new THREE.Mesh(geometry, material);
+				sphere.position.set(x * 100, 50, y * 100);
+
+				this.scene.add(sphere);
 			}
 		}
 	};
