@@ -20,6 +20,7 @@ app.get("/", (req, res) => {
 	const folder = req.query.folder;
 	if (folder) fmPath.cdInto(folder);
 
+	res.req.query.projectPath = fmPath.getProjectPath();
 	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 });
 
@@ -31,7 +32,10 @@ app.post("/upload", (req, res) => {
 	});
 
 	form.on("fileBegin", (_, file) => {
-		file.filepath = nodePath.join(__dirname + "/pliki/", file.originalFilename);
+		file.filepath = nodePath.join(
+			__dirname + "/pliki/" + fmPath.getProjectPath(),
+			file.originalFilename
+		);
 	});
 	form.parse(req, () => {});
 
@@ -65,6 +69,16 @@ app.get("/deleteFile", (req, res) => {
 	const name = req.query.name;
 	fs.rmSync(`${fmPath.getFullPath()}/${name}`, { force: true });
 
+	res.render("filemanager.hbs", { ...getFiles(fmPath) });
+	res.redirect("/");
+});
+
+app.get("/rename", (req, res) => {
+	const name = req.query.name;
+	const newName = req.query.newName;
+
+	console.log(name, newName);
+	fs.renameSync(`${fmPath.getFullPath()}/${name}`, `${fmPath.getFullPath()}/${newName}`);
 	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 	res.redirect("/");
 });

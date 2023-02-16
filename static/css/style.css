@@ -148,6 +148,15 @@ form[action="/upload"] > p {
 	background-size: cover;
 	background-position: center;
 }
+.name {
+	display: flex;
+	gap: 0.5em;
+}
+
+.open-rename:hover {
+	cursor: pointer;
+	box-shadow: 0 1px 0 white;
+}
 
 .separator {
 	color: grey;

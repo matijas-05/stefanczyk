@@ -36,9 +36,11 @@ module.exports = class Path {
 
 		return [root, ...rest];
 	}
+	getProjectPath() {
+		return this.path.slice(this.basePath.length).join("/");
+	}
 
 	/**
-	 *
 	 * @param {string} name
 	 */
 	cdInto(name) {
