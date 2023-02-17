@@ -9,12 +9,23 @@
 		<link rel="stylesheet" href="./style.css" />
 
 		<script src="./js/three.js"></script>
-		<script src="./js/Game.js"></script>
-		<script src="./js/Net.js"></script>
-		<script src="./js/Ui.js"></script>
-		<script src="./js/main.js"></script>
+		<script src="./js/Game.js" type="module"></script>
+		<script src="./js/Net.js" type="module"></script>
+		<script src="./js/Ui.js" type="module"></script>
+		<script src="./js/main.js" type="module"></script>
 	</head>
 	<body>
-		<div id="root"></div>
+		<main>
+			<div id="info">STATUS</div>
+			<div id="root" class="disabled"></div>
+
+			<!-- Submit through JS (Net.js) -->
+			<form id="login" action="/login" method="post" class="removed">
+				<h2>LOGOWANIE</h2>
+				<input type="text" name="username" id="username" autofocus />
+				<input type="submit" value="LOGUJ" />
+				<input type="reset" value="RESET" />
+			</form>
+		</main>
 	</body>
 </html>

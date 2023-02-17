@@ -1,4 +1,4 @@
-class Game {
+export class Game {
 	constructor() {
 		this.checkerboard = [
 			[1, 0, 1, 0, 1, 0, 1, 0],
@@ -28,7 +28,7 @@ class Game {
 			0.1,
 			10000
 		);
-		this.camera.position.set(350, 600, 1050);
+		this.camera.position.set(350, 650, 1075);
 		this.camera.rotateX(-Math.PI / 4);
 
 		const axesHelper = new THREE.AxesHelper(1000);
@@ -42,7 +42,6 @@ class Game {
 
 		this.drawCheckerboard();
 		this.drawCheckers();
-		this.render();
 	}
 
 	drawCheckerboard = () => {
@@ -85,7 +84,7 @@ class Game {
 
 	render = () => {
 		this.renderer.render(this.scene, this.camera);
-		console.log("render leci");
+		// console.log("render leci");
 
 		requestAnimationFrame(this.render);
 	};
