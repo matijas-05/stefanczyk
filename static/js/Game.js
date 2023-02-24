@@ -1,3 +1,5 @@
+import { Pawn } from "./Pawn.js";
+
 export class Game {
 	constructor() {
 		this.checkerboard = [
@@ -68,16 +70,7 @@ export class Game {
 				const pawn = this.pawns[y][x];
 				if (pawn === 0) continue;
 
-				const geometry = new THREE.SphereGeometry(50, 32, 32);
-				const material = new THREE.MeshBasicMaterial({
-					color: pawn === 1 ? 0xe83f25 : 0xf8f8f8,
-					side: THREE.DoubleSide,
-					map: new THREE.TextureLoader().load("../gfx/wood.png"),
-				});
-				const sphere = new THREE.Mesh(geometry, material);
-				sphere.position.set(x * 100, 50, y * 100);
-
-				this.scene.add(sphere);
+				new Pawn(this.scene, pawn === 1 ? "white" : "black", x, y);
 			}
 		}
 	};
