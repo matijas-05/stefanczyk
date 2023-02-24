@@ -28,8 +28,8 @@ export class Game {
 			0.1,
 			10000
 		);
-		this.camera.position.set(350, 650, 1075);
-		this.camera.rotateX(-Math.PI / 4);
+		this.camera.position.set(350, 1250, 325);
+		this.camera.rotateX(-Math.PI / 2);
 
 		const axesHelper = new THREE.AxesHelper(1000);
 		axesHelper.position.y = 100;
@@ -82,9 +82,24 @@ export class Game {
 		}
 	};
 
+	start = (color) => {
+		if (color === "black") {
+			this.camera.position.set(350, 650, 1075);
+			this.camera.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 4);
+			console.log("black");
+		} else if (color === "white") {
+			this.camera.position.set(350, 650, -375);
+			this.camera.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
+			this.camera.rotateX(-Math.PI / 4);
+			console.log("white");
+		}
+
+		this.render();
+	};
+
 	render = () => {
 		this.renderer.render(this.scene, this.camera);
-		// console.log("render leci");
+		console.log("render leci");
 
 		requestAnimationFrame(this.render);
 	};

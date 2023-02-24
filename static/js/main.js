@@ -8,6 +8,6 @@ let ui;
 
 window.onload = () => {
 	game = new Game();
-	net = new Net(game.render);
+	net = new Net(game.start);
 	// ui = new Ui();
 };

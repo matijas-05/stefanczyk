@@ -42,9 +42,8 @@ export class Net {
 				this.loginForm.remove();
 
 				const { color } = await res.json();
-				console.log(color);
 
-				startGame();
+				startGame(color);
 			} else {
 				const { error } = await res.json();
 
