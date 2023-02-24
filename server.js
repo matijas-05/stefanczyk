@@ -1,5 +1,6 @@
 const express = require("express");
 const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
 app.use(express.json());
@@ -7,11 +8,25 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("static"));
 
 const server = http.createServer(app);
+const socketio = new Server(server);
 
 /**
  * @type {Array<{username: string}>}
  */
 const users = [];
+
+socketio.on("connection", (client) => {
+	console.log("client connected", client.id);
+
+	client.on("waitForPlayer", () => {
+		console.log("wait for player");
+		socketio.emit("waitForPlayer", users.length === 2);
+	});
+
+	client.on("disconnect", (reason) => {
+		console.log("client disconnected", reason);
+	});
+});
 
 app.get("/", (req, res) => {
 	res.sendFile(__dirname + "/static/index.html");

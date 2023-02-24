@@ -7,7 +7,9 @@ let net;
 let ui;
 
 window.onload = () => {
+	const client = io();
+
 	ui = new Ui();
 	game = new Game();
-	net = new Net(game.start, ui);
+	net = new Net(game.start, ui, client);
 };

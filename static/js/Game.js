@@ -79,13 +79,12 @@ export class Game {
 		if (color === "black") {
 			this.camera.position.set(350, 650, 1075);
 			this.camera.setRotationFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 4);
-			console.log("black");
 		} else if (color === "white") {
 			this.camera.position.set(350, 650, -375);
 			this.camera.setRotationFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI);
 			this.camera.rotateX(-Math.PI / 4);
-			console.log("white");
 		}
+		console.log(color);
 
 		this.render();
 	};

@@ -10,6 +10,8 @@
 
 		<script src="./js/three.js"></script>
 		<script src="./js/main.js" type="module"></script>
+
+		<script src="/socket.io/socket.io.js"></script>
 	</head>
 	<body>
 		<main>
@@ -23,6 +25,10 @@
 				<input type="submit" value="LOGUJ" />
 				<input type="reset" value="RESET" />
 			</form>
+
+			<div id="wait-for-player" class="removed">
+				<h2>Czekaj na drugiego gracza...</h2>
+			</div>
 		</main>
 	</body>
 </html>

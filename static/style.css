@@ -73,6 +73,9 @@ input[type="reset"]:hover {
 	color: var(--light-green);
 }
 
+#wait-for-player {
+}
+
 .disabled {
 	opacity: 0.3;
 }

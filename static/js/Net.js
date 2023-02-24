@@ -6,8 +6,19 @@ export class Net {
 	 * @param {any} startGame
 	 * @param {Ui} ui
 	 */
-	constructor(startGame, ui) {
+	constructor(startGame, ui, client) {
 		this.ui = ui;
+		this.client = client;
+
+		client.on("waitForPlayer", (lobbyFull) => {
+			if (!lobbyFull && this.ui.loginForm.classList.contains("removed")) {
+				ui.showLoading();
+			}
+			if (lobbyFull) {
+				ui.removeLoading();
+				startGame(this.color);
+			}
+		});
 
 		this.canJoin().then((canJoin) => {
 			if (canJoin === "false") {
@@ -17,7 +28,7 @@ export class Net {
 				this.ui.loginForm.classList.remove("removed");
 			}
 		});
-		this.login(startGame);
+		this.login();
 	}
 
 	async canJoin() {
@@ -29,7 +40,7 @@ export class Net {
 		});
 		return await res.text();
 	}
-	async login(startGame) {
+	async login() {
 		this.ui.loginForm.onsubmit = async (e) => {
 			e.preventDefault();
 			const username = e.target.username.value;
@@ -46,11 +57,12 @@ export class Net {
 				console.log("Zalogowano");
 				const root = document.getElementById("root");
 				root.classList.remove("disabled");
-				this.ui.loginForm.remove();
+				this.ui.loginForm.classList.add("removed");
 
 				const { color } = await res.json();
+				this.color = color;
 
-				startGame(color);
+				this.client.emit("waitForPlayer");
 			} else {
 				const { error } = await res.json();
 
