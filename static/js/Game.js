@@ -99,7 +99,7 @@ export class Game {
 
 	render = () => {
 		this.renderer.render(this.scene, this.camera);
-		console.log("render leci");
+		// console.log("render leci");
 
 		requestAnimationFrame(this.render);
 	};

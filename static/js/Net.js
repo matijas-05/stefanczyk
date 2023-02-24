@@ -1,13 +1,20 @@
+import { Ui } from "./Ui.js";
+
 export class Net {
-	constructor(startGame) {
-		this.loginForm = document.getElementById("login");
+	/**
+	 *
+	 * @param {any} startGame
+	 * @param {Ui} ui
+	 */
+	constructor(startGame, ui) {
+		this.ui = ui;
 
 		this.canJoin().then((canJoin) => {
 			if (canJoin === "false") {
-				this.loginForm.classList.remove("removed");
-				this.showError("Gra jest pełna");
+				this.ui.loginForm.classList.remove("removed");
+				this.ui.showError("Gra jest pełna");
 			} else {
-				this.loginForm.classList.remove("removed");
+				this.ui.loginForm.classList.remove("removed");
 			}
 		});
 		this.login(startGame);
@@ -23,9 +30,9 @@ export class Net {
 		return await res.text();
 	}
 	async login(startGame) {
-		this.loginForm.onsubmit = async (e) => {
+		this.ui.loginForm.onsubmit = async (e) => {
 			e.preventDefault();
-			const username = document.getElementById("username").value;
+			const username = e.target.username.value;
 
 			const res = await fetch("http://localhost:3000/login", {
 				method: "POST",
@@ -39,7 +46,7 @@ export class Net {
 				console.log("Zalogowano");
 				const root = document.getElementById("root");
 				root.classList.remove("disabled");
-				this.loginForm.remove();
+				this.ui.loginForm.remove();
 
 				const { color } = await res.json();
 
@@ -48,16 +55,11 @@ export class Net {
 				const { error } = await res.json();
 
 				if (res.status === 400 && error === "username") {
-					this.showError("Nazwa użytkownika jest zajęta");
+					this.ui.showError("Nazwa użytkownika jest zajęta");
 				} else {
-					this.showError("Nie udało się zalogować. Nieznany błąd");
+					this.ui.showError("Nie udało się zalogować. Nieznany błąd");
 				}
 			}
 		};
-	}
-
-	showError(message) {
-		document.getElementById("root").classList.add("disabled");
-		document.getElementById("login").innerHTML = message;
 	}
 }
