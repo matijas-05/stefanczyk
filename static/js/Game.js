@@ -1,5 +1,6 @@
 import { Net } from "./Net.js";
 import { Pawn } from "./Pawn.js";
+import { Tile } from "./Tile.js";
 
 export class Game {
 	constructor() {
@@ -7,7 +8,7 @@ export class Game {
 		 * 1 - white,
 		 * 0 - black
 		 */
-		this.checkerboard = [
+		this.checkerboardColors = [
 			[1, 0, 1, 0, 1, 0, 1, 0],
 			[0, 1, 0, 1, 0, 1, 0, 1],
 			[1, 0, 1, 0, 1, 0, 1, 0],
@@ -21,6 +22,13 @@ export class Game {
 		 * 2 - white pawn,
 		 * 1 - black pawn,
 		 * 0 - empty
+		 *
+		 * top left is 0, 0;
+		 * difference is 100;
+		 * z increases when going down;
+		 * x increases when going right
+		 *
+		 * @type {number[][]}
 		 */
 		this.pawns = [
 			[0, 2, 0, 2, 0, 2, 0, 2],
@@ -32,6 +40,10 @@ export class Game {
 			[0, 1, 0, 1, 0, 1, 0, 1],
 			[1, 0, 1, 0, 1, 0, 1, 0],
 		];
+
+		this.topLeftCoords = new THREE.Vector3(0, 0, 0);
+		this.tileDifference = new THREE.Vector3(100, 0, 100);
+
 		this.canMove = false;
 		/**
 		 * @type {Net} net
@@ -67,29 +79,29 @@ export class Game {
 		document.getElementById("root").append(this.renderer.domElement);
 
 		this.drawCheckerboard();
-		this.drawCheckers();
+		this.drawPawns(this.pawns);
 	}
 
 	drawCheckerboard = () => {
-		for (let y = 0; y < this.checkerboard.length; y++) {
-			for (let x = 0; x < this.checkerboard[y].length; x++) {
-				const white = this.checkerboard[y][x] === 1;
-
-				const geometry = new THREE.BoxGeometry(100, 100, 100);
-				const material = new THREE.MeshBasicMaterial({
-					color: white ? 0xeed89c : 0x492d18,
-					side: THREE.DoubleSide,
-					map: new THREE.TextureLoader().load("../gfx/wood.png"),
-				});
-				const cube = new THREE.Mesh(geometry, material);
-				cube.position.set(x * 100, 0, y * 100);
-				cube.name = "tile";
-
-				this.scene.add(cube);
+		for (let y = 0; y < this.checkerboardColors.length; y++) {
+			for (let x = 0; x < this.checkerboardColors[y].length; x++) {
+				this.scene.add(new Tile(x, y, this.checkerboardColors[x][y] === 1));
 			}
 		}
 	};
-	drawCheckers = () => {
+	drawPawns = (board) => {
+		if (!board) return;
+		this.pawns = board;
+
+		// remove all pawns
+		this.scene.children = this.scene.children.filter((object) => {
+			if (object instanceof Pawn) {
+				this.scene.remove(object);
+				return false;
+			}
+			return true;
+		});
+
 		for (let y = 0; y < this.pawns.length; y++) {
 			for (let x = 0; x < this.pawns[y].length; x++) {
 				const pawn = this.pawns[y][x];
@@ -101,7 +113,6 @@ export class Game {
 	};
 
 	beginRound = (color) => {
-		console.log("beginRound");
 		this.canMove = this.color === color;
 	};
 	endRound = () => {
@@ -109,8 +120,23 @@ export class Game {
 		this.canMove = false;
 	};
 
+	movePawn = (object) => {
+		const prevPosition = this.selectedPawn.position.clone().divideScalar(100);
+		this.selectedPawn.position.set(object.position.x, 50, object.position.z);
+		const newPosition = this.selectedPawn.position.clone().divideScalar(100);
+
+		const posDiff = {
+			x: newPosition.x - prevPosition.x,
+			z: newPosition.z - prevPosition.z,
+		};
+		this.pawns[prevPosition.z][prevPosition.x] = 0;
+		this.pawns[prevPosition.z + posDiff.z][prevPosition.x + posDiff.x] =
+			this.color === "white" ? 2 : 1;
+
+		this.net.updateBoard(this.pawns);
+	};
+
 	start = (color) => {
-		console.log("start");
 		this.color = color;
 
 		if (color === "black") {
@@ -133,9 +159,10 @@ export class Game {
 			if (this.clicked && intersects.length > 0) {
 				// Move pawn
 				if (this.selectedPawn && intersects[0].object.name === "tile") {
-					this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
+					this.movePawn(intersects[0].object);
+
 					this.endRound();
-					console.log(intersects[0].object);
+					this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
 				} else if (this.selectedPawn && intersects[0].object.name === "pawn") {
 					this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
 				}

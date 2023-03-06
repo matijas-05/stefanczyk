@@ -32,6 +32,10 @@ export class Net {
 			this.ui.logMessage(`Runda ${color === "white" ? "białych" : "czarnych"}`);
 			this.game.beginRound(color);
 		});
+		this.client.on("updateBoard", (board) => {
+			console.table(board);
+			this.game.drawPawns(board);
+		});
 
 		this.canJoin().then((canJoin) => {
 			if (canJoin === "false") {
@@ -90,14 +94,13 @@ export class Net {
 	};
 
 	endRound = (color) => {
-		console.log("endRound");
 		this.client.emit("endRound", color);
 		this.client.emit("beginRound", color === "white" ? "black" : "white");
 	};
 
 	/**
 	 *
-	 * @param {number[]} board
+	 * @param {number[][]} board
 	 */
 	updateBoard = (board) => {
 		this.client.emit("updateBoard", board);

@@ -37,9 +37,10 @@ socketio.on("connection", (client) => {
 		console.log("endRound", color);
 		socketio.emit("endRound", color);
 	});
-	// client.on("updateBoard", (board) => {
-	// 	console.log("update board", board);
-	// });
+	client.on("updateBoard", (board) => {
+		console.log("update board", board);
+		socketio.emit("updateBoard", board);
+	});
 
 	client.on("disconnect", (reason) => {
 		console.log("client disconnected", reason);
