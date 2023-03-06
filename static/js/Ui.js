@@ -21,5 +21,6 @@ export class Ui {
 	logMessage = (message) => {
 		if (this.info.innerText === "STATUS") this.info.innerHTML = "";
 		this.info.innerText += `${message}\n`;
+		this.info.scrollTo({ top: this.info.scrollHeight });
 	};
 }
