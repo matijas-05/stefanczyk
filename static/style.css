@@ -38,6 +38,11 @@ main {
 	padding: 1rem;
 	border-bottom: 1px solid var(--light-green);
 }
+#time-left {
+	margin-top: 3rem;
+	text-align: center;
+	font-size: 10rem;
+}
 
 #login {
 	display: flex;

@@ -3,6 +3,8 @@ export class Ui {
 		this.loginForm = document.getElementById("login");
 		this.root = document.getElementById("root");
 		this.waitForPlayer = document.getElementById("wait-for-player");
+		this.waitForMove = document.getElementById("wait-for-move");
+		this.timeLeft = document.getElementById("time-left");
 		this.info = document.getElementById("info");
 	}
 
@@ -16,6 +18,18 @@ export class Ui {
 	};
 	removeLoading = () => {
 		this.waitForPlayer.classList.add("removed");
+	};
+
+	showWaitingForMove = () => {
+		this.root.classList.add("disabled");
+		this.waitForMove.classList.remove("removed");
+	};
+	removeWaitingForMove = () => {
+		this.root.classList.remove("disabled");
+		this.waitForMove.classList.add("removed");
+	};
+	updateTimeLeft = (timeLeft) => {
+		this.timeLeft.innerText = timeLeft;
 	};
 
 	logMessage = (message) => {

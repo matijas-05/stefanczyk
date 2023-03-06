@@ -115,8 +115,8 @@ export class Game {
 	beginRound = (color) => {
 		this.canMove = this.color === color;
 	};
-	endRound = () => {
-		this.net.endRound(this.color);
+	endRound = (color) => {
+		this.net.endRound(color ?? this.color);
 		this.canMove = false;
 	};
 

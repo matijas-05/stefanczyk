@@ -16,6 +16,7 @@ export class Net {
 		 */
 		this.ui = ui;
 		this.client = client;
+		this.timeLeft = 30;
 
 		this.client.on("waitForPlayer", (data) => {
 			this.ui.showLoading();
@@ -31,9 +32,27 @@ export class Net {
 		this.client.on("beginRound", (color) => {
 			this.ui.logMessage(`Runda ${color === "white" ? "białych" : "czarnych"}`);
 			this.game.beginRound(color);
+			this.timeLeft = 30;
+
+			if (color === this.game.color) {
+				this.ui.removeWaitingForMove();
+			} else {
+				this.ui.showWaitingForMove();
+
+				if (this.interval) clearInterval(this.interval);
+				this.ui.updateTimeLeft(this.timeLeft);
+				this.interval = setInterval(() => {
+					this.timeLeft = this.timeLeft < 0 ? 0 : this.timeLeft - 1;
+					this.ui.updateTimeLeft(this.timeLeft);
+
+					if (this.timeLeft === 0) {
+						this.game.endRound();
+						clearInterval(this.interval);
+					}
+				}, 1000);
+			}
 		});
 		this.client.on("updateBoard", (board) => {
-			console.table(board);
 			this.game.drawPawns(board);
 		});
 
