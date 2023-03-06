@@ -31,6 +31,9 @@ main {
 }
 #info {
 	width: 100vw;
+	max-height: 5em;
+	overflow-y: auto;
+
 	background-color: var(--green);
 	padding: 1rem;
 	border-bottom: 1px solid var(--light-green);
@@ -71,9 +74,6 @@ input[type="submit"]:hover,
 input[type="reset"]:hover {
 	background-color: var(--green);
 	color: var(--light-green);
-}
-
-#wait-for-player {
 }
 
 .disabled {

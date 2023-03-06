@@ -11,5 +11,6 @@ window.onload = () => {
 
 	ui = new Ui();
 	game = new Game();
-	net = new Net(game.start, ui, client);
+	net = new Net(game, ui, client);
+	game.net = net;
 };

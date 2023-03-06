@@ -1,23 +1,36 @@
+import { Game } from "./Game.js";
 import { Ui } from "./Ui.js";
 
 export class Net {
 	/**
-	 *
-	 * @param {any} startGame
+	 * @param {Game} game
 	 * @param {Ui} ui
 	 */
-	constructor(startGame, ui, client) {
+	constructor(game, ui, client) {
+		/**
+		 * @type {Game}
+		 */
+		this.game = game;
+		/**
+		 * @type {Ui}
+		 */
 		this.ui = ui;
 		this.client = client;
 
-		client.on("waitForPlayer", (lobbyFull) => {
-			if (!lobbyFull && this.ui.loginForm.classList.contains("removed")) {
-				ui.showLoading();
+		this.client.on("waitForPlayer", (data) => {
+			this.ui.showLoading();
+
+			if (data.lastJoinedUsername !== this.username) {
+				this.ui.logMessage(`${data.lastJoinedUsername} dołączył do gry`);
 			}
-			if (lobbyFull) {
-				ui.removeLoading();
-				startGame(this.color);
-			}
+		});
+		this.client.on("start", () => {
+			this.ui.removeLoading();
+			this.game.start(this.color);
+		});
+		this.client.on("beginRound", (color) => {
+			this.ui.logMessage(`Runda ${color === "white" ? "białych" : "czarnych"}`);
+			this.game.beginRound(color);
 		});
 
 		this.canJoin().then((canJoin) => {
@@ -31,7 +44,7 @@ export class Net {
 		this.login();
 	}
 
-	async canJoin() {
+	canJoin = async () => {
 		const res = await fetch("http://localhost:3000/canJoin", {
 			method: "POST",
 			headers: {
@@ -39,30 +52,31 @@ export class Net {
 			},
 		});
 		return await res.text();
-	}
-	async login() {
+	};
+	login = async () => {
 		this.ui.loginForm.onsubmit = async (e) => {
 			e.preventDefault();
-			const username = e.target.username.value;
+			this.username = e.target.username.value;
 
 			const res = await fetch("http://localhost:3000/login", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ username }),
+				body: JSON.stringify({ username: this.username }),
 			});
 
 			if (res.ok) {
-				console.log("Zalogowano");
-				const root = document.getElementById("root");
-				root.classList.remove("disabled");
+				this.ui.root.classList.remove("disabled");
 				this.ui.loginForm.classList.add("removed");
 
 				const { color } = await res.json();
 				this.color = color;
+				this.ui.logMessage(
+					`Witaj ${this.username}, grasz ${color === "white" ? "białymi" : "czarnymi"}`
+				);
 
-				this.client.emit("waitForPlayer");
+				this.client.emit("waitForPlayer", this.username);
 			} else {
 				const { error } = await res.json();
 
@@ -73,5 +87,19 @@ export class Net {
 				}
 			}
 		};
-	}
+	};
+
+	endRound = (color) => {
+		console.log("endRound");
+		this.client.emit("endRound", color);
+		this.client.emit("beginRound", color === "white" ? "black" : "white");
+	};
+
+	/**
+	 *
+	 * @param {number[]} board
+	 */
+	updateBoard = (board) => {
+		this.client.emit("updateBoard", board);
+	};
 }

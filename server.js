@@ -18,10 +18,28 @@ const users = [];
 socketio.on("connection", (client) => {
 	console.log("client connected", client.id);
 
-	client.on("waitForPlayer", () => {
-		console.log("wait for player");
-		socketio.emit("waitForPlayer", users.length === 2);
+	client.on("waitForPlayer", (username) => {
+		socketio.emit("waitForPlayer", {
+			lastJoinedUsername: username,
+		});
+
+		if (users.length === 2) {
+			socketio.emit("start");
+			socketio.emit("beginRound", "white");
+		}
 	});
+
+	client.on("beginRound", (color) => {
+		console.log("beginRound", color);
+		socketio.emit("beginRound", color);
+	});
+	client.on("endRound", (color) => {
+		console.log("endRound", color);
+		socketio.emit("endRound", color);
+	});
+	// client.on("updateBoard", (board) => {
+	// 	console.log("update board", board);
+	// });
 
 	client.on("disconnect", (reason) => {
 		console.log("client disconnected", reason);
