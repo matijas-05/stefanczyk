@@ -117,6 +117,7 @@ export class Game {
 	};
 	endRound = (color) => {
 		this.resetTileColors();
+		this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
 		this.net.endRound(color ?? this.color);
 		this.canMove = false;
 	};
