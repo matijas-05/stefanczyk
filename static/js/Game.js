@@ -162,7 +162,9 @@ export class Game {
 					this.movePawn(intersects[0].object);
 
 					this.endRound();
+
 					this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
+					this.selectedPawn = null;
 				} else if (this.selectedPawn && intersects[0].object.name === "pawn") {
 					this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
 				}
