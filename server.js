@@ -38,7 +38,8 @@ socketio.on("connection", (client) => {
 		socketio.emit("endRound", color);
 	});
 	client.on("updateBoard", (board) => {
-		console.log("update board", board);
+		console.log("updateBoard");
+		console.table(board);
 		socketio.emit("updateBoard", board);
 	});
 

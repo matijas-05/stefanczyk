@@ -117,7 +117,14 @@ export class Game {
 	};
 	endRound = (color) => {
 		this.resetTileColors();
-		this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
+		this.selectedPawn?.material.color.set(Pawn.getColorByName(this.color));
+
+		if (this.toRemove) {
+			this.pawns[this.toRemove.z / 100][this.toRemove.x / 100] = 0;
+			this.net.updateBoard(this.pawns);
+			this.toRemove = null;
+		}
+
 		this.net.endRound(color ?? this.color);
 		this.canMove = false;
 	};
@@ -220,13 +227,44 @@ export class Game {
 								this.selectedPawn.position.x + x * 100,
 								this.selectedPawn.position.z + z * 100
 							);
+							if (!tile) continue;
+
+							const pawn = this.getPawnData(tile.position.x, tile.position.z);
+
+							// Color green when tile empty
 							if (
-								tile &&
 								tile.userData.originalColor === Tile.black &&
-								this.getPawnData(tile.position.x, tile.position.z) === null
+								!tile.userData.tileAfterTake &&
+								!pawn
 							) {
 								tile.material.color.set(0x00ff00);
 								tile.userData.canMoveTo = true;
+							}
+							// Color green when tile has enemy pawn
+							else if (pawn && pawn.color !== this.color) {
+								const fromPawnToTile = new THREE.Vector3(
+									tile.position.x - this.selectedPawn.position.x,
+									0,
+									tile.position.z - this.selectedPawn.position.z
+								);
+								const tileAfterTakePos = fromPawnToTile.add(tile.position);
+
+								const pawnOnTileAfterTake = this.getPawnData(
+									tileAfterTakePos.x,
+									tileAfterTakePos.z
+								);
+
+								if (pawnOnTileAfterTake) continue;
+
+								const tileAfterTake = this.getTile(
+									tileAfterTakePos.x,
+									tileAfterTakePos.z
+								);
+								tileAfterTake.material.color.set(0x00ff00);
+								tileAfterTake.userData.tileAfterTake = true;
+								tileAfterTake.userData.canMoveTo = true;
+
+								this.toRemove = pawn;
 							}
 						}
 					}
