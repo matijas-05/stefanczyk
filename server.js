@@ -23,6 +23,14 @@ app.get("/", (req, res) => {
 	res.req.query.projectPath = fmPath.getProjectPath();
 	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 });
+app.get("/fileEditor", (req, res) => {
+	const file = req.query.file;
+	console.log(nodePath.join(fmPath.getCurrentPath(), file));
+	res.render("fileEditor.hbs", {
+		content: fs.readFileSync(nodePath.join(fmPath.getCurrentPath(), file)),
+		path: "/" + fmPath.getProjectPath() + "/" + file,
+	});
+});
 
 app.post("/upload", (req, res) => {
 	const form = formidable({
@@ -37,7 +45,7 @@ app.post("/upload", (req, res) => {
 			file.originalFilename
 		);
 	});
-	form.parse(req, () => {});
+	form.parse(req);
 
 	// res.render("filemanager.hbs", { ...getFiles() });
 	res.redirect("/");
@@ -60,7 +68,11 @@ app.get("/deleteFolder", (req, res) => {
 
 app.get("/newFile", (req, res) => {
 	const name = req.query.name;
-	fs.writeFileSync(`${fmPath.getFullPath()}/${name}.txt`, "");
+	const ext = nodePath.extname(name);
+	const filename = `config/templates/${ext.replace(".", "")}${ext}`;
+
+	const data = fs.readFileSync(nodePath.join(__dirname, filename));
+	fs.writeFileSync(`${fmPath.getFullPath()}/${name}`, data);
 
 	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 	res.redirect("/");

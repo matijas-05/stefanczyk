@@ -39,6 +39,12 @@ module.exports = class Path {
 	getProjectPath() {
 		return this.path.slice(this.basePath.length).join("/");
 	}
+	getBasePath() {
+		return this.basePath.join("/");
+	}
+	getCurrentPath() {
+		return this.path.join("/");
+	}
 
 	/**
 	 * @param {string} name

@@ -1,0 +1,31 @@
+<aside>
+	<div id="font-change">
+		<button id="font-change-minus">font -</button>
+		<button>tło</button>
+		<button id="font-change-plus">font +</button>
+	</div>
+</aside>
+
+<div id="content" class="file-editor">
+	<div class="file-info">{{path}}</div>
+	<div class="editor">
+		<textarea class="lines">dupa</textarea>
+		<textarea class="text" spellcheck="false" wrap="off">{{content}}</textarea>
+	</div>
+</div>
+
+<script>
+	const textarea = document.querySelector('.text');
+	const fontChangeMinus = document.getElementById('font-change-minus');
+	const fontChangePlus = document.getElementById('font-change-plus');
+
+	fontChangeMinus.addEventListener('click', () => {
+		textarea.style.fontSize = parseInt(textarea.style.fontSize) - 1 + 'px';
+	});
+
+	fontChangePlus.addEventListener('click', () => {
+		textarea.style.fontSize = parseInt(textarea.style.fontSize) + 1 + 'px';
+	});
+
+
+</script>
