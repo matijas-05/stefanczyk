@@ -1,0 +1,61 @@
+<aside>
+	<div id="font-change">
+		<button id="font-change-minus">font -</button>
+		<button>tło</button>
+		<button id="font-change-plus">font +</button>
+	</div>
+</aside>
+
+<div id="content" class="file-editor">
+	<div class="file-info">{{path}}</div>
+	<div class="editor">
+		<textarea class="lines" disabled>dupa</textarea>
+		<textarea class="text" spellcheck="false" wrap="off" >{{content}}</textarea>
+	</div>
+</div>
+
+<script>
+	/**
+	 * @type {HTMLTextAreaElement}
+	 */
+	const textarea = document.querySelector('.text');
+	/**
+	 * @type {HTMLTextAreaElement}
+	 */
+	const lines = document.querySelector('.lines');
+	const fontChangeMinus = document.getElementById('font-change-minus');
+	const fontChangePlus = document.getElementById('font-change-plus');
+	updateLines();
+
+	fontChangeMinus.addEventListener('click', () => {
+		const fontSize = window.getComputedStyle(textarea).fontSize;
+		textarea.style.fontSize = parseInt(fontSize) - 1 + 'px';
+		lines.style.fontSize = parseInt(fontSize) - 1 + 'px';
+	});
+
+	fontChangePlus.addEventListener('click', () => {
+			const fontSize = window.getComputedStyle(textarea).fontSize;
+		textarea.style.fontSize = parseInt(fontSize) + 1 + 'px';
+		lines.style.fontSize = parseInt(fontSize) + 1 + 'px';
+	});
+
+	textarea.oninput = () => {
+		updateLines();
+	};
+
+	function updateLines() {
+		// add line numbers of textarea to lines
+		const linesCount = textarea.value.split('\n').length;
+		let linesContent = '';
+
+		for (let i = 1; i <= linesCount; i++) {
+			linesContent += i + '\n';
+		}
+
+		lines.value = linesContent;
+		lines.style.width = Math.max(...lines.textContent.split('\n').map(line => line.length)) + 'ch';
+		lines.scrollTo(0, textarea.scrollTop);
+	}
+
+
+</script>

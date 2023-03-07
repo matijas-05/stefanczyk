@@ -23,10 +23,10 @@ app.get("/", (req, res) => {
 	res.req.query.projectPath = fmPath.getProjectPath();
 	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 });
-app.get("/fileEditor", (req, res) => {
+app.get("/texteditor", (req, res) => {
 	const file = req.query.file;
 	console.log(nodePath.join(fmPath.getCurrentPath(), file));
-	res.render("fileEditor.hbs", {
+	res.render("texteditor.hbs", {
 		content: fs.readFileSync(nodePath.join(fmPath.getCurrentPath(), file)),
 		path: "/" + fmPath.getProjectPath() + "/" + file,
 	});
