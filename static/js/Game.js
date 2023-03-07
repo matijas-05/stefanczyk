@@ -116,7 +116,7 @@ export class Game {
 		this.canMove = this.color === color;
 	};
 	endRound = (color) => {
-		this.resetTileColors();
+		this.resetTileData();
 		this.selectedPawn?.material.color.set(Pawn.getColorByName(this.color));
 
 		if (this.toRemove) {
@@ -162,11 +162,12 @@ export class Game {
 
 		return tile;
 	};
-	resetTileColors = () => {
+	resetTileData = () => {
 		this.scene.children.forEach((object) => {
 			if (object.name === "tile") {
 				object.material.color.setHex(object.userData.originalColor);
 				object.userData.canMoveTo = false;
+				object.userData.tileAfterTake = false;
 			}
 		});
 	};
@@ -199,6 +200,8 @@ export class Game {
 
 				// Move pawn
 				if (this.selectedPawn && tile && tile.userData.canMoveTo) {
+					if (!tile.userData.tileAfterTake) this.toRemove = null;
+
 					this.movePawn(tile);
 					this.endRound();
 
@@ -217,7 +220,7 @@ export class Game {
 				) {
 					this.selectedPawn = intersects[0].object;
 					this.selectedPawn.material.color.set(0xffff00);
-					this.resetTileColors();
+					this.resetTileData();
 
 					for (let x = -1; x <= 1; x++) {
 						for (let z = -1; z <= 1; z++) {
