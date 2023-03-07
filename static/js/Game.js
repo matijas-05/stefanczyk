@@ -116,6 +116,7 @@ export class Game {
 		this.canMove = this.color === color;
 	};
 	endRound = (color) => {
+		this.resetTileColors();
 		this.net.endRound(color ?? this.color);
 		this.canMove = false;
 	};
@@ -134,6 +135,32 @@ export class Game {
 			this.color === "white" ? 2 : 1;
 
 		this.net.updateBoard(this.pawns);
+	};
+	getPawnData = (x, z) => {
+		const pawn = this.pawns[z / 100][x / 100];
+		if (pawn === 0) return null;
+
+		return {
+			color: pawn === 2 ? "white" : "black",
+			x,
+			z,
+		};
+	};
+
+	getTile = (x, z) => {
+		const tile = this.scene.children.find(
+			(object) => object.position.x === x && object.position.z === z
+		);
+
+		return tile;
+	};
+	resetTileColors = () => {
+		this.scene.children.forEach((object) => {
+			if (object.name === "tile") {
+				object.material.color.setHex(object.userData.originalColor);
+				object.userData.canMoveTo = false;
+			}
+		});
 	};
 
 	start = (color) => {
@@ -157,10 +184,14 @@ export class Game {
 			const intersects = this.raycaster.intersectObjects(this.scene.children);
 
 			if (this.clicked && intersects.length > 0) {
-				// Move pawn
-				if (this.selectedPawn && intersects[0].object.name === "tile") {
-					this.movePawn(intersects[0].object);
+				const tile = this.getTile(
+					intersects[0].object.position.x,
+					intersects[0].object.position.z
+				);
 
+				// Move pawn
+				if (this.selectedPawn && tile && tile.userData.canMoveTo) {
+					this.movePawn(tile);
 					this.endRound();
 
 					this.selectedPawn.material.color.set(Pawn.getColorByName(this.color));
@@ -178,6 +209,26 @@ export class Game {
 				) {
 					this.selectedPawn = intersects[0].object;
 					this.selectedPawn.material.color.set(0xffff00);
+					this.resetTileColors();
+
+					for (let x = -1; x <= 1; x++) {
+						for (let z = -1; z <= 1; z++) {
+							if (x === 0 && z === 0) continue;
+
+							const tile = this.getTile(
+								this.selectedPawn.position.x + x * 100,
+								this.selectedPawn.position.z + z * 100
+							);
+							if (
+								tile &&
+								tile.userData.originalColor === Tile.black &&
+								this.getPawnData(tile.position.x, tile.position.z) === null
+							) {
+								tile.material.color.set(0x00ff00);
+								tile.userData.canMoveTo = true;
+							}
+						}
+					}
 				}
 			}
 		}
