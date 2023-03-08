@@ -59,7 +59,7 @@
 	}
 
 	const filters = document.getElementById("filters");
-	document.getElementById("save-file").onclick = () => {
+	document.getElementById("save-file").onclick = async () => {
 		const path = "{{path}}";
 		const ext = path.split(".").pop();
 		const dataUrl = canvas.toDataURL("image/" + ext);
@@ -72,14 +72,20 @@
 		const byteArray = new Uint8Array(byteNumbers);
 		const blob = new Blob([byteArray], {type: "application/octet-stream"});
 
-		fetch(`/imageeditor/saveFile?name={{path}}`, {
+		const res = await fetch(`/imageeditor/saveFile?name={{path}}`, {
 			method: "POST",
 			body: blob,
 			headers: {
 				"Content-Type": "application/octet-stream",
-				"Content-Disposition": "attachment; filename={{path}}"
+				"Content-Disposition": "attachment; filename=" + path
 			}
 		});
+
+		if (res.status === 201) {
+			alert("Zapisano");
+		} else {
+			alert("Błąd");
+		}
 	}
 	document.getElementById("rename-file").onclick = () => {
 		document.getElementById("to-rename").value = "{{path}}";
@@ -105,7 +111,4 @@
 			reloadCanvas();
 		}
 	}
-
-
-
 </script>

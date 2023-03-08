@@ -84,7 +84,10 @@ app.post("/imageeditor/saveFile", octetParser, (req, res) => {
 	const name = nodePath.basename(req.query.name).split(".")[0];
 	const ext = nodePath.extname(req.query.name).split(".")[1];
 
-	fs.writeFileSync(nodePath.join(__dirname, "pliki", `${name}.${ext}`), req.body);
+	fs.writeFileSync(
+		nodePath.join(__dirname, "pliki", fmPath.getProjectPath(), `${name}.${ext}`),
+		req.body
+	);
 	res.sendStatus(201);
 });
 
