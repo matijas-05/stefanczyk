@@ -28,10 +28,10 @@ app.get("/", (req, res) => {
 });
 app.get("/texteditor", (req, res) => {
 	const file = req.query.file;
-	console.log(nodePath.join(fmPath.getCurrentPath(), file));
+
 	res.render("texteditor.hbs", {
 		content: fs.readFileSync(nodePath.join(fmPath.getCurrentPath(), file)),
-		path: "/" + fmPath.getProjectPath() + "/" + file,
+		path: fmPath.getProjectPath() + "/" + file,
 	});
 });
 app.get("/texteditor/settings", (req, res) => {
@@ -50,6 +50,10 @@ app.post("/texteditor/settings", jsonParser, (req, res) => {
 
 	fs.writeFileSync("./config/settings.json", json);
 
+	res.sendStatus(201);
+});
+app.post("/texteditor/saveFile", jsonParser, (req, res) => {
+	fs.writeFileSync(nodePath.join(fmPath.getCurrentPath(), req.body.path), req.body.content);
 	res.sendStatus(201);
 });
 

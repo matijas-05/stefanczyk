@@ -4,8 +4,9 @@
 		<button id="color-change">tło</button>
 		<button id="font-change-plus">font +</button>
 	</div>
-
+	<br>
 	<button id="save-settings">zapisz ustawienia</button>
+	<button id="save-file"><u>zapisz plik</u></button>
 </aside>
 
 <div id="content" class="file-editor">
@@ -47,10 +48,34 @@
 		settings.textEditor.color = settings.textEditor.color === "black" ? "white" : "black";
 		update();
 	};
-
 	textarea.oninput = () => {
 		updateLines();
 	};
+
+	document.getElementById("save-settings").onclick = () => {
+		fetch("/texteditor/settings", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				fontSize: window.getComputedStyle(textarea).fontSize,
+				color: settings.textEditor.color
+			})
+		});
+	}
+	document.getElementById("save-file").onclick = () => {
+		fetch("/texteditor/saveFile", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				path: "{{path}}",
+				content: textarea.value
+			})
+		});
+	}
 
 	function updateLines() {
 		// add line numbers of textarea to lines
@@ -81,17 +106,6 @@
 		lines.style.backgroundColor = settings.textEditor.color === "black" ? "white" : "#222";
 	}
 
-	document.getElementById("save-settings").onclick = () => {
-		fetch("/texteditor/settings", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			},
-			body: JSON.stringify({
-				fontSize: window.getComputedStyle(textarea).fontSize,
-				color: settings.textEditor.color
-			})
-		});
-	}
+
 
 </script>
