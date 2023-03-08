@@ -1,9 +1,11 @@
 <aside>
 	<div id="font-change">
 		<button id="font-change-minus">font -</button>
-		<button>tło</button>
+		<button id="color-change">tło</button>
 		<button id="font-change-plus">font +</button>
 	</div>
+
+	<button id="save-settings">zapisz ustawienia</button>
 </aside>
 
 <div id="content" class="file-editor">
@@ -25,6 +27,10 @@
 	const lines = document.querySelector('.lines');
 	const fontChangeMinus = document.getElementById('font-change-minus');
 	const fontChangePlus = document.getElementById('font-change-plus');
+	const colorChange = document.getElementById('color-change');
+	let settings;
+
+	loadSettings();
 	updateLines();
 
 	fontChangeMinus.addEventListener('click', () => {
@@ -32,12 +38,15 @@
 		textarea.style.fontSize = parseInt(fontSize) - 1 + 'px';
 		lines.style.fontSize = parseInt(fontSize) - 1 + 'px';
 	});
-
 	fontChangePlus.addEventListener('click', () => {
-			const fontSize = window.getComputedStyle(textarea).fontSize;
+		const fontSize = window.getComputedStyle(textarea).fontSize;
 		textarea.style.fontSize = parseInt(fontSize) + 1 + 'px';
 		lines.style.fontSize = parseInt(fontSize) + 1 + 'px';
 	});
+	colorChange.onclick = () => {
+		settings.textEditor.color = settings.textEditor.color === "black" ? "white" : "black";
+		update();
+	};
 
 	textarea.oninput = () => {
 		updateLines();
@@ -56,6 +65,33 @@
 		lines.style.width = Math.max(...lines.textContent.split('\n').map(line => line.length)) + 'ch';
 		lines.scrollTo(0, textarea.scrollTop);
 	}
+	async function loadSettings() {
+		const response = await fetch("/texteditor/settings");
+		settings = await response.json();
 
+		update();
+	}
+	function update() {
+		textarea.style.fontSize = settings.textEditor.fontSize;
+		textarea.style.color = settings.textEditor.color === "black" ? "black" : "white";
+		textarea.style.backgroundColor = settings.textEditor.color === "black" ? "white" : "#222";
+
+		lines.style.fontSize = settings.textEditor.fontSize;
+		lines.style.color = settings.textEditor.color === "black" ? "black" : "turquoise";
+		lines.style.backgroundColor = settings.textEditor.color === "black" ? "white" : "#222";
+	}
+
+	document.getElementById("save-settings").onclick = () => {
+		fetch("/texteditor/settings", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				fontSize: window.getComputedStyle(textarea).fontSize,
+				color: settings.textEditor.color
+			})
+		});
+	}
 
 </script>

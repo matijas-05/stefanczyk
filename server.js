@@ -1,5 +1,6 @@
 const express = require("express");
 const hbs = require("express-handlebars");
+const bodyParser = require("body-parser");
 const fs = require("fs");
 const nodePath = require("path");
 const formidable = require("formidable");
@@ -7,6 +8,8 @@ const Path = require("./path");
 
 const app = express();
 const fmPath = new Path(__dirname);
+
+const jsonParser = bodyParser.json();
 
 app.set("views", nodePath.join(__dirname, "views"));
 app.engine(
@@ -30,6 +33,24 @@ app.get("/texteditor", (req, res) => {
 		content: fs.readFileSync(nodePath.join(fmPath.getCurrentPath(), file)),
 		path: "/" + fmPath.getProjectPath() + "/" + file,
 	});
+});
+app.get("/texteditor/settings", (req, res) => {
+	const settings = JSON.parse(fs.readFileSync("./config/settings.json"));
+
+	res.send(settings);
+});
+app.post("/texteditor/settings", jsonParser, (req, res) => {
+	const data = {
+		textEditor: {
+			fontSize: req.body.fontSize,
+			color: req.body.color,
+		},
+	};
+	const json = JSON.stringify(data, null, 2);
+
+	fs.writeFileSync("./config/settings.json", json);
+
+	res.sendStatus(201);
 });
 
 app.post("/upload", (req, res) => {
