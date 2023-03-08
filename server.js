@@ -18,6 +18,7 @@ app.engine(
 );
 app.set("view engine", "hbs");
 app.use(express.static("static"));
+app.use(express.static("pliki"));
 
 app.get("/", (req, res) => {
 	const folder = req.query.folder;
@@ -26,6 +27,18 @@ app.get("/", (req, res) => {
 	res.req.query.projectPath = fmPath.getProjectPath();
 	res.render("filemanager.hbs", { ...getFiles(fmPath) });
 });
+
+app.get("/open", (req, res) => {
+	const file = req.query.file;
+	const ext = nodePath.extname(file);
+
+	if (ext === ".png" || ext === ".jpg" || ext === ".jpeg") {
+		res.redirect("/imageeditor?file=" + file);
+	} else {
+		res.redirect("/texteditor?file=" + file);
+	}
+});
+
 app.get("/texteditor", (req, res) => {
 	const file = req.query.file;
 
@@ -55,6 +68,14 @@ app.post("/texteditor/settings", jsonParser, (req, res) => {
 app.post("/texteditor/saveFile", jsonParser, (req, res) => {
 	fs.writeFileSync(nodePath.join(fmPath.getCurrentPath(), req.body.path), req.body.content);
 	res.sendStatus(201);
+});
+
+app.get("/imageeditor", (req, res) => {
+	const file = req.query.file;
+
+	res.render("imageeditor.hbs", {
+		path: fmPath.getProjectPath() + "/" + file,
+	});
 });
 
 app.post("/upload", (req, res) => {
@@ -124,7 +145,7 @@ app.get("/rename", (req, res) => {
 		res.render("filemanager.hbs", { ...getFiles(fmPath) });
 		res.redirect("/");
 	} else {
-		res.redirect("/texteditor?file=" + newName);
+		res.redirect("/open?file=" + newName);
 	}
 });
 

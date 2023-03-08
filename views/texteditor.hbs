@@ -100,19 +100,6 @@
 	document.getElementById("rename-cancel").onclick = () => {
 		document.getElementById("rename-modal").close();
 	}
-	/*document.querySelector("form[action='/rename']").onsubmit = async (e) => {
-		//e.preventDefault();
-
-		const query = `?name=${encodeURIComponent(e.target.name.value)}&newName=${encodeURIComponent(e.target.newName.value)}&textEditor`;
-		await fetch("/rename" + query, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json"
-			},
-		});
-
-		document.getElementById("rename-modal").close();
-	}*/
 
 	function updateLines() {
 		// add line numbers of textarea to lines
@@ -142,7 +129,4 @@
 		lines.style.color = settings.textEditor.color === "black" ? "black" : "turquoise";
 		lines.style.backgroundColor = settings.textEditor.color === "black" ? "white" : "#222";
 	}
-
-
-
 </script>
