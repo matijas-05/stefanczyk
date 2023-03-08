@@ -115,7 +115,10 @@ app.get("/rename", (req, res) => {
 	const newName = req.query.newName;
 
 	console.log(name, newName);
-	fs.renameSync(`${fmPath.getFullPath()}/${name}`, `${fmPath.getFullPath()}/${newName}`);
+	fs.renameSync(
+		`${fmPath.getFullPath()}/${nodePath.basename(name)}`,
+		`${fmPath.getFullPath()}/${newName}`
+	);
 
 	if (req.query.textEditor !== "true") {
 		res.render("filemanager.hbs", { ...getFiles(fmPath) });
