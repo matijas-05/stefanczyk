@@ -95,6 +95,10 @@ form[action="/upload"] > p {
 	font-size: 1rem;
 }
 
+canvas {
+	margin: 0 auto;
+}
+
 .modal {
 	position: absolute;
 	top: 50%;

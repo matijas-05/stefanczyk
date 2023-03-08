@@ -1,5 +1,6 @@
 <aside>
 	<button id="rename-file">zmień nazwę</button>
+	<button id="save-file"><u>zapisz</u></button>
 	<button id="show-filters">filtry</button>
 	<br>
 	<div id="filters" style="max-height: 0;">
@@ -17,9 +18,10 @@
 
 <div id="content" class="file-editor">
 	<div class="file-info">{{path}}</div>
-	<div class="image">
+	<div class="image" style="display: none;">
 		<img src="{{path}}" alt="">
 	</div>
+	<canvas class="image"></canvas>
 </div>
 
 <dialog id="rename-modal" class="modal">
@@ -61,7 +63,26 @@
 	for (const input of document.querySelectorAll("input[type='image']")) {
 		input.onclick = () => {
 			document.querySelector("img").style.filter = input.style.filter;
+			reloadCanvas();
 		}
+	}
+
+	const canvas = document.querySelector("canvas");
+	const ctx = canvas.getContext("2d");
+	const image = new Image();
+	image.src = "{{path}}";
+
+	image.onload = () => {
+		reloadCanvas();
+	}
+	function reloadCanvas() {
+		canvas.width = image.width;
+		canvas.height = image.height;
+		canvas.style.width = image.width + "px";
+		canvas.style.height = image.height + "px";
+
+		ctx.filter = document.querySelector("img").style.filter;
+		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 	}
 
 </script>
