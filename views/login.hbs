@@ -1,0 +1,22 @@
+<style>
+	main {
+		width: auto;
+		height: auto;
+	}
+</style>
+
+<div class="auth">
+	<h1>Zaloguj się</h1>
+	<form action="/login" method="post" class="auth-form">
+
+		{{#if error}}
+		<p class="error">{{error}}</p>
+		{{/if}}
+
+		<input type="text" name="username" id="username" placeholder="Nazwa użytkownika" required>
+		<input type="password" name="password" id="password" placeholder="Hasło" required>
+
+		<button type="submit">Zaloguj się</button>
+		<a href="/register">Zarejestruj się</a>
+	</form>
+</div>

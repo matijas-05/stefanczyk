@@ -1,9 +1,11 @@
 const express = require("express");
 const hbs = require("express-handlebars");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const fs = require("fs");
 const nodePath = require("path");
 const formidable = require("formidable");
+const nocache = require("nocache");
 const Path = require("./path");
 
 const app = express();
@@ -12,6 +14,7 @@ const effects = [{ name: "grayscale" }, { name: "invert" }, { name: "sepia" }, {
 
 const jsonParser = bodyParser.json();
 const octetParser = bodyParser.raw({ type: "application/octet-stream", limit: "50mb" });
+const urlencodedParser = bodyParser.urlencoded({ extended: true });
 
 app.set("views", nodePath.join(__dirname, "views"));
 app.engine(
@@ -21,13 +24,76 @@ app.engine(
 app.set("view engine", "hbs");
 app.use(express.static("static"));
 app.use(express.static("pliki"));
+app.use(cookieParser());
+app.use(nocache());
+
+app.get("/login", (req, res) => {
+	res.render("login.hbs", { error: req.query.error });
+});
+app.post("/login", urlencodedParser, (req, res) => {
+	/**
+	 * @type {Array<{username: string, password: string}>}
+	 */
+	const users = JSON.parse(fs.readFileSync("./config/users.json"));
+
+	const user = users.find(
+		(user) => user.username === req.body.username && user.password === req.body.password
+	);
+
+	if (user) {
+		res.cookie("user", user.username, {
+			expires: new Date(Date.now() + 60 * 1000),
+			httpOnly: true,
+		});
+		res.redirect("/");
+	} else {
+		res.redirect("/login?error=" + encodeURIComponent("Niepoprawne dane!"));
+	}
+});
+
+app.get("/register", (req, res) => {
+	res.render("register.hbs", { error: req.query.error });
+});
+app.post("/register", urlencodedParser, (req, res) => {
+	/**
+	 * @type {Array<{username: string, password: string}>}
+	 */
+	const users = JSON.parse(fs.readFileSync("./config/users.json"));
+	const user = users.find((user) => user.username === req.body.username);
+
+	if (user) {
+		res.redirect(
+			"/register?error=" + encodeURIComponent("Użytkownik o takiej nazwie już istnieje!")
+		);
+	} else if (req.body.password !== req.body.repeatPassword) {
+		res.redirect("/register?error=" + encodeURIComponent("Hasła nie są takie same!"));
+	} else {
+		users.push({ username: req.body.username, password: req.body.password });
+		fs.writeFileSync("./config/users.json", JSON.stringify(users, null, 2));
+
+		res.redirect("/login");
+	}
+});
+
+app.get("/logout", (req, res) => {
+	res.clearCookie("user");
+	res.redirect("/login");
+});
+
+app.get("/*", (req, res, next) => {
+	if (!req.cookies.user) {
+		res.redirect("/login");
+		return;
+	}
+	next();
+});
 
 app.get("/", (req, res) => {
 	const folder = req.query.folder;
 	if (folder) fmPath.cdInto(folder);
 
 	res.req.query.projectPath = fmPath.getProjectPath();
-	res.render("filemanager.hbs", { ...getFiles(fmPath) });
+	res.render("filemanager.hbs", { ...getFiles(fmPath), username: req.cookies.user });
 });
 
 app.get("/open", (req, res) => {
@@ -47,6 +113,7 @@ app.get("/texteditor", (req, res) => {
 	res.render("texteditor.hbs", {
 		content: fs.readFileSync(nodePath.join(fmPath.getCurrentPath(), file)),
 		path: fmPath.getProjectPath() + "/" + file,
+		username: req.cookies.user,
 	});
 });
 app.get("/texteditor/settings", (req, res) => {
@@ -68,7 +135,7 @@ app.post("/texteditor/settings", jsonParser, (req, res) => {
 	res.sendStatus(201);
 });
 app.post("/texteditor/saveFile", jsonParser, (req, res) => {
-	fs.writeFileSync(nodePath.join(fmPath.getCurrentPath(), req.body.path), req.body.content);
+	fs.writeFileSync(nodePath.join(fmPath.getBasePath(), req.body.path), req.body.content);
 	res.sendStatus(201);
 });
 
@@ -78,6 +145,7 @@ app.get("/imageeditor", (req, res) => {
 	res.render("imageeditor.hbs", {
 		path: fmPath.getProjectPath() + "/" + file,
 		effects,
+		username: req.cookies.user,
 	});
 });
 app.post("/imageeditor/saveFile", octetParser, (req, res) => {

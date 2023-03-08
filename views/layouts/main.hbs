@@ -10,6 +10,13 @@
 <body>
 	<header>
 		<a href="/">filemanager</a>
+
+		{{#if username}}
+		<div class="user-info">
+			<p class="username">{{username}}</p>
+			<a href="/logout">Wyloguj się</a>
+		</div>
+		{{/if}}
 	</header>
 	<main>{{{body}}}</main>
 </body>

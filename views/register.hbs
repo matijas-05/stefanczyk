@@ -1,0 +1,23 @@
+<style>
+	main {
+		width: auto;
+		height: auto;
+	}
+</style>
+
+<div class="auth">
+	<h1>Zarejestruj się</h1>
+	<form action="/register" method="post" class="auth-form">
+
+		{{#if error}}
+		<p class="error">{{error}}</p>
+		{{/if}}
+
+		<input type="text" name="username" id="username" placeholder="Nazwa użytkownika" required>
+		<input type="password" name="password" id="password" placeholder="Hasło" required>
+		<input type="password" name="repeatPassword" id="repeat-password" placeholder="Powtórz hasło" required>
+
+		<button type="submit">Zarejestruj się</button>
+		<a href="/login">Zaloguj się</a>
+	</form>
+</div>
