@@ -6,6 +6,7 @@
 	</div>
 	<br>
 	<button id="save-settings">zapisz ustawienia</button>
+	<button id="rename-file">zmień nazwę</button>
 	<button id="save-file"><u>zapisz plik</u></button>
 </aside>
 
@@ -16,6 +17,21 @@
 		<textarea class="text" spellcheck="false" wrap="off" >{{content}}</textarea>
 	</div>
 </div>
+
+<dialog id="rename-modal" class="modal">
+	<form action="/rename" method="get">
+		<label for="name">Nowa nazwa</label>
+		<input type="text" name="newName" placeholder="nazwa pliku" required />
+		<input type="hidden" id="to-rename" name="name">
+		<input type="hidden" name="textEditor" value="true">
+
+		<div>
+			<input type="submit" value="OK" id="rename-submit" style="display: none;" />
+			<input type="button" value="OK" onclick="document.getElementById('rename-submit').click();" />
+			<input type="button" value="Cancel" id="rename-cancel">
+		</div>
+	</form>
+</dialog>
 
 <script>
 	/**
@@ -76,6 +92,27 @@
 			})
 		});
 	}
+
+	document.getElementById("rename-file").onclick = () => {
+		document.getElementById("to-rename").value = "{{path}}";
+		document.getElementById("rename-modal").showModal();
+	}
+	document.getElementById("rename-cancel").onclick = () => {
+		document.getElementById("rename-modal").close();
+	}
+	/*document.querySelector("form[action='/rename']").onsubmit = async (e) => {
+		//e.preventDefault();
+
+		const query = `?name=${encodeURIComponent(e.target.name.value)}&newName=${encodeURIComponent(e.target.newName.value)}&textEditor`;
+		await fetch("/rename" + query, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+		});
+
+		document.getElementById("rename-modal").close();
+	}*/
 
 	function updateLines() {
 		// add line numbers of textarea to lines

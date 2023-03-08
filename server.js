@@ -116,8 +116,13 @@ app.get("/rename", (req, res) => {
 
 	console.log(name, newName);
 	fs.renameSync(`${fmPath.getFullPath()}/${name}`, `${fmPath.getFullPath()}/${newName}`);
-	res.render("filemanager.hbs", { ...getFiles(fmPath) });
-	res.redirect("/");
+
+	if (req.query.textEditor !== "true") {
+		res.render("filemanager.hbs", { ...getFiles(fmPath) });
+		res.redirect("/");
+	} else {
+		res.redirect("/texteditor?file=" + newName);
+	}
 });
 
 app.get("/path", (req, res) => {
