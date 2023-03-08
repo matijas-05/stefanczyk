@@ -40,8 +40,47 @@
 </dialog>
 
 <script>
-	const filters = document.getElementById("filters");
+	const canvas = document.querySelector("canvas");
+	const ctx = canvas.getContext("2d");
+	const image = new Image();
+	image.src = "{{path}}";
 
+	image.onload = () => {
+		reloadCanvas();
+	}
+	function reloadCanvas() {
+		canvas.width = image.width;
+		canvas.height = image.height;
+		canvas.style.width = image.width + "px";
+		canvas.style.height = image.height + "px";
+
+		ctx.filter = document.querySelector("img").style.filter;
+		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+	}
+
+	const filters = document.getElementById("filters");
+	document.getElementById("save-file").onclick = () => {
+		const path = "{{path}}";
+		const ext = path.split(".").pop();
+		const dataUrl = canvas.toDataURL("image/" + ext);
+
+		const byteCharacters = atob(dataUrl.split(",")[1]);
+		const byteNumbers = new Array(byteCharacters.length);
+		for (let i = 0; i < byteCharacters.length; i++) {
+		    byteNumbers[i] = byteCharacters.charCodeAt(i);
+		}
+		const byteArray = new Uint8Array(byteNumbers);
+		const blob = new Blob([byteArray], {type: "application/octet-stream"});
+
+		fetch(`/imageeditor/saveFile?name={{path}}`, {
+			method: "POST",
+			body: blob,
+			headers: {
+				"Content-Type": "application/octet-stream",
+				"Content-Disposition": "attachment; filename={{path}}"
+			}
+		});
+	}
 	document.getElementById("rename-file").onclick = () => {
 		document.getElementById("to-rename").value = "{{path}}";
 		document.getElementById("rename-modal").showModal();
@@ -67,22 +106,6 @@
 		}
 	}
 
-	const canvas = document.querySelector("canvas");
-	const ctx = canvas.getContext("2d");
-	const image = new Image();
-	image.src = "{{path}}";
 
-	image.onload = () => {
-		reloadCanvas();
-	}
-	function reloadCanvas() {
-		canvas.width = image.width;
-		canvas.height = image.height;
-		canvas.style.width = image.width + "px";
-		canvas.style.height = image.height + "px";
-
-		ctx.filter = document.querySelector("img").style.filter;
-		ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-	}
 
 </script>

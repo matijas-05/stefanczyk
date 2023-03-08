@@ -11,6 +11,7 @@ const fmPath = new Path(__dirname);
 const effects = [{ name: "grayscale" }, { name: "invert" }, { name: "sepia" }, { name: "none" }];
 
 const jsonParser = bodyParser.json();
+const octetParser = bodyParser.raw({ type: "application/octet-stream", limit: "50mb" });
 
 app.set("views", nodePath.join(__dirname, "views"));
 app.engine(
@@ -78,6 +79,13 @@ app.get("/imageeditor", (req, res) => {
 		path: fmPath.getProjectPath() + "/" + file,
 		effects,
 	});
+});
+app.post("/imageeditor/saveFile", octetParser, (req, res) => {
+	const name = nodePath.basename(req.query.name).split(".")[0];
+	const ext = nodePath.extname(req.query.name).split(".")[1];
+
+	fs.writeFileSync(nodePath.join(__dirname, "pliki", `${name}.${ext}`), req.body);
+	res.sendStatus(201);
 });
 
 app.post("/upload", (req, res) => {
