@@ -8,6 +8,7 @@ const Path = require("./path");
 
 const app = express();
 const fmPath = new Path(__dirname);
+const effects = [{ name: "grayscale" }, { name: "invert" }, { name: "sepia" }, { name: "none" }];
 
 const jsonParser = bodyParser.json();
 
@@ -75,6 +76,7 @@ app.get("/imageeditor", (req, res) => {
 
 	res.render("imageeditor.hbs", {
 		path: fmPath.getProjectPath() + "/" + file,
+		effects,
 	});
 });
 

@@ -5,22 +5,12 @@
 	<div id="filters" style="max-height: 0;">
 		<h4>Filtry</h4>
 
+		{{#each effects}}
 		<figure class="filter">
-			<input type="image" src="{{path}}" width="100" alt="" style="filter: grayscale(100%);">
-			<figcaption>grayscale</figcaption>
+			<input type="image" src="{{../path}}" width="100" alt="" style="filter: {{name}}(100%);">
+			<figcaption>{{name}}</figcaption>
 		</figure>
-		<figure class="filter">
-			<input type="image" src="{{path}}" width="100" alt="" style="filter: invert();">
-			<figcaption>invert</figcaption>
-		</figure>
-		<figure class="filter">
-			<input type="image" src="{{path}}" width="100" alt="" style="filter: sepia();">
-			<figcaption>sepia</figcaption>
-		</figure>
-		<figure class="filter">
-			<input type="image" src="{{path}}" width="100" alt="" style="filter: none;">
-			<figcaption>none</figcaption>
-		</figure>
+		{{/each}}
 	</div>
 	</div>
 </aside>
@@ -71,7 +61,6 @@
 	for (const input of document.querySelectorAll("input[type='image']")) {
 		input.onclick = () => {
 			document.querySelector("img").style.filter = input.style.filter;
-			console.log("CHUJ")
 		}
 	}
 
