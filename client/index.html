@@ -8,21 +8,19 @@
 	<title>Chat - Mateusz Wojtyna</title>
 
 	<link rel="stylesheet" href="./style.css" />
-	<script src="./js/main.js" defer></script>
+	<script src="./main.js" type="module" defer></script>
 </head>
 
 <body>
-	<form id="login" action="/login" method="post" class="hidden">
+	<form id="login" action="/login" method="post" class="">
 		<h1>Zaloguj się</h1>
 		<input type="text" name="username" id="username" placeholder="Nazwa użytkownika" required />
 		<input type="submit" value="Zaloguj się">
 	</form>
 
-	<main>
+	<main class="hidden">
 		<div id="chat">
 			<div id="messages">
-				<div class="message left">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cupiditate et ipsa quidem minima ab laudantium ullam! Fuga velit quo quod, fugit, pariatur voluptatum eos commodi quas eaque modi saepe itaque?</div>
-				<div class="message right">Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cupiditate et ipsa quidem minima ab laudantium ullam! Fuga velit quo quod, fugit, pariatur voluptatum eos commodi quas eaque modi saepe itaque?</div>
 			</div>
 			<form id="message-form" action="/message" method="post">
 				<textarea name="message" id="message" placeholder="Wiadomość" required></textarea>
@@ -30,6 +28,11 @@
 			</form>
 		</div>
 	</main>
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		var socket = io();
+	</script>
 </body>
 
 </html>

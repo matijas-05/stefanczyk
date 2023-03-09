@@ -5,14 +5,12 @@
 	"type": "module",
 	"scripts": {
 		"start": "tsx .",
-		"dev": "concurrently --kill-others -c blue,magenta 'tsx watch --clear-screen=false --ignore ./client .' 'npx tsc --watch --project client/tsconfig.json'"
+		"dev": "tsx watch --clear-screen=false --ignore ./client ."
 	},
 	"dependencies": {
 		"@tsconfig/node18-strictest-esm": "^1.0.1",
 		"@types/node": "^18.14.6",
+		"socket.io": "^4.6.1",
 		"typescript": "^4.9.5"
-	},
-	"devDependencies": {
-		"concurrently": "^7.6.0"
 	}
 }
