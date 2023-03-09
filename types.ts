@@ -2,6 +2,7 @@ export interface Message {
 	username: string;
 	message: string;
 	type: "message" | "info";
+	time: string;
 }
 export interface User {
 	id: string;

@@ -50,7 +50,8 @@ io.on("connection", (socket) => {
 			username: username,
 			message: "<span style='color: #aaa;'>dołączył do czatu</span>",
 			type: "info",
-		} as Message;
+			time: new Date().toLocaleTimeString("pl-PL"),
+		} satisfies Message;
 
 		messages.push(message);
 		users.push({ id: socket.id, name: username });
@@ -72,7 +73,8 @@ io.on("connection", (socket) => {
 				username: user.name,
 				message: "<span style='color: #aaa;'>opuścił czat</span>",
 				type: "info",
-			} as Message;
+				time: new Date().toLocaleTimeString("pl-PL"),
+			} satisfies Message;
 			messages.push(message);
 
 			io.emit("message", message);
