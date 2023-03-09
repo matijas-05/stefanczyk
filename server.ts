@@ -46,12 +46,15 @@ function notFound(res: http.ServerResponse) {
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server);
 io.on("connection", (socket) => {
 	socket.on("userJoined", (username) => {
-		users.push({ id: socket.id, name: username });
-		io.emit("message", {
+		const message = {
 			username: username,
 			message: "<span style='color: #aaa;'>dołączył do czatu</span>",
 			type: "info",
-		});
+		} as Message;
+
+		messages.push(message);
+		users.push({ id: socket.id, name: username });
+		io.emit("message", message);
 	});
 
 	socket.on("message", (data) => {
@@ -65,11 +68,14 @@ io.on("connection", (socket) => {
 	socket.on("disconnect", () => {
 		const user = users.find((user) => user.id === socket.id);
 		if (user) {
-			io.emit("message", {
+			const message = {
 				username: user.name,
 				message: "<span style='color: #aaa;'>opuścił czat</span>",
 				type: "info",
-			});
+			} as Message;
+			messages.push(message);
+
+			io.emit("message", message);
 		}
 	});
 });
