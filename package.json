@@ -1,15 +1,18 @@
 {
-	"name": "chat-server",
+	"name": "chat",
 	"version": "1.0.0",
 	"main": "server.ts",
 	"type": "module",
 	"scripts": {
 		"start": "tsx .",
-		"dev": "tsx watch --clear-screen=false --ignore ./client ."
+		"dev": "concurrently --kill-others -c blue,magenta 'tsx watch --clear-screen=false --ignore ./client .' 'npx tsc --watch --project client/tsconfig.json'"
 	},
 	"dependencies": {
 		"@tsconfig/node18-strictest-esm": "^1.0.1",
 		"@types/node": "^18.14.6",
 		"typescript": "^4.9.5"
+	},
+	"devDependencies": {
+		"concurrently": "^7.6.0"
 	}
 }

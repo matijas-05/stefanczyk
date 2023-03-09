@@ -1,3 +1,66 @@
-h1 {
-	color: pink;
+*,
+*::before,
+*::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: monospace;
+}
+
+body {
+	font-size: 1.25rem;
+}
+main {
+	display: grid;
+	height: 100vh;
+	place-items: center;
+	margin: 0 10rem;
+}
+
+#login {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	width: fit-content;
+	margin: 2rem auto;
+}
+#message-form textarea {
+	width: 100%;
+	height: 4rem;
+	font-size: 1.25rem;
+	resize: none;
+	margin-bottom: 1rem;
+}
+
+#chat {
+	display: grid;
+	place-items: center;
+	gap: 1rem;
+	color: white;
+}
+#messages {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 2rem;
+	max-height: 75vh;
+	overflow-y: auto;
+	border: 1px solid black;
+	border-radius: 1rem;
+}
+.message {
+	padding: 1rem;
+	max-width: 75%;
+	border-radius: 1rem;
+}
+.message.right {
+	background-color: blue;
+	margin-left: auto;
+}
+.message.left {
+	background-color: #777;
+}
+
+.hidden {
+	display: none !important;
 }
