@@ -2,9 +2,10 @@ import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { Server } from "socket.io";
-import type { ClientToServerEvents, Message, ServerToClientEvents } from "./types";
+import type { ClientToServerEvents, Message, ServerToClientEvents, User } from "./types";
 
 const messages: Message[] = [];
+const users: User[] = [];
 
 const server = http.createServer(async (req, res) => {
 	let file: Buffer;
@@ -44,13 +45,32 @@ function notFound(res: http.ServerResponse) {
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server);
 io.on("connection", (socket) => {
-	socket.on("message", (data) => {
-		messages.push(data);
-		socket.broadcast.emit("message", data);
+	socket.on("userJoined", (username) => {
+		users.push({ id: socket.id, name: username });
+		io.emit("message", {
+			username: username,
+			message: "<span style='color: #aaa;'>dołączył do czatu</span>",
+			type: "info",
+		});
 	});
 
+	socket.on("message", (data) => {
+		messages.push(data);
+		io.emit("message", data);
+	});
 	socket.on("getMessages", () => {
 		socket.emit("getMessages", messages);
+	});
+
+	socket.on("disconnect", () => {
+		const user = users.find((user) => user.id === socket.id);
+		if (user) {
+			io.emit("message", {
+				username: user.name,
+				message: "<span style='color: #aaa;'>opuścił czat</span>",
+				type: "info",
+			});
+		}
 	});
 });
 

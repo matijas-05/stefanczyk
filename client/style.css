@@ -54,6 +54,7 @@ main {
 	flex-direction: column;
 	gap: 1rem;
 	padding: 2rem;
+	min-width: 25rem;
 	max-height: 75vh;
 	overflow-y: auto;
 	border: 1px solid black;

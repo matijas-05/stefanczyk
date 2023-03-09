@@ -3,6 +3,10 @@ export interface Message {
 	message: string;
 	type: "message" | "info";
 }
+export interface User {
+	id: string;
+	name: string;
+}
 
 export interface ClientToServerEvents {
 	userJoined: (username: string) => void;
