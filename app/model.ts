@@ -2,7 +2,7 @@ interface ImageHistory {
 	status: "original" | "edited" | "deleted";
 	timestamp: Date;
 }
-export interface Image {
+interface Image {
 	id: number;
 	album: string;
 	originalName: string;

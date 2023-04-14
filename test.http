@@ -1,4 +1,6 @@
-#GET http://localhost:3000/api/photos HTTP/1.1
+GET http://localhost:3000/api/photos HTTP/1.1
+
+###
 
 POST http://localhost:3000/api/photos HTTP/1.1
 Content-Type: multipart/form-data; boundary=----FormBoundary1234
@@ -10,8 +12,8 @@ Content-Type: image/jpeg
 < ./input.jpg
 
 ------FormBoundary1234
-# Content-Disposition: form-data; name="album"
-# Content-Type: text/plain
+Content-Disposition: form-data; name="album"
+Content-Type: text/plain
 
-# nazwa_albumu
-# ------FormBoundary1234
+nazwa_albumu
+------FormBoundary1234

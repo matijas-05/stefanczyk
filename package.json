@@ -9,9 +9,9 @@
 	"dependencies": {
 		"@tsconfig/esm": "^1.0.2",
 		"@tsconfig/node18": "^1.0.1",
-		"@types/formidable": "^2.0.5",
+		"@types/formidable": "^1.2.2",
 		"@types/node": "^18.15.11",
-		"formidable": "^2.1.1",
+		"formidable": "^1.2.2",
 		"pino": "^8.11.0",
 		"pino-pretty": "^10.0.0",
 		"tsx": "^3.12.6"
