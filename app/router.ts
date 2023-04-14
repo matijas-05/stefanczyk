@@ -31,8 +31,6 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 
 				break;
 			}
-
-			break;
 		}
 		case "POST": {
 			switch (req.url) {
@@ -90,6 +88,34 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 					const image = model.getAll().find((image) => image.id === id);
 					if (image) {
 						model.remove(image);
+						res.writeHead(204).end();
+					} else {
+						res.writeHead(404).end();
+					}
+				}
+			}
+		}
+		case "PATCH": {
+			const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
+
+			if (matches) {
+				for (const match of matches) {
+					const id = parseInt(match[1]);
+					const image = model.getAll().find((image) => image.id === id);
+
+					if (image) {
+						const data = await parseFormData(req);
+						model.update(id, {
+							album: data.fields.album as string,
+							lastChange: new Date(),
+							originalName: (data.files.file as formidable.File).name!,
+							url: (data.files.file as formidable.File).path,
+							history: [
+								...image.history,
+								{ status: "edited", timestamp: new Date() },
+							],
+						});
+
 						res.writeHead(204).end();
 					} else {
 						res.writeHead(404).end();

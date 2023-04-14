@@ -25,3 +25,21 @@ nazwa_albumu
 ###
 
 DELETE http://localhost:3000/api/photos/1 HTTP/1.1
+
+###
+
+PATCH http://localhost:3000/api/photos/1 HTTP/1.1
+Content-Type: multipart/form-data; boundary=----FormBoundary12345
+
+------FormBoundary12345
+Content-Disposition: form-data; name="file"; filename="input.jpg"
+Content-Type: image/jpeg
+
+< ./input_copy.jpg
+
+------FormBoundary12345
+Content-Disposition: form-data; name="album"
+Content-Type: text/plain
+
+nowa_nazwa_albumu
+------FormBoundary12345
