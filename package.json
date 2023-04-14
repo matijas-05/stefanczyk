@@ -4,7 +4,7 @@
 	"main": "main.ts",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx watch --ignore uploads/**/* ."
+		"dev": "tsx watch --ignore uploads/**/* --ignore ./test.http ."
 	},
 	"dependencies": {
 		"@tsconfig/esm": "^1.0.2",

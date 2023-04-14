@@ -19,3 +19,9 @@ export function getAll(): Image[] {
 export function add(image: Image) {
 	images.push(image);
 }
+export function remove(image: Image) {
+	const index = images.indexOf(image);
+	if (index !== -1) {
+		images.splice(index, 1);
+	}
+}

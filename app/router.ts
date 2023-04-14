@@ -81,5 +81,21 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 				}
 			}
 		}
+		case "DELETE": {
+			const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
+
+			if (matches) {
+				for (const match of matches) {
+					const id = parseInt(match[1]);
+					const image = model.getAll().find((image) => image.id === id);
+					if (image) {
+						model.remove(image);
+						res.writeHead(204).end();
+					} else {
+						res.writeHead(404).end();
+					}
+				}
+			}
+		}
 	}
 }
