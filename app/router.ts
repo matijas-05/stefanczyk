@@ -9,13 +9,30 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
-			switch (req.url) {
-				case "/api/photos": {
-					res.writeHead(200, { "Content-Type": "application/json" });
-					res.end(JSON.stringify(model.getAll()));
-					break;
+			if (req.url === "/api/photos") {
+				res.writeHead(200, { "Content-Type": "application/json" });
+				res.end(JSON.stringify(model.getAll()));
+				break;
+			} else {
+				const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
+
+				if (matches) {
+					for (const match of matches) {
+						const id = parseInt(match[1]);
+						const image = model.getAll().find((image) => image.id === id);
+						if (image) {
+							res.writeHead(200, { "Content-Type": "application/json" });
+							res.end(JSON.stringify(image));
+						} else {
+							res.writeHead(404).end();
+						}
+					}
 				}
+
+				break;
 			}
+
+			break;
 		}
 		case "POST": {
 			switch (req.url) {
