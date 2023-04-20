@@ -1,5 +1,5 @@
 import http from "node:http";
-import { router } from "./app/router";
+import { router } from "./app/routers/";
 import { pino } from "./app/logger";
 
 const server = http.createServer((req, res) => router(req, res));

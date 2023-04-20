@@ -1,12 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import formidable from "formidable";
-import { pino } from "./logger";
-import * as model from "./model";
-import { parseFormData } from "./controllers/file";
+import * as model from "../models/imageModel";
+import { parseFormData } from "../controllers/fileController";
 
-export async function router(req: IncomingMessage, res: ServerResponse) {
-	pino.info(`Request: ${req.method} ${req.url}`);
-
+export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
 			if (req.url === "/api/photos") {
