@@ -52,3 +52,17 @@ export function addTag(imageId: number, tag: Omit<Tag, "id">) {
 		image.tags.push({ id: image.tags.length, ...tag });
 	}
 }
+
+export function addTags(imageId: number, tags: Omit<Tag, "id">[]) {
+	for (const tags of images.map((image) => image.tags)) {
+		for (const tag of tags) {
+			if (tags.filter((t) => t.name === tag.name).length! > 0) {
+				throw new Error("Tag already exists");
+			}
+		}
+	}
+
+	for (const tag of tags) {
+		addTag(imageId, tag);
+	}
+}

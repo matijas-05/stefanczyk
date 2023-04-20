@@ -104,6 +104,9 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 			const addTagToPhoto = Array.from(
 				req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags$/g) ?? []
 			);
+			const addTagsToPhoto = Array.from(
+				req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags\/mass$/g) ?? []
+			);
 
 			if (editPhoto.length > 0) {
 				for (const match of editPhoto) {
@@ -137,6 +140,23 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 					if (image && tag) {
 						try {
 							imageModel.addTag(imageId, tag);
+							res.writeHead(204).end();
+						} catch (error) {
+							res.writeHead(409).end();
+						}
+					} else {
+						res.writeHead(404).end();
+					}
+				}
+			} else if (addTagsToPhoto.length > 0) {
+				for (const match of addTagsToPhoto) {
+					const imageId = parseInt(match[1]);
+					const image = imageModel.get(imageId);
+					const tags = await parse<tagModel.Tag[]>(req);
+
+					if (image && tags) {
+						try {
+							imageModel.addTags(imageId, tags);
 							res.writeHead(204).end();
 						} catch (error) {
 							res.writeHead(409).end();
