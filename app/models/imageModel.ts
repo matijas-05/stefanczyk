@@ -66,3 +66,10 @@ export function addTags(imageId: number, tags: Omit<Tag, "id">[]) {
 		addTag(imageId, tag);
 	}
 }
+
+export function getTags(imageId: number) {
+	const image = get(imageId);
+	if (image) {
+		return image.tags;
+	}
+}

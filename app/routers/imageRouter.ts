@@ -13,10 +13,13 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				res.end(JSON.stringify(imageModel.getAll()));
 				break;
 			} else {
-				const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
+				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/([0-9]+)/g) ?? []);
+				const getPhotoTags = Array.from(
+					req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags/g) ?? []
+				);
 
-				if (matches) {
-					for (const match of matches) {
+				if (getPhoto.length > 0 && getPhotoTags.length === 0) {
+					for (const match of getPhoto) {
 						const id = parseInt(match[1]);
 						const image = imageModel.getAll().find((image) => image.id === id);
 						if (image) {
@@ -25,6 +28,16 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 						} else {
 							res.writeHead(404).end();
 						}
+					}
+				} else if (getPhotoTags.length > 0) {
+					const imageId = parseInt(getPhotoTags[0][1]);
+					const tags = imageModel.getTags(imageId);
+
+					if (tags) {
+						res.writeHead(200, { "Content-Type": "application/json" });
+						res.end(JSON.stringify(tags));
+					} else {
+						res.writeHead(404).end();
 					}
 				}
 
