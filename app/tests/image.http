@@ -43,3 +43,13 @@ Content-Type: text/plain
 
 nowa_nazwa_albumu
 ------FormBoundary12345
+
+###
+
+PATCH http://localhost:3000/api/photos/1/tags HTTP/1.1
+Content-Type: application/json
+
+{
+	"name": "#new-tag",
+	"popularity": 1233
+}

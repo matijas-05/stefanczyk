@@ -1,14 +1,16 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import formidable from "formidable";
-import * as model from "../models/imageModel";
+import * as imageModel from "../models/imageModel";
+import * as tagModel from "../models/tagModel";
 import { parseFormData } from "../controllers/fileController";
+import { parse } from "../controllers/jsonController";
 
 export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
 			if (req.url === "/api/photos") {
 				res.writeHead(200, { "Content-Type": "application/json" });
-				res.end(JSON.stringify(model.getAll()));
+				res.end(JSON.stringify(imageModel.getAll()));
 				break;
 			} else {
 				const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
@@ -16,7 +18,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				if (matches) {
 					for (const match of matches) {
 						const id = parseInt(match[1]);
-						const image = model.getAll().find((image) => image.id === id);
+						const image = imageModel.getAll().find((image) => image.id === id);
 						if (image) {
 							res.writeHead(200, { "Content-Type": "application/json" });
 							res.end(JSON.stringify(image));
@@ -29,6 +31,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				break;
 			}
 		}
+
 		case "POST": {
 			switch (req.url) {
 				case "/api/photos": {
@@ -37,8 +40,8 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 
 						if (Array.isArray(data.files)) {
 							(data.files as formidable.File[]).forEach((file) => {
-								model.add({
-									id: model.getAll().length,
+								imageModel.add({
+									id: imageModel.getAll().length,
 									album: data.fields.album as string,
 									originalName: file.name!,
 									url: file.path,
@@ -49,12 +52,13 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 											timestamp: new Date(),
 										},
 									],
+									tags: [],
 								});
 							});
 						} else {
 							const file = data.files.file as formidable.File;
-							model.add({
-								id: model.getAll().length,
+							imageModel.add({
+								id: imageModel.getAll().length,
 								album: data.fields.album as string,
 								originalName: file.name!,
 								url: file.path,
@@ -65,6 +69,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 										timestamp: new Date(),
 									},
 								],
+								tags: [],
 							});
 						}
 						res.writeHead(201).end();
@@ -76,15 +81,16 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				}
 			}
 		}
+
 		case "DELETE": {
 			const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
 
 			if (matches) {
 				for (const match of matches) {
 					const id = parseInt(match[1]);
-					const image = model.getAll().find((image) => image.id === id);
+					const image = imageModel.getAll().find((image) => image.id === id);
 					if (image) {
-						model.remove(image);
+						imageModel.remove(image);
 						res.writeHead(204).end();
 					} else {
 						res.writeHead(404).end();
@@ -92,17 +98,21 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				}
 			}
 		}
-		case "PATCH": {
-			const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
 
-			if (matches) {
-				for (const match of matches) {
+		case "PATCH": {
+			const editPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/([0-9]+)$/g) ?? []);
+			const addTagToPhoto = Array.from(
+				req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags$/g) ?? []
+			);
+
+			if (editPhoto.length > 0) {
+				for (const match of editPhoto) {
 					const id = parseInt(match[1]);
-					const image = model.getAll().find((image) => image.id === id);
+					const image = imageModel.getAll().find((image) => image.id === id);
 
 					if (image) {
 						const data = await parseFormData(req);
-						model.update(id, {
+						imageModel.update(id, {
 							album: data.fields.album as string,
 							lastChange: new Date(),
 							originalName: (data.files.file as formidable.File).name!,
@@ -114,6 +124,23 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 						});
 
 						res.writeHead(204).end();
+					} else {
+						res.writeHead(404).end();
+					}
+				}
+			} else if (addTagToPhoto.length > 0) {
+				for (const match of addTagToPhoto) {
+					const imageId = parseInt(match[1]);
+					const image = imageModel.get(imageId);
+					const tag = await parse<tagModel.Tag>(req);
+
+					if (image && tag) {
+						try {
+							imageModel.addTag(imageId, tag);
+							res.writeHead(204).end();
+						} catch (error) {
+							res.writeHead(409).end();
+						}
 					} else {
 						res.writeHead(404).end();
 					}
