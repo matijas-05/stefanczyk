@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "node:http";
 import * as model from "../models/tagModel";
-import { parse } from "../controllers/jsonController";
+import { parseJson } from "../controllers/jsonController";
 
 export async function tagRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req.method?.toUpperCase()) {
@@ -35,7 +35,7 @@ export async function tagRouter(req: IncomingMessage, res: ServerResponse) {
 			if (req.url === "/api/tags") {
 				let tag: model.Tag | undefined = undefined;
 				try {
-					tag = await parse<model.Tag>(req);
+					tag = await parseJson<model.Tag>(req);
 				} catch (error) {
 					res.writeHead(400).end();
 					return;

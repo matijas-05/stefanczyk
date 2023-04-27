@@ -3,7 +3,7 @@ import formidable from "formidable";
 import * as imageModel from "../models/imageModel";
 import * as tagModel from "../models/tagModel";
 import { parseFormData } from "../controllers/fileController";
-import { parse } from "../controllers/jsonController";
+import { parseJson } from "../controllers/jsonController";
 
 export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req.method?.toUpperCase()) {
@@ -148,7 +148,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				for (const match of addTagToPhoto) {
 					const imageId = parseInt(match[1]);
 					const image = imageModel.get(imageId);
-					const tag = await parse<tagModel.Tag>(req);
+					const tag = await parseJson<tagModel.Tag>(req);
 
 					if (image && tag) {
 						try {
@@ -165,7 +165,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 				for (const match of addTagsToPhoto) {
 					const imageId = parseInt(match[1]);
 					const image = imageModel.get(imageId);
-					const tags = await parse<tagModel.Tag[]>(req);
+					const tags = await parseJson<tagModel.Tag[]>(req);
 
 					if (image && tags) {
 						try {

@@ -1,6 +1,6 @@
 import { IncomingMessage } from "node:http";
 
-export async function parse<T>(req: IncomingMessage) {
+export async function parseJson<T>(req: IncomingMessage) {
 	return new Promise<T>((resolve, reject) => {
 		let body = "";
 

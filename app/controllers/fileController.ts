@@ -1,5 +1,5 @@
+import { IncomingMessage } from "node:http";
 import formidable from "formidable";
-import { IncomingMessage } from "http";
 
 export function parseFormData(req: IncomingMessage) {
 	const form = formidable({

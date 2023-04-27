@@ -1,0 +1,13 @@
+GET http://localhost:3000/api/filters/metadata/0
+
+###
+
+PATCH http://localhost:3000/api/filters/crop/0
+Content-Type: application/json
+
+{
+	"width": 100,
+	"height": 50,
+	"top": 10,
+	"left": 10
+}
