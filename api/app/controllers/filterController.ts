@@ -27,3 +27,7 @@ export function flip(image: sharp.Sharp) {
 export function flop(image: sharp.Sharp) {
 	image.flop();
 }
+
+export function negate(image: sharp.Sharp) {
+	image.negate();
+}

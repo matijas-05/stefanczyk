@@ -101,6 +101,11 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 						break;
 					}
 
+					case "negate": {
+						filterController.negate(sharp);
+						break;
+					}
+
 					default:
 						break;
 				}
