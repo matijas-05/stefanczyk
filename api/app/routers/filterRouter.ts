@@ -4,7 +4,7 @@ import * as imageModel from "../models/imageModel";
 import * as filterModel from "../models/filterModel";
 import * as filterController from "../controllers/filterController";
 import { parseJson } from "../controllers/jsonController";
-import type { Region } from "sharp";
+import type { AvailableFormatInfo, FormatEnum, Region } from "sharp";
 
 export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req.method?.toUpperCase()) {
@@ -73,6 +73,16 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 					case "resize": {
 						const body = await parseJson<{ width: number; height: number }>(req);
 						filterController.resize(sharp, body.width, body.height);
+						break;
+					}
+
+					case "reformat": {
+						const body = await parseJson<{
+							format: keyof FormatEnum | AvailableFormatInfo;
+						}>(req);
+						filterController.reformat(sharp, body.format);
+
+						image.url = image.url.split(".").slice(0, -1).join(".") + `.${body.format}`;
 						break;
 					}
 

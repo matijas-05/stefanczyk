@@ -30,3 +30,12 @@ Content-Type: application/json
 	"width": 100,
 	"height": 50
 }
+
+###
+
+PATCH http://localhost:3000/api/filters/reformat/0
+Content-Type: application/json
+
+{
+	"format": "png"
+}
