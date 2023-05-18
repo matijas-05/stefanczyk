@@ -70,6 +70,12 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 						break;
 					}
 
+					case "resize": {
+						const body = await parseJson<{ width: number; height: number }>(req);
+						filterController.resize(sharp, body.width, body.height);
+						break;
+					}
+
 					default:
 						break;
 				}
