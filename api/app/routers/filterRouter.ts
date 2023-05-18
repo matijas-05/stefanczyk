@@ -86,6 +86,11 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 						break;
 					}
 
+					case "grayscale": {
+						filterController.grayscale(sharp);
+						break;
+					}
+
 					default:
 						break;
 				}

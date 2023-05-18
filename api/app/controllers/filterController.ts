@@ -15,3 +15,7 @@ export function resize(image: sharp.Sharp, width: number, height: number) {
 export function reformat(image: sharp.Sharp, format: keyof FormatEnum | AvailableFormatInfo) {
 	image.toFormat(format);
 }
+
+export function grayscale(image: sharp.Sharp) {
+	image.grayscale();
+}
