@@ -1,8 +1,10 @@
+import { FilterName } from "./filterModel";
 import { Tag } from "./tagModel";
 
 interface ImageHistory {
-	status: "original" | "edited" | "deleted";
+	status: "original" | "edited" | "deleted" | FilterName;
 	timestamp: Date;
+	url?: string;
 }
 interface Image {
 	id: number;
@@ -71,5 +73,12 @@ export function getTags(imageId: number) {
 	const image = get(imageId);
 	if (image) {
 		return image.tags;
+	}
+}
+
+export function updateHistory(id: number, historyEntry: ImageHistory) {
+	const image = get(id);
+	if (image) {
+		image.history.push(historyEntry);
 	}
 }

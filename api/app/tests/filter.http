@@ -11,3 +11,12 @@ Content-Type: application/json
 	"top": 10,
 	"left": 10
 }
+
+###
+
+PATCH http://localhost:3000/api/filters/rotate/0
+Content-Type: application/json
+
+{
+	"angle": 90
+}

@@ -56,12 +56,19 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 				}
 
 				const sharp = filterModel.getSharpObject(image.url);
-				const body = await parseJson(req);
 
 				switch (filterName as filterModel.FilterName) {
-					case "crop":
-						filterController.crop(sharp, body as Region);
+					case "crop": {
+						const body = await parseJson<Region>(req);
+						filterController.crop(sharp, body);
 						break;
+					}
+
+					case "rotate": {
+						const body = await parseJson<{ angle: number }>(req);
+						filterController.rotate(sharp, body.angle);
+						break;
+					}
 
 					default:
 						break;
@@ -76,6 +83,17 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 						`${imagePathNoExt}-${filterName}${imageExt}`,
 						await sharp.toBuffer()
 					);
+
+					imageModel.updateHistory(imageId, {
+						status: filterName as filterModel.FilterName,
+						timestamp: new Date(),
+						url:
+							image.url.split(".").slice(0, -1).join(".") +
+							`-${filterName}.` +
+							image.url.split(".").slice(-1),
+					});
+
+					res.writeHead(201).end();
 				} catch (error) {
 					res.writeHead(500).end();
 				}
