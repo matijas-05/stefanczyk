@@ -106,6 +106,12 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 						break;
 					}
 
+					case "tint": {
+						const body = await parseJson<{ r: number; g: number; b: number }>(req);
+						filterController.tint(sharp, body.r, body.g, body.b);
+						break;
+					}
+
 					default:
 						break;
 				}

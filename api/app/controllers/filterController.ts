@@ -31,3 +31,7 @@ export function flop(image: sharp.Sharp) {
 export function negate(image: sharp.Sharp) {
 	image.negate();
 }
+
+export function tint(image: sharp.Sharp, r: number, g: number, b: number) {
+	image.tint({ r: r, g: g, b: b });
+}

@@ -55,3 +55,14 @@ PATCH http://localhost:3000/api/filters/flop/0
 ###
 
 PATCH http://localhost:3000/api/filters/negate/0
+
+###
+
+PATCH http://localhost:3000/api/filters/tint/0
+Content-Type: application/json
+
+{
+	"r": 255,
+	"g": 0,
+	"b": 0
+}
