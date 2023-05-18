@@ -73,7 +73,7 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 					const imageExt = imagePath.slice(imagePath.lastIndexOf("."));
 
 					await fs.writeFile(
-						`${imagePathNoExt}-${filterName}.${imageExt}`,
+						`${imagePathNoExt}-${filterName}${imageExt}`,
 						await sharp.toBuffer()
 					);
 				} catch (error) {
