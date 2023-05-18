@@ -91,6 +91,16 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 						break;
 					}
 
+					case "flip": {
+						filterController.flip(sharp);
+						break;
+					}
+
+					case "flop": {
+						filterController.flop(sharp);
+						break;
+					}
+
 					default:
 						break;
 				}

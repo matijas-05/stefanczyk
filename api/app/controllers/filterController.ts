@@ -19,3 +19,11 @@ export function reformat(image: sharp.Sharp, format: keyof FormatEnum | Availabl
 export function grayscale(image: sharp.Sharp) {
 	image.grayscale();
 }
+
+export function flip(image: sharp.Sharp) {
+	image.flip();
+}
+
+export function flop(image: sharp.Sharp) {
+	image.flop();
+}

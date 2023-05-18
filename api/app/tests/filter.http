@@ -44,3 +44,10 @@ Content-Type: application/json
 
 PATCH http://localhost:3000/api/filters/grayscale/0
 
+###
+
+PATCH http://localhost:3000/api/filters/flip/0
+
+###
+
+PATCH http://localhost:3000/api/filters/flop/0
