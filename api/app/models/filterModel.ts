@@ -1,5 +1,6 @@
 import path from "node:path";
 import sharp from "sharp";
+import { getFullPath } from "../controllers/fileController";
 
 const filterNames = [
 	"rotate",
@@ -14,12 +15,8 @@ const filterNames = [
 ] as const;
 export type FilterName = (typeof filterNames)[number];
 
-export function getImagePath(imageUrl: string) {
-	return path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../", imageUrl);
-}
-
 export function getSharpObject(imagePath: string) {
-	return sharp(getImagePath(imagePath));
+	return sharp(getFullPath(imagePath));
 }
 
 export async function getMetadata(imagePath: string) {

@@ -1,5 +1,7 @@
 import { IncomingMessage } from "node:http";
+import fs from "node:fs/promises";
 import formidable from "formidable";
+import path from "node:path";
 
 export function parseFormData(req: IncomingMessage) {
 	const form = formidable({
@@ -19,4 +21,12 @@ export function parseFormData(req: IncomingMessage) {
 			});
 		}
 	);
+}
+
+export async function getFile(path: string) {
+	return fs.readFile(path);
+}
+
+export function getFullPath(url: string) {
+	return path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../", url);
 }

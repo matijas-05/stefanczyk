@@ -1,8 +1,9 @@
-import { IncomingMessage, ServerResponse } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs/promises";
 import * as imageModel from "../models/imageModel";
 import * as filterModel from "../models/filterModel";
 import * as filterController from "../controllers/filterController";
+import * as fileController from "../controllers/fileController";
 import { parseJson } from "../controllers/jsonController";
 import type { AvailableFormatInfo, FormatEnum, Region } from "sharp";
 
@@ -117,7 +118,7 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 				}
 
 				try {
-					const imagePath = filterModel.getImagePath(image.url);
+					const imagePath = fileController.getFullPath(image.url);
 					const imagePathNoExt = imagePath.slice(0, imagePath.lastIndexOf("."));
 					const imageExt = imagePath.slice(imagePath.lastIndexOf("."));
 

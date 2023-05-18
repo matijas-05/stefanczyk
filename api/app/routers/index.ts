@@ -3,6 +3,7 @@ import { pino } from "../logger";
 import { imageRouter } from "./imageRouter";
 import { tagRouter } from "./tagRouter";
 import { filterRouter } from "./filterRouter";
+import { getFileRouter } from "./getFileRouter";
 
 export async function router(req: IncomingMessage, res: ServerResponse) {
 	pino.info(`Request: ${req.method} ${req.url}`);
@@ -13,6 +14,8 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 		return await tagRouter(req, res);
 	} else if (req.url?.startsWith("/api/filters")) {
 		return await filterRouter(req, res);
+	} else if (req.url?.startsWith("/api/getFile")) {
+		return await getFileRouter(req, res);
 	} else {
 		pino.warn("Route not matched: " + req.url);
 	}
