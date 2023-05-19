@@ -36,6 +36,10 @@ export async function tagRouter(req: IncomingMessage, res: ServerResponse) {
 				let tag: model.Tag | undefined = undefined;
 				try {
 					tag = await parseJson<model.Tag>(req);
+					if (!tag) {
+						res.writeHead(400).end();
+						return;
+					}
 				} catch (error) {
 					res.writeHead(400).end();
 					return;

@@ -57,7 +57,6 @@ export async function filterRouter(req: IncomingMessage, res: ServerResponse) {
 				}
 
 				const sharp = filterModel.getSharpObject(image.url);
-
 				switch (filterName as filterModel.FilterName) {
 					case "crop": {
 						const body = await parseJson<Region>(req);
