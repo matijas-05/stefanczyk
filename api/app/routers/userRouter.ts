@@ -13,16 +13,36 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					return;
 				}
 
+				let token = "";
 				try {
-					await userController.register(user);
+					token = await userController.register(user);
 				} catch (error) {
 					res.writeHead(409).end();
 					return;
 				}
 
-				res.writeHead(201).end();
+				res.writeHead(201, { "Content-Type": "application/json" }).end(
+					JSON.stringify({ token })
+				);
 			}
 			break;
+		}
+
+		case "GET": {
+			if (req.url?.startsWith("/api/user/confirm/")) {
+				const token = req.url.split("/confirm/")[1];
+				if (!token) {
+					res.writeHead(400).end();
+					return;
+				}
+
+				try {
+					userController.confirm(token);
+					res.writeHead(200).end();
+				} catch (error) {
+					res.writeHead(400).end();
+				}
+			}
 		}
 	}
 }

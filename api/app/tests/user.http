@@ -6,3 +6,7 @@ POST http://localhost:3000/api/user/register
 	"email": "user@domain.com",
 	"password": "1234"
 }
+
+###
+
+GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NDQ3ODE1MCwiZXhwIjoxNjg0NDc4MTgwfQ.17PMz6FhxN0TC3qHOHvFKCVap593MzIg0frIcIY2ErU
