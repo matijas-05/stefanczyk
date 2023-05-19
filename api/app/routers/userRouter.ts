@@ -24,6 +24,27 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 				res.writeHead(201, { "Content-Type": "application/json" }).end(
 					JSON.stringify({ token })
 				);
+			} else if (req.url === "/api/user/login") {
+				const loginData = await parseJson<{ email: string; password: string }>(req);
+				if (!loginData) {
+					res.writeHead(400).end();
+					return;
+				}
+
+				try {
+					const token = await userController.login(loginData.email, loginData.password);
+					res.writeHead(200, { "Content-Type": "application/json" }).end(
+						JSON.stringify({ token })
+					);
+				} catch (error) {
+					if (error instanceof Error) {
+						if (error.message === "User not confirmed") {
+							res.writeHead(403).end("User not confirmed");
+						} else if (error.message === "Credentials invalid") {
+							res.writeHead(401).end();
+						}
+					}
+				}
 			}
 			break;
 		}

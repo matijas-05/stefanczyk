@@ -1,4 +1,5 @@
 POST http://localhost:3000/api/user/register
+Content-Type: application/json
 
 {
 	"name": "Mateusz",
@@ -9,4 +10,14 @@ POST http://localhost:3000/api/user/register
 
 ###
 
-GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NDQ3ODE1MCwiZXhwIjoxNjg0NDc4MTgwfQ.17PMz6FhxN0TC3qHOHvFKCVap593MzIg0frIcIY2ErU
+GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NDQ3OTE5MCwiZXhwIjoxNjg0NDc5MjIwfQ.y8w4NiRY0JU015otH4nMj7I4suTqxRL2JT44K4xS5Mg
+
+###
+
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+	"email": "user@domain.com",
+	"password": "1224"
+}

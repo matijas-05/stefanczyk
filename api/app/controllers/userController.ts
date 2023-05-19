@@ -33,3 +33,23 @@ export function confirm(token: string) {
 	user.confirmed = true;
 	userModel.update(user);
 }
+
+export async function login(email: string, password: string) {
+	const user = userModel.get(email);
+	if (user && user.confirmed === false) {
+		throw new Error("User not confirmed");
+	}
+
+	const match = await bcrypt.compare(password, user?.password ?? "");
+	if (!match) {
+		throw new Error("Credentials invalid");
+	}
+
+	const token = jwt.sign(
+		{ email: user!.email } satisfies userModel.JwtPayload,
+		process.env.JWT_SECRET as string,
+		{ expiresIn: "1d" }
+	);
+
+	return token;
+}
