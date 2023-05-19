@@ -1,0 +1,8 @@
+POST http://localhost:3000/api/user/register
+
+{
+	"name": "Mateusz",
+	"lastName": "Wojtyna",
+	"email": "user@domain.com",
+	"password": "1234"
+}

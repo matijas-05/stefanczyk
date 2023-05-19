@@ -11,10 +11,14 @@
 		"@tsconfig/node18": "^1.0.1",
 		"@types/formidable": "^1.2.2",
 		"@types/node": "^18.15.11",
+		"bcrypt": "^5.1.0",
 		"formidable": "^1.2.2",
 		"pino": "^8.11.0",
 		"pino-pretty": "^10.0.0",
 		"sharp": "^0.32.1",
 		"tsx": "^3.12.6"
+	},
+	"devDependencies": {
+		"@types/bcrypt": "^5.0.0"
 	}
 }

@@ -1,4 +1,3 @@
-import path from "node:path";
 import sharp from "sharp";
 import { getFullPath } from "../controllers/fileController";
 
