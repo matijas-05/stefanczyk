@@ -63,6 +63,36 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 				} catch (error) {
 					res.writeHead(400).end();
 				}
+			} else if (req.url === "/api/user/profile") {
+				const token = req.headers.authorization?.split(" ")[1];
+				if (!token) {
+					res.writeHead(400).end();
+					return;
+				}
+
+				try {
+					const payload = userController.verifyToken(token);
+					if (!payload) {
+						res.writeHead(401).end();
+						return;
+					}
+
+					const user = userModel.get(payload.email);
+					if (!user) {
+						res.writeHead(404).end();
+						return;
+					}
+
+					res.writeHead(200, { "Content-Type": "application/json" }).end(
+						JSON.stringify({
+							name: user.name,
+							lastName: user.lastName,
+							email: user.email,
+						})
+					);
+				} catch (error) {
+					res.writeHead(500).end();
+				}
 			}
 		}
 	}

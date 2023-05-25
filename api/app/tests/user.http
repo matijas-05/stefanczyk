@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NDQ3OTE5MCwiZXhwIjoxNjg0NDc5MjIwfQ.y8w4NiRY0JU015otH4nMj7I4suTqxRL2JT44K4xS5Mg
+GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAwODQxMCwiZXhwIjoxNjg1MDEyMDEwfQ.sw9XZAVtJRGMySFjl3u6gYRzN07x8foVedFB27HKUUk
 
 ###
 
@@ -19,5 +19,10 @@ Content-Type: application/json
 
 {
 	"email": "user@domain.com",
-	"password": "1224"
+	"password": "1234"
 }
+
+###
+
+GET http://localhost:3000/api/user/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAwODQzMCwiZXhwIjoxNjg1MDk0ODMwfQ.9qgoZSd5Tlb8HDmjp4uYn5qjQNq97eRL0j5Do-PTYC4

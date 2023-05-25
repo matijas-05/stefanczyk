@@ -10,8 +10,8 @@ export async function register(user: User) {
 
 	const token = jwt.sign(
 		{ email: user.email } satisfies userModel.JwtPayload,
-		process.env.JWT_SECRET as string,
-		{ expiresIn: "30s" }
+		process.env.JWT_SECRET!,
+		{ expiresIn: "1h" }
 	);
 
 	try {
@@ -52,4 +52,13 @@ export async function login(email: string, password: string) {
 	);
 
 	return token;
+}
+
+export function verifyToken(token: string): JwtPayload | null {
+	try {
+		const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+		return payload;
+	} catch (error) {
+		return null;
+	}
 }
