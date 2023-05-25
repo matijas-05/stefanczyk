@@ -1,7 +1,10 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import fs from "node:fs/promises";
 import { parseJson } from "../controllers/jsonController";
 import * as userModel from "../models/userModel";
 import * as userController from "../controllers/userController";
+import * as fileController from "../controllers/fileController";
+import formidable from "formidable";
 
 export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req?.method?.toUpperCase()) {
@@ -45,6 +48,46 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 						}
 					}
 				}
+			} else if (req.url === "/api/user/profile") {
+				const token = req.headers.authorization?.split(" ")[1];
+				if (!token) {
+					res.writeHead(400).end();
+					return;
+				}
+
+				const payload = userController.verifyToken(token);
+				if (!payload) {
+					res.writeHead(401).end();
+					return;
+				}
+
+				const user = userModel.get(payload.email)!;
+				if (!user) {
+					res.writeHead(404).end();
+					return;
+				}
+
+				const path = `./uploads/${user.id}`;
+				await fs.mkdir(path, { recursive: true });
+
+				try {
+					const { files } = await fileController.parseFormData(req, path);
+					if (!files) {
+						res.writeHead(400).end();
+						return;
+					}
+
+					const user = userModel.get(payload.email)!;
+					userModel.update({
+						...user,
+						profilePicture: (files.file as formidable.File).path,
+					});
+
+					res.writeHead(201).end();
+				} catch (error) {
+					res.writeHead(500).end(error);
+					return;
+				}
 			}
 			break;
 		}
@@ -77,19 +120,46 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 						return;
 					}
 
-					const user = userModel.get(payload.email);
-					if (!user) {
-						res.writeHead(404).end();
-						return;
-					}
-
+					const user = userModel.get(payload.email)!;
 					res.writeHead(200, { "Content-Type": "application/json" }).end(
 						JSON.stringify({
 							name: user.name,
 							lastName: user.lastName,
 							email: user.email,
+							profilePicture: user.profilePicture,
 						})
 					);
+				} catch (error) {
+					res.writeHead(500).end();
+				}
+			}
+		}
+
+		case "PATCH": {
+			if (req.url === "/api/user/profile") {
+				const token = req.headers.authorization?.split(" ")[1];
+				if (!token) {
+					res.writeHead(400).end();
+					return;
+				}
+
+				try {
+					const payload = userController.verifyToken(token);
+					if (!payload) {
+						res.writeHead(401).end();
+						return;
+					}
+
+					const user = userModel.get(payload.email)!;
+
+					const newUser = await parseJson<Pick<userModel.User, "name" | "lastName">>(req);
+					if (!newUser) {
+						res.writeHead(400).end();
+						return;
+					}
+
+					userModel.update({ ...user, name: newUser.name, lastName: newUser.lastName });
+					res.writeHead(200).end();
 				} catch (error) {
 					res.writeHead(500).end();
 				}

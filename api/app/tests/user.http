@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAwODQxMCwiZXhwIjoxNjg1MDEyMDEwfQ.sw9XZAVtJRGMySFjl3u6gYRzN07x8foVedFB27HKUUk
+GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMjM5MiwiZXhwIjoxNjg1MDE1OTkyfQ.5SQKZ0IZUBh84zxLYWeGLppBQoA7VMUe8tPjFFI-e9M
 
 ###
 
@@ -25,4 +25,28 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3000/api/user/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAwODQzMCwiZXhwIjoxNjg1MDk0ODMwfQ.9qgoZSd5Tlb8HDmjp4uYn5qjQNq97eRL0j5Do-PTYC4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMDI3MCwiZXhwIjoxNjg1MDk2NjcwfQ.dpBKQA9neHQZQPNEUhCKe-1UYWTqQpicWdgYJlVkIzc
+
+###
+
+PATCH http://localhost:3000/api/user/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAwODg5MSwiZXhwIjoxNjg1MDk1MjkxfQ.5b6tJRTH4WRZ_wrkrIvewvSnsRM3xH5Hsicc6bKGwq0
+Content-Type: application/json
+
+{
+	"name": "Mateusz1",
+	"lastName": "Wojtyna1"
+}
+
+###
+
+POST http://localhost:3000/api/user/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMDI3MCwiZXhwIjoxNjg1MDk2NjcwfQ.dpBKQA9neHQZQPNEUhCKe-1UYWTqQpicWdgYJlVkIzc
+Content-Type: multipart/form-data; boundary=----FormBoundary12345
+
+------FormBoundary12345
+Content-Disposition: form-data; name="file"; filename="input.jpg"
+Content-Type: image/jpg
+
+< ./input.jpg
+------FormBoundary12345

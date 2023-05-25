@@ -5,6 +5,7 @@ export interface User {
 	email: string;
 	password: string;
 	confirmed: boolean;
+	profilePicture?: string;
 }
 export interface JwtPayload {
 	email: string;

@@ -1,11 +1,14 @@
-import { IncomingMessage } from "node:http";
+import type { IncomingMessage } from "node:http";
 import fs from "node:fs/promises";
-import formidable from "formidable";
 import path from "node:path";
+import formidable from "formidable";
 
-export function parseFormData(req: IncomingMessage) {
+/**
+ * @param dir Relative to the /api directory. `uploads` folder is `./uploads`
+ */
+export function parseFormData(req: IncomingMessage, dir?: string) {
 	const form = formidable({
-		uploadDir: "./uploads",
+		uploadDir: dir ?? "./uploads",
 		keepExtensions: true,
 		multiples: true,
 	});
