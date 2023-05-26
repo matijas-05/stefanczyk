@@ -132,6 +132,25 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 				} catch (error) {
 					res.writeHead(500).end();
 				}
+			} else if (req.url === "/api/user/logout") {
+				const token = req.headers.authorization?.split(" ")[1];
+				if (!token) {
+					res.writeHead(400).end();
+					return;
+				}
+
+				const payload = userController.verifyToken(token);
+				if (!payload) {
+					res.writeHead(401).end();
+					return;
+				}
+
+				try {
+					userController.logout(payload.email, token);
+					res.writeHead(200).end();
+				} catch (error) {
+					res.writeHead(500).end();
+				}
 			}
 		}
 

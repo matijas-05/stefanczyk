@@ -10,7 +10,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMjM5MiwiZXhwIjoxNjg1MDE1OTkyfQ.5SQKZ0IZUBh84zxLYWeGLppBQoA7VMUe8tPjFFI-e9M
+GET http://localhost:3000/api/user/confirm/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTA3OTg3OSwiZXhwIjoxNjg1MDgzNDc5fQ.yIGxfTonddZitr8xJT_Hj_fZmOLHB8xRfaa5N5U3u84
 
 ###
 
@@ -50,3 +50,8 @@ Content-Type: image/jpg
 
 < ./input.jpg
 ------FormBoundary12345
+
+###
+
+GET http://localhost:3000/api/user/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMDI3MCwiZXhwIjoxNjg1MDk2NjcwfQ.dpBKQA9neHQZQPNEUhCKe-1UYWTqQpicWdgYJlVkIzc

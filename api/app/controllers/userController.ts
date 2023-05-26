@@ -1,7 +1,9 @@
-import { User } from "../models/userModel";
-import * as userModel from "../models/userModel";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import type { User, JwtPayload } from "../models/userModel";
+import * as userModel from "../models/userModel";
+
+const loggedOutTokens: string[] = [];
 
 export async function register(user: User) {
 	const hashed = await bcrypt.hash(user.password, 10);
@@ -54,7 +56,20 @@ export async function login(email: string, password: string) {
 	return token;
 }
 
+export function logout(email: string, token: string) {
+	const user = userModel.get(email);
+	if (!user) {
+		throw new Error("User not found");
+	}
+
+	loggedOutTokens.push(token);
+}
+
 export function verifyToken(token: string): JwtPayload | null {
+	if (loggedOutTokens.includes(token)) {
+		return null;
+	}
+
 	try {
 		const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 		return payload;
