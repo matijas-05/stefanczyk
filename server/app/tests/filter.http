@@ -1,8 +1,8 @@
-GET http://localhost:3000/api/filters/metadata/0
+GET http://localhost:3001/api/filters/metadata/0
 
 ###
 
-PATCH http://localhost:3000/api/filters/crop/0
+PATCH http://localhost:3001/api/filters/crop/0
 Content-Type: application/json
 
 {
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/api/filters/rotate/0
+PATCH http://localhost:3001/api/filters/rotate/0
 Content-Type: application/json
 
 {
@@ -23,7 +23,7 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/api/filters/resize/0
+PATCH http://localhost:3001/api/filters/resize/0
 Content-Type: application/json
 
 {
@@ -33,7 +33,7 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/api/filters/reformat/0
+PATCH http://localhost:3001/api/filters/reformat/0
 Content-Type: application/json
 
 {
@@ -42,23 +42,23 @@ Content-Type: application/json
 
 ###
 
-PATCH http://localhost:3000/api/filters/grayscale/0
+PATCH http://localhost:3001/api/filters/grayscale/0
 
 ###
 
-PATCH http://localhost:3000/api/filters/flip/0
+PATCH http://localhost:3001/api/filters/flip/0
 
 ###
 
-PATCH http://localhost:3000/api/filters/flop/0
+PATCH http://localhost:3001/api/filters/flop/0
 
 ###
 
-PATCH http://localhost:3000/api/filters/negate/0
+PATCH http://localhost:3001/api/filters/negate/0
 
 ###
 
-PATCH http://localhost:3000/api/filters/tint/0
+PATCH http://localhost:3001/api/filters/tint/0
 Content-Type: application/json
 
 {
