@@ -9,8 +9,8 @@ import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
-	email: z.string().nonempty().email(),
-	password: z.string().nonempty(),
+	email: z.string().nonempty({ message: "Required" }).email(),
+	password: z.string().nonempty({ message: "Required" }),
 });
 type Inputs = z.infer<typeof schema>;
 
