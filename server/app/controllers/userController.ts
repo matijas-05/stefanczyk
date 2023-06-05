@@ -39,12 +39,12 @@ export function confirm(token: string) {
 export async function login(email: string, password: string) {
 	const user = userModel.get(email);
 	if (user && user.confirmed === false) {
-		throw new Error("User not confirmed");
+		throw new Error("not_confirmed");
 	}
 
 	const match = await bcrypt.compare(password, user?.password ?? "");
 	if (!match) {
-		throw new Error("Credentials invalid");
+		throw new Error("credentials");
 	}
 
 	const token = jwt.sign(

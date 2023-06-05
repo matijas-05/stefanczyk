@@ -6,6 +6,7 @@ import SignIn from "@/routes/SignIn";
 import SignUp from "./routes/SignUp";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./styles.css";
+import ConfirmAccount from "./routes/ConfirmAccount";
 
 const router = createBrowserRouter([
 	{
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
 	{
 		path: "/signup",
 		element: <SignUp />,
+	},
+	{
+		path: "/confirm",
+		element: <ConfirmAccount />,
 	},
 ]);
 

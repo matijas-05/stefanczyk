@@ -41,9 +41,9 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					);
 				} catch (error) {
 					if (error instanceof Error) {
-						if (error.message === "User not confirmed") {
+						if (error.message === "not_confirmed") {
 							res.writeHead(403).end("User not confirmed");
-						} else if (error.message === "Credentials invalid") {
+						} else if (error.message === "credentials") {
 							res.writeHead(401).end();
 						}
 					}

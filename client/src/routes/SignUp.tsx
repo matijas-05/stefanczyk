@@ -5,7 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 
@@ -38,11 +38,25 @@ export default function SignIn() {
 			},
 		});
 	});
+	const navigate = useNavigate();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		const res = await mutation.mutateAsync(data);
-		console.log(res);
+		try {
+			const res = await mutation.mutateAsync(data);
+
+			if (res.status === 409) {
+				form.setError("email", {
+					type: "manual",
+					message: "User with this email already exists",
+				});
+			} else if (res.ok) {
+				const { token } = await res.json();
+				navigate("/confirm?token=" + token);
+			} else throw Error();
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (
@@ -121,7 +135,7 @@ export default function SignIn() {
 							)}
 						/>
 
-						<Button className="mt-2 w-full" type="submit">
+						<Button className="mt-2 w-full" type="submit" loading={mutation.isLoading}>
 							Sign Up
 						</Button>
 					</Form>

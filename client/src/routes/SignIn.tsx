@@ -7,6 +7,9 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { Button } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Alert, AlertTitle } from "@/components/ui/Alert";
+import { AlertCircle } from "lucide-react";
 
 const schema = z.object({
 	email: z.string().nonempty({ message: "Required" }).email(),
@@ -15,13 +18,49 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>;
 
 export default function SignIn() {
+	const mutation = useMutation((data: Inputs) =>
+		fetch("http://localhost:3001/api/user/login", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(data),
+		})
+	);
+
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
-	const onSubmit: SubmitHandler<Inputs> = (data) => {};
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		const res = await mutation.mutateAsync(data);
+
+		if (res.ok) {
+			console.log(await res.json());
+		} else {
+			if (res.status === 401) {
+				form.setError("root", {
+					type: "manual",
+					message: "Incorrect credentials",
+				});
+			} else if (res.status === 403) {
+				form.setError("root", {
+					type: "manual",
+					message: "User is not confirmed",
+				});
+			}
+		}
+	};
 
 	return (
 		<div className="m-8 mx-auto w-fit space-y-2">
 			<Card className="flex flex-col items-center gap-4 p-8">
 				<Logo />
+
+				{form.formState.errors.root && (
+					<Alert variant={"destructive"} icon={<AlertCircle className="w-5" />}>
+						<AlertTitle className="!mb-0 text-sm">
+							{form.formState.errors.root?.message}
+						</AlertTitle>
+					</Alert>
+				)}
 
 				<form onSubmit={form.handleSubmit(onSubmit)} className="flex w-64 flex-col gap-2">
 					<Form {...form}>
