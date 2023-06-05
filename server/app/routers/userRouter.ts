@@ -5,6 +5,7 @@ import * as userModel from "../models/userModel";
 import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
 import formidable from "formidable";
+import * as cookie from "cookie";
 
 export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req?.method?.toUpperCase()) {
@@ -36,9 +37,18 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 
 				try {
 					const token = await userController.login(loginData.email, loginData.password);
-					res.writeHead(200, { "Content-Type": "application/json" }).end(
-						JSON.stringify({ token })
-					);
+					const setCookieHeader = cookie.serialize("token", token, {
+						httpOnly: false,
+						sameSite: "strict",
+						path: "/",
+						secure: false,
+						maxAge: 60 * 60 * 24 * 7,
+					});
+
+					res.writeHead(200, {
+						"Content-Type": "application/json",
+						"Set-Cookie": setCookieHeader,
+					}).end();
 				} catch (error) {
 					if (error instanceof Error) {
 						if (error.message === "not_confirmed") {

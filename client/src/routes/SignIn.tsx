@@ -5,7 +5,7 @@ import Logo from "@/components/ui/Logo";
 import { Input } from "@/components/ui/Input";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/Form";
 import { Button } from "@/components/ui/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, AlertTitle } from "@/components/ui/Alert";
@@ -25,15 +25,17 @@ export default function SignIn() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(data),
+			credentials: "include",
 		})
 	);
+	const navigate = useNavigate();
 
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		const res = await mutation.mutateAsync(data);
 
 		if (res.ok) {
-			console.log(await res.json());
+			return navigate("/", { replace: true });
 		} else {
 			if (res.status === 401) {
 				form.setError("root", {
@@ -90,7 +92,7 @@ export default function SignIn() {
 							)}
 						/>
 
-						<Button className="mt-2 w-full" type="submit">
+						<Button className="mt-2 w-full" type="submit" loading={mutation.isLoading}>
 							Sign In
 						</Button>
 					</Form>

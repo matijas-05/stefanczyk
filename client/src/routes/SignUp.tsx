@@ -52,7 +52,7 @@ export default function SignIn() {
 				});
 			} else if (res.ok) {
 				const { token } = await res.json();
-				navigate("/confirm?token=" + token);
+				navigate("/confirm?token=" + token, { replace: true });
 			} else throw Error();
 		} catch (error) {
 			console.log(error);

@@ -17,7 +17,7 @@ export default function ConfirmAccount() {
 	const onSubmit = async () => {
 		const res = await mutation.mutateAsync(searchParams.get("token") ?? "");
 		if (res.ok) {
-			navigate("/signin");
+			navigate("/signin", { replace: true });
 		}
 	};
 

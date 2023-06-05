@@ -10,12 +10,12 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 	pino.info(`Request: ${req.method} ${req.url}`);
 
 	res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+	res.setHeader("Access-Control-Allow-Credentials", "true");
 	if (req.method === "OPTIONS") {
 		res.writeHead(200, {
 			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-			"Access-Control-Allow-Headers": "Content-Type, Authorization, Set-Cookie",
-		});
-		res.end();
+			"Access-Control-Allow-Headers": "Content-Type",
+		}).end();
 		return;
 	}
 
