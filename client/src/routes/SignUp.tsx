@@ -7,18 +7,20 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 
 const schema = z
 	.object({
-		email: z.string().nonempty().email(),
-		username: z.string().nonempty(),
+		email: z.string().nonempty({ message: "Required" }).email(),
+		name: z.string().nonempty({ message: "Required" }),
+		lastName: z.string().nonempty({ message: "Required" }),
 		password: z
 			.string()
 			.min(6, { message: "Password must be at least 6 characters long" })
 			.regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
 			.regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
 			.regex(/[0-9]/, { message: "Password must contain at least one number" }),
-		repeatPassword: z.string(),
+		repeatPassword: z.string().nonempty({ message: "Required" }),
 	})
 	.refine((data) => data.password === data.repeatPassword, {
 		path: ["repeatPassword"],
@@ -27,9 +29,20 @@ const schema = z
 type Inputs = z.infer<typeof schema>;
 
 export default function SignIn() {
+	const mutation = useMutation((data: Inputs) => {
+		return fetch("http://localhost:3001/api/user/register", {
+			method: "POST",
+			body: JSON.stringify(data),
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+	});
+
 	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		console.log(data);
+		const res = await mutation.mutateAsync(data);
+		console.log(res);
 	};
 
 	return (
@@ -37,7 +50,7 @@ export default function SignIn() {
 			<Card className="flex flex-col items-center gap-4 p-8">
 				<Logo />
 
-				<form onSubmit={form.handleSubmit(onSubmit)} className="flex w-64 flex-col gap-2">
+				<form onSubmit={form.handleSubmit(onSubmit)} className="flex w-80 flex-col gap-2">
 					<Form {...form}>
 						<FormField
 							control={form.control}
@@ -51,18 +64,33 @@ export default function SignIn() {
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="username"
-							render={({ field }) => (
-								<FormItem>
-									<FormControl>
-										<Input type="text" placeholder="Username" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+
+						<div className="flex gap-2">
+							<FormField
+								control={form.control}
+								name="name"
+								render={({ field }) => (
+									<FormItem>
+										<FormControl>
+											<Input type="text" placeholder="Name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="lastName"
+								render={({ field }) => (
+									<FormItem>
+										<FormControl>
+											<Input type="text" placeholder="Last Name" {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 
 						<FormField
 							control={form.control}
@@ -99,6 +127,7 @@ export default function SignIn() {
 					</Form>
 				</form>
 			</Card>
+
 			<Card className="px-4 py-2 text-center text-sm">
 				Have an account?{" "}
 				<Button variant={"link"} asChild>

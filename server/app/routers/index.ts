@@ -9,6 +9,16 @@ import { userRouter } from "./userRouter";
 export async function router(req: IncomingMessage, res: ServerResponse) {
 	pino.info(`Request: ${req.method} ${req.url}`);
 
+	res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+	if (req.method === "OPTIONS") {
+		res.writeHead(200, {
+			"Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+			"Access-Control-Allow-Headers": "Content-Type, Authorization",
+		});
+		res.end();
+		return;
+	}
+
 	if (req.url?.startsWith("/api/photos")) {
 		return await imageRouter(req, res);
 	} else if (req.url?.startsWith("/api/tags")) {
