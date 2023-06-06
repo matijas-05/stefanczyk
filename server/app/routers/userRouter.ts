@@ -143,7 +143,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					res.writeHead(500).end();
 				}
 			} else if (req.url === "/api/user/logout") {
-				const token = req.headers.authorization?.split(" ")[1];
+				const token = userController.getToken(req);
 				if (!token) {
 					res.writeHead(400).end();
 					return;
@@ -157,6 +157,14 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 
 				try {
 					userController.logout(payload.email, token);
+					res.setHeader(
+						"Set-Cookie",
+						cookie.serialize("token", "", {
+							expires: new Date(0),
+							path: "/",
+							sameSite: "strict",
+						})
+					);
 					res.writeHead(200).end();
 				} catch (error) {
 					res.writeHead(500).end();

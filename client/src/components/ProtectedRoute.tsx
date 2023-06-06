@@ -4,7 +4,7 @@ import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
 	if (!Cookies.get("token")) {
-		return <Navigate to="/signin" />;
+		return <Navigate to="/signin" replace />;
 	}
 
 	return <>{children}</>;

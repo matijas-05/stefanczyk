@@ -7,27 +7,41 @@ import SignUp from "./routes/SignUp";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./styles.css";
 import ConfirmAccount from "./routes/ConfirmAccount";
+import AuthRoute from "./components/AuthRoute";
+import Main from "./routes/Main";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		element: (
 			<ProtectedRoute>
-				<h1>Root</h1>
+				<Main />
 			</ProtectedRoute>
 		),
 	},
 	{
 		path: "/signin",
-		element: <SignIn />,
+		element: (
+			<AuthRoute>
+				<SignIn />
+			</AuthRoute>
+		),
 	},
 	{
 		path: "/signup",
-		element: <SignUp />,
+		element: (
+			<AuthRoute>
+				<SignUp />
+			</AuthRoute>
+		),
 	},
 	{
 		path: "/confirm",
-		element: <ConfirmAccount />,
+		element: (
+			<AuthRoute>
+				<ConfirmAccount />
+			</AuthRoute>
+		),
 	},
 ]);
 
