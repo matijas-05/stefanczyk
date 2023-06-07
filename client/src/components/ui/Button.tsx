@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Loader } from "lucide-react";
 
 const buttonVariants = cva(
-	"inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background active:translate-y-px",
+	"gap-2 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background active:translate-y-px",
 	{
 		variants: {
 			variant: {
@@ -34,10 +34,14 @@ export interface ButtonProps
 		VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 	loading?: boolean;
+	icon?: React.ReactNode;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({ className, variant, size, asChild = false, loading, disabled, children, ...props }, ref) => {
+	(
+		{ className, variant, size, asChild = false, loading, disabled, children, icon, ...props },
+		ref
+	) => {
 		const Comp = asChild ? Slot : "button";
 		return (
 			<Comp
@@ -48,12 +52,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 			>
 				{asChild ? (
 					<span>
-						{loading && <Loader className="mr-1 w-4 animate-spin" />}
+						{loading ? <Loader className="mr-1 w-4 animate-spin" /> : icon}
 						{children}
 					</span>
 				) : (
 					<>
-						{loading && <Loader className="mr-1 w-4 animate-spin" />}
+						{loading ? <Loader className="mr-1 w-4 animate-spin" /> : icon}
 						{children}
 					</>
 				)}

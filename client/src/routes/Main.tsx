@@ -1,14 +1,11 @@
-import * as React from "react";
-import { Button } from "@/components/ui/Button";
-import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 import Profile from "@/components/ui/Profile";
+import Nav from "@/components/ui/Nav";
 
 export default function Main() {
 	return (
-		<div className="grid h-full w-full grid-flow-col place-items-center items-start">
+		<div className="grid h-full w-full grid-flow-col items-start justify-between">
+			<Nav />
 			<div>zdjecia</div>
-			<Profile />
 		</div>
 	);
 }

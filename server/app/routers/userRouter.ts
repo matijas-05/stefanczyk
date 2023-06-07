@@ -183,6 +183,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 					res.writeHead(500).end();
 				}
 			}
+			break;
 		}
 	}
 }

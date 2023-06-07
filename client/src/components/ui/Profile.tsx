@@ -1,11 +1,12 @@
-import * as React from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "./Avatar";
 import type { Profile } from "@server/types";
 import { Button } from "./Button";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { LogOut } from "lucide-react";
 
-export default function Profile() {
+export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const { data: user } = useQuery<Profile>(["profile"], async () =>
 		fetch("http://localhost:3001/api/user/profile", {
 			method: "GET",
@@ -21,7 +22,7 @@ export default function Profile() {
 	const navigate = useNavigate();
 
 	return (
-		<div className="flex items-center gap-8">
+		<div className={cn("flex items-center gap-4", className)} {...props}>
 			<div className="flex items-center gap-3">
 				<Avatar>
 					<AvatarFallback>
@@ -38,16 +39,16 @@ export default function Profile() {
 				</div>
 			</div>
 			<Button
-				variant={"link"}
+				variant={"ghost"}
+				className="px-2 text-primary hover:text-primary"
+				icon={<LogOut />}
 				onClick={async () => {
 					const res = await logOut.mutateAsync();
 					if (res.ok) {
 						return navigate("/signin");
 					}
 				}}
-			>
-				Log out
-			</Button>
+			/>
 		</div>
 	);
 }
