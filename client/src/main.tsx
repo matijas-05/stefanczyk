@@ -1,49 +1,63 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+	createBrowserRouter,
+	createRoutesFromElements,
+	Route,
+	RouterProvider,
+} from "react-router-dom";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SignIn from "@/routes/SignIn";
 import SignUp from "./routes/SignUp";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "./styles.css";
 import ConfirmAccount from "./routes/ConfirmAccount";
 import AuthRoute from "./components/AuthRoute";
-import Main from "./routes/Main";
+import RootLayout from "./layouts/RootLayout";
+import "./styles.css";
 
-const router = createBrowserRouter([
-	{
-		path: "/",
-		element: (
-			<ProtectedRoute>
-				<Main />
-			</ProtectedRoute>
-		),
-	},
-	{
-		path: "/signin",
-		element: (
-			<AuthRoute>
-				<SignIn />
-			</AuthRoute>
-		),
-	},
-	{
-		path: "/signup",
-		element: (
-			<AuthRoute>
-				<SignUp />
-			</AuthRoute>
-		),
-	},
-	{
-		path: "/confirm",
-		element: (
-			<AuthRoute>
-				<ConfirmAccount />
-			</AuthRoute>
-		),
-	},
-]);
+const router = createBrowserRouter(
+	createRoutesFromElements(
+		<>
+			<Route
+				path="/"
+				element={
+					<ProtectedRoute>
+						<RootLayout />
+					</ProtectedRoute>
+				}
+			>
+				<Route index element={<h1>Home</h1>} />
+				<Route path="/upload" element={<h1>Upload</h1>} />
+				<Route path="/profile" element={<h1>Profile</h1>} />
+			</Route>
+
+			<Route
+				path="/signin"
+				element={
+					<AuthRoute>
+						<SignIn />
+					</AuthRoute>
+				}
+			/>
+			<Route
+				path="/signup"
+				element={
+					<AuthRoute>
+						<SignUp />
+					</AuthRoute>
+				}
+			/>
+			<Route
+				path="/confirm"
+				element={
+					<AuthRoute>
+						<ConfirmAccount />
+					</AuthRoute>
+				}
+			/>
+		</>
+	)
+);
 
 const queryClient = new QueryClient();
 

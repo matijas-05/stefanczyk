@@ -22,8 +22,8 @@ export default function Nav() {
 
 function NavItem({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
 	return (
-		<li className="w-full">
-			<Link className="w-full" to={href}>
+		<li>
+			<Link to={href}>
 				<Button
 					className="flex h-12 w-full justify-start text-base"
 					variant={"ghost"}
