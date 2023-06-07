@@ -1,11 +1,10 @@
-import Profile from "@/components/ui/Profile";
 import Nav from "@/components/ui/Nav";
 
 export default function Main() {
 	return (
-		<div className="grid h-full w-full grid-flow-col items-start justify-between">
+		<div className="flex h-full w-full items-start">
 			<Nav />
-			<div>zdjecia</div>
+			<div className="mx-auto">zdjecia</div>
 		</div>
 	);
 }
