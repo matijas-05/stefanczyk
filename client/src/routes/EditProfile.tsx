@@ -64,7 +64,7 @@ export default function EditProfile() {
 	return (
 		<form onSubmit={form.handleSubmit(onSubmit)} className="flex w-64 flex-col gap-2">
 			<Form {...form}>
-				<TypographyH2 className="mb-4">Edit profile</TypographyH2>
+				<TypographyH2 className="mb-2">Edit profile</TypographyH2>
 
 				<FormField
 					control={form.control}
