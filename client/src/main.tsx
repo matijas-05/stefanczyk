@@ -15,6 +15,7 @@ import AuthRoute from "./components/AuthRoute";
 import RootLayout from "./layouts/RootLayout";
 import "./styles.css";
 import EditProfile from "./routes/EditProfile";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -65,7 +66,9 @@ const queryClient = new QueryClient();
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<React.StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<RouterProvider router={router} />
+			<TooltipProvider delayDuration={400}>
+				<RouterProvider router={router} />
+			</TooltipProvider>
 		</QueryClientProvider>
 	</React.StrictMode>
 );

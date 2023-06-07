@@ -5,6 +5,7 @@ import { Button } from "./Button";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { LogOut } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 
 export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const { data: user } = useQuery<Profile>(["profile"], async () =>
@@ -40,17 +41,23 @@ export default function Profile({ className, ...props }: React.ComponentPropsWit
 					</p>
 				</div>
 			</div>
-			<Button
-				variant={"ghost"}
-				className="px-2 text-primary hover:text-primary"
-				icon={<LogOut />}
-				onClick={async () => {
-					const res = await logOut.mutateAsync();
-					if (res.ok) {
-						return navigate("/signin");
-					}
-				}}
-			/>
+
+			<Tooltip>
+				<TooltipTrigger>
+					<Button
+						variant={"ghost"}
+						className="px-2 text-primary hover:text-primary"
+						icon={<LogOut />}
+						onClick={async () => {
+							const res = await logOut.mutateAsync();
+							if (res.ok) {
+								return navigate("/signin");
+							}
+						}}
+					/>
+				</TooltipTrigger>
+				<TooltipContent>Log out</TooltipContent>
+			</Tooltip>
 		</div>
 	);
 }
