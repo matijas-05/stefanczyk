@@ -157,12 +157,6 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 
 		case "PATCH": {
 			if (req.url === "/api/user/profile") {
-				const token = req.headers.authorization?.split(" ")[1];
-				if (!token) {
-					res.writeHead(400).end();
-					return;
-				}
-
 				try {
 					const payload = userController.verifyToken(token);
 					if (!payload) {

@@ -14,6 +14,7 @@ import ConfirmAccount from "./routes/ConfirmAccount";
 import AuthRoute from "./components/AuthRoute";
 import RootLayout from "./layouts/RootLayout";
 import "./styles.css";
+import EditProfile from "./routes/EditProfile";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -28,7 +29,7 @@ const router = createBrowserRouter(
 			>
 				<Route index element={<h1>Home</h1>} />
 				<Route path="/upload" element={<h1>Upload</h1>} />
-				<Route path="/profile" element={<h1>Profile</h1>} />
+				<Route path="/profile" element={<EditProfile />} />
 			</Route>
 
 			<Route

@@ -30,7 +30,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluL
 ###
 
 PATCH http://localhost:3001/api/user/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAwODg5MSwiZXhwIjoxNjg1MDk1MjkxfQ.5b6tJRTH4WRZ_wrkrIvewvSnsRM3xH5Hsicc6bKGwq0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 Content-Type: application/json
 
 {
@@ -54,5 +54,4 @@ Content-Type: image/jpg
 ###
 
 GET http://localhost:3001/api/user/logout
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMDI3MCwiZXhwIjoxNjg1MDk2NjcwfQ.dpBKQA9neHQZQPNEUhCKe-1UYWTqQpicWdgYJlVkIzc
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0

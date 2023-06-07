@@ -32,7 +32,7 @@ export default function Profile({ className, ...props }: React.ComponentPropsWit
 				</Avatar>
 
 				<div>
-					<p>
+					<p className="w-[15ch] truncate">
 						{user?.name} {user?.lastName}
 					</p>
 					<p className="text-sm text-muted-foreground">{user?.email}</p>
