@@ -3,7 +3,14 @@ import { z } from "zod";
 import { Card } from "@/components/ui/Card";
 import Logo from "@/components/ui/Logo";
 import { Input } from "@/components/ui/Input";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/Form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/Form";
 import { Button } from "@/components/ui/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -71,8 +78,13 @@ export default function SignIn() {
 							name="email"
 							render={({ field }) => (
 								<FormItem>
+									<FormLabel>Email</FormLabel>
 									<FormControl>
-										<Input type="email" placeholder="Email" {...field} />
+										<Input
+											type="email"
+											placeholder="user@domain.com"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -84,8 +96,9 @@ export default function SignIn() {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
+									<FormLabel>Password</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="Password" {...field} />
+										<Input type="password" placeholder="******" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

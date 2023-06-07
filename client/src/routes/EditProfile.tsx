@@ -3,7 +3,14 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/Form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/Form";
 import { TypographyH2 } from "@/components/ui/Typography";
 import { Input } from "@/components/ui/Input";
 import type { Profile } from "@server/types";
@@ -64,8 +71,9 @@ export default function EditProfile() {
 					name="name"
 					render={({ field }) => (
 						<FormItem>
+							<FormLabel>Name</FormLabel>
 							<FormControl>
-								<Input type="text" placeholder="Name" {...field} />
+								<Input type="text" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -76,8 +84,9 @@ export default function EditProfile() {
 					name="lastName"
 					render={({ field }) => (
 						<FormItem>
+							<FormLabel>Last name</FormLabel>
 							<FormControl>
-								<Input type="text" placeholder="Last name" {...field} />
+								<Input type="text" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>

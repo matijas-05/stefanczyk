@@ -1,7 +1,14 @@
 import { Card } from "@/components/ui/Card";
 import Logo from "@/components/ui/Logo";
 import { Input } from "@/components/ui/Input";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/Form";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/Form";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/Button";
@@ -71,8 +78,13 @@ export default function SignIn() {
 							name="email"
 							render={({ field }) => (
 								<FormItem>
+									<FormLabel>Email</FormLabel>
 									<FormControl>
-										<Input type="email" placeholder="Email" {...field} />
+										<Input
+											type="email"
+											placeholder="user@domain.com"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -85,8 +97,9 @@ export default function SignIn() {
 								name="name"
 								render={({ field }) => (
 									<FormItem>
+										<FormLabel>Name</FormLabel>
 										<FormControl>
-											<Input type="text" placeholder="Name" {...field} />
+											<Input type="text" placeholder="John" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -97,8 +110,9 @@ export default function SignIn() {
 								name="lastName"
 								render={({ field }) => (
 									<FormItem>
+										<FormLabel>Last name</FormLabel>
 										<FormControl>
-											<Input type="text" placeholder="Last Name" {...field} />
+											<Input type="text" placeholder="Doe" {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -111,8 +125,9 @@ export default function SignIn() {
 							name="password"
 							render={({ field }) => (
 								<FormItem>
+									<FormLabel>Password</FormLabel>
 									<FormControl>
-										<Input type="password" placeholder="Password" {...field} />
+										<Input type="password" placeholder="******" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -123,12 +138,9 @@ export default function SignIn() {
 							name="repeatPassword"
 							render={({ field }) => (
 								<FormItem>
+									<FormLabel>Repeat password</FormLabel>
 									<FormControl>
-										<Input
-											type="password"
-											placeholder="Repeat Password"
-											{...field}
-										/>
+										<Input type="password" placeholder="******" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
