@@ -14,7 +14,7 @@ export interface JwtPayload {
 const users: User[] = [];
 
 export function add(user: Omit<User, "id">) {
-	if (users.find((user) => user.email === user.email)) {
+	if (users.find((x) => user.email === x.email)) {
 		throw new Error("User already exists");
 	}
 
