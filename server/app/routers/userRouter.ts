@@ -5,9 +5,9 @@ import * as userModel from "../models/userModel";
 import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
 import formidable from "formidable";
-import * as cookie from "cookie";
+import * as Cookies from "cookie";
 
-export async function userRouter(req: IncomingMessage, res: ServerResponse) {
+export async function userRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req?.method?.toUpperCase()) {
 		case "POST": {
 			if (req.url === "/api/user/register") {
@@ -37,7 +37,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 
 				try {
 					const token = await userController.login(loginData.email, loginData.password);
-					const setCookieHeader = cookie.serialize("token", token, {
+					const setCookieHeader = Cookies.serialize("token", token, {
 						httpOnly: false,
 						sameSite: "strict",
 						path: "/",
@@ -59,12 +59,6 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					}
 				}
 			} else if (req.url === "/api/user/profile") {
-				const token = req.headers.authorization?.split(" ")[1];
-				if (!token) {
-					res.writeHead(400).end();
-					return;
-				}
-
 				const payload = userController.verifyToken(token);
 				if (!payload) {
 					res.writeHead(401).end();
@@ -117,12 +111,6 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					res.writeHead(400).end();
 				}
 			} else if (req.url === "/api/user/profile") {
-				const token = req.headers.authorization?.split(" ")[1];
-				if (!token) {
-					res.writeHead(400).end();
-					return;
-				}
-
 				try {
 					const payload = userController.verifyToken(token);
 					if (!payload) {
@@ -143,12 +131,6 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					res.writeHead(500).end();
 				}
 			} else if (req.url === "/api/user/logout") {
-				const token = userController.getToken(req);
-				if (!token) {
-					res.writeHead(400).end();
-					return;
-				}
-
 				const payload = userController.verifyToken(token);
 				if (!payload) {
 					res.writeHead(401).end();
@@ -159,7 +141,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					userController.logout(payload.email, token);
 					res.setHeader(
 						"Set-Cookie",
-						cookie.serialize("token", "", {
+						Cookies.serialize("token", "", {
 							expires: new Date(0),
 							path: "/",
 							sameSite: "strict",
@@ -170,6 +152,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					res.writeHead(500).end();
 				}
 			}
+			break;
 		}
 
 		case "PATCH": {
@@ -188,7 +171,6 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse) {
 					}
 
 					const user = userModel.get(payload.email)!;
-
 					const newUser = await parseJson<Pick<userModel.User, "name" | "lastName">>(req);
 					if (!newUser) {
 						res.writeHead(400).end();

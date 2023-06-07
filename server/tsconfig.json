@@ -1,6 +1,10 @@
 {
 	"compilerOptions": {
-		"module": "ES2022"
+		"module": "ES2022",
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./*"]
+		}
 	},
 	"extends": ["@tsconfig/esm/tsconfig.json", "@tsconfig/node18/tsconfig.json"]
 }

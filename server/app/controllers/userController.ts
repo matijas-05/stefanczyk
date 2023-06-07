@@ -2,8 +2,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import type { User, JwtPayload } from "../models/userModel";
 import * as userModel from "../models/userModel";
-import type { IncomingMessage } from "node:http";
-import * as cookie from "cookie";
 
 const loggedOutTokens: string[] = [];
 
@@ -78,8 +76,4 @@ export function verifyToken(token: string): JwtPayload | null {
 	} catch (error) {
 		return null;
 	}
-}
-
-export function getToken(req: IncomingMessage) {
-	return cookie.parse(req.headers.cookie ?? "").token;
 }
