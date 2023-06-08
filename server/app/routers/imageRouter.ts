@@ -12,7 +12,9 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
 			if (req.url === "/api/photos") {
-				const images = await ImageModel.find().sort({ lastChange: -1 });
+				const images = await ImageModel.find()
+					.sort({ lastChange: -1 })
+					.populate("user", "-password -confirmed");
 
 				res.writeHead(200, { "Content-Type": "application/json" });
 				res.end(JSON.stringify(images));
@@ -121,6 +123,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 				const image = await ImageModel.findByIdAndUpdate(id, {
 					$set: {
 						url: file.path,
+						lastChange: new Date(),
 					},
 					$push: {
 						history: {

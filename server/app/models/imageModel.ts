@@ -6,7 +6,7 @@ export interface ImageHistory {
 	status: "original" | "edited" | "deleted" | FilterName;
 	timestamp: Date;
 }
-interface Image {
+export interface Image {
 	user: mongoose.Schema.Types.ObjectId;
 	url: String;
 	lastChange: Date;

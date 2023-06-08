@@ -1,3 +1,4 @@
-import * as userModel from "./app/models/userModel";
+import type { User } from "./app/models/userModel";
 
-export type Profile = Omit<userModel.User, "id" | "confirmed" | "password">;
+export type Profile = Omit<User, "password" | "confirmed">;
+export type { Image } from "./app/models/imageModel";

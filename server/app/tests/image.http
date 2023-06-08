@@ -22,7 +22,7 @@ Content-Type: image/jpeg
 Content-Disposition: form-data; name="tags"
 Content-Type: application/json
 
-["1", "2"]
+[]
 --FormBoundary1234--
 
 ###
@@ -31,7 +31,7 @@ DELETE http://localhost:3001/api/photos/0 HTTP/1.1
 
 ###
 
-PATCH http://localhost:3001/api/photos/ HTTP/1.1
+PATCH http://localhost:3001/api/photos/64825628456233deb7e3606d HTTP/1.1
 Content-Type: multipart/form-data; boundary=FormBoundary1234
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
