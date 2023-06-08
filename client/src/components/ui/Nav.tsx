@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "./Button";
 import Logo from "./Logo";
 import { Home, Upload, User } from "lucide-react";
 import Profile from "./Profile";
+import { Skeleton } from "./Skeleton";
 
 export default function Nav() {
 	return (
@@ -15,7 +17,9 @@ export default function Nav() {
 				<NavItem href="/profile" label="Profile" icon={<User />} />
 			</ul>
 
-			<Profile className="mt-auto" />
+			<Suspense fallback={<Skeleton className="mt-auto h-10 w-60" />}>
+				<Profile className="mt-auto" />
+			</Suspense>
 		</nav>
 	);
 }

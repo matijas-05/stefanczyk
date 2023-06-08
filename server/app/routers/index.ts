@@ -43,6 +43,7 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 		await userRouter(req, res, token);
 	} else {
 		pino.warn("Route not matched: " + req.url);
+		res.writeHead(404).end();
 	}
 
 	if (res.statusCode <= 399) {

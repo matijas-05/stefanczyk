@@ -5,6 +5,7 @@ import { UserModel, type User } from "../models/userModel";
 import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
 import * as Cookies from "cookie";
+import type formidable from "formidable";
 
 export async function userRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req?.method?.toUpperCase()) {
@@ -70,17 +71,18 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 					return;
 				}
 
-				const path = `./uploads/${user.id}`;
-				await fs.mkdir(path, { recursive: true });
-
 				try {
-					const { files } = await fileController.parseFormData(req, path);
-					if (!files) {
+					const data = await fileController.parseFormData(req);
+					const file = data.files.file as formidable.File;
+					if (!file) {
 						res.writeHead(400).end();
 						return;
 					}
 
-					await UserModel.updateOne({ email: payload.email });
+					await UserModel.updateOne(
+						{ email: payload.email },
+						{ profilePicture: file.path }
+					);
 
 					res.writeHead(201).end();
 				} catch (error) {

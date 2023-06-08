@@ -25,7 +25,7 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3001/api/user/profile
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
 ###
 
@@ -41,15 +41,15 @@ Content-Type: application/json
 ###
 
 POST http://localhost:3001/api/user/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NTAxMDI3MCwiZXhwIjoxNjg1MDk2NjcwfQ.dpBKQA9neHQZQPNEUhCKe-1UYWTqQpicWdgYJlVkIzc
-Content-Type: multipart/form-data; boundary=----FormBoundary12345
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
+Content-Type: multipart/form-data; boundary=FormBoundary1234
 
-------FormBoundary12345
+--FormBoundary1234
 Content-Disposition: form-data; name="file"; filename="input.jpg"
 Content-Type: image/jpg
 
 < ./input.jpg
-------FormBoundary12345
+--FormBoundary1234--
 
 ###
 
