@@ -17,6 +17,12 @@ Content-Disposition: form-data; name="file"; filename="input.jpg"
 Content-Type: image/jpeg
 
 < ./input.jpg
+
+--FormBoundary1234
+Content-Disposition: form-data; name="tags"
+Content-Type: application/json
+
+["1", "2"]
 --FormBoundary1234--
 
 ###

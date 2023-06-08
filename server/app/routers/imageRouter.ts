@@ -58,24 +58,21 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 				const user = await UserModel.findOne({ email: payload.email });
 				const data = await parseFormData(req);
+				const newImage = (file: formidable.File, fields: formidable.Fields) => ({
+					user: user!._id,
+					url: file.path,
+					history: [{ status: "original", timestamp: new Date() }],
+					lastChange: new Date(),
+					tags: JSON.parse(fields.tags as string),
+				});
 
 				if (Array.isArray(data.files)) {
 					(data.files as formidable.File[]).forEach(async (file) => {
-						await ImageModel.create({
-							user: user!._id,
-							url: file.path,
-							history: [{ status: "original", timestamp: new Date() }],
-							lastChange: new Date(),
-						});
+						await ImageModel.create(newImage(file, data.fields));
 					});
 				} else {
 					const file = data.files.file as formidable.File;
-					await ImageModel.create({
-						user: user!._id,
-						url: file.path,
-						history: [{ status: "original", timestamp: new Date() }],
-						lastChange: new Date(),
-					});
+					await ImageModel.create(newImage(file, data.fields));
 				}
 
 				res.writeHead(201).end();

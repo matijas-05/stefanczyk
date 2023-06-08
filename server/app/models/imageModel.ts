@@ -23,6 +23,6 @@ const imageSchema = new mongoose.Schema<Image>({
 	url: { type: String, required: true },
 	lastChange: { type: Date, required: true },
 	history: { type: [imageHistorySchema], required: true },
-	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag", required: true }],
 });
 export const ImageModel = mongoose.model<Image>("Image", imageSchema);
