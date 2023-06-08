@@ -8,11 +8,14 @@ import { Button } from "./Button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-	const { data: user } = useQuery<Profile>(["profile"], async () =>
-		fetch("http://localhost:3001/api/user/profile", {
-			method: "GET",
-			credentials: "include",
-		}).then((res) => res.json())
+	const { data: user } = useQuery<Profile>(
+		["profile"],
+		async () =>
+			fetch("http://localhost:3001/api/user/profile", {
+				method: "GET",
+				credentials: "include",
+			}).then((res) => res.json()),
+		{ refetchOnWindowFocus: false }
 	);
 	const logOut = useMutation(() =>
 		fetch("http://localhost:3001/api/user/logout", {

@@ -6,7 +6,7 @@ import Profile from "./Profile";
 
 export default function Nav() {
 	return (
-		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border py-8 pl-4 pr-4">
+		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border px-4 py-8">
 			<Logo />
 
 			<ul className="w-full space-y-1">
