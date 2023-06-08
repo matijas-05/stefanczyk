@@ -1,5 +1,6 @@
-import { FilterName } from "./filterModel";
-import { Tag } from "./tagModel";
+import mongoose from "mongoose";
+import type { FilterName } from "./filterModel";
+import type { Tag } from "./tagModel";
 
 interface ImageHistory {
 	status: "original" | "edited" | "deleted" | FilterName;
@@ -7,28 +8,28 @@ interface ImageHistory {
 	url?: string;
 }
 interface Image {
-	id: number;
-	album: string;
+	user: mongoose.Schema.Types.ObjectId;
 	originalName: string;
-	url: string;
+	imageUrl: String;
 	lastChange: Date;
 	history: ImageHistory[];
 	tags: Tag[];
 }
 
-const images: Image[] = [];
-
-export function getAll() {
-	return images;
-}
-
-export function get(id: number) {
-	return images.find((image) => image.id === id);
-}
-
-export function add(image: Image) {
-	images.push(image);
-}
+const imageHistorySchema = new mongoose.Schema<ImageHistory>({
+	status: { type: String, required: true },
+	timestamp: { type: Date, required: true },
+	url: { type: String, required: true },
+});
+const imageSchema = new mongoose.Schema<Image>({
+	user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+	originalName: { type: String },
+	imageUrl: { type: String },
+	lastChange: { type: Date },
+	history: { type: [imageHistorySchema] },
+	tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }],
+});
+export const ImageModel = mongoose.model<Image>("Image", imageSchema);
 
 export function remove(image: Image) {
 	const index = images.indexOf(image);

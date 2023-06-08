@@ -4,7 +4,6 @@ import { parseJson } from "../controllers/jsonController";
 import { UserModel, type User } from "../models/userModel";
 import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
-import formidable from "formidable";
 import * as Cookies from "cookie";
 
 export async function userRouter(req: IncomingMessage, res: ServerResponse, token: string) {
@@ -81,10 +80,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 						return;
 					}
 
-					await UserModel.updateOne(
-						{ email: payload.email },
-						{ profilePicture: (files.file as formidable.File).path }
-					);
+					await UserModel.updateOne({ email: payload.email });
 
 					res.writeHead(201).end();
 				} catch (error) {

@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import formidable from "formidable";
-import * as imageModel from "../models/imageModel";
+import { ImageModel } from "../models/imageModel";
 import * as tagModel from "../models/tagModel";
 import { parseFormData } from "../controllers/fileController";
 import { parseJson } from "../controllers/jsonController";
@@ -9,40 +9,41 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
 			if (req.url === "/api/photos") {
+				const images = await ImageModel.find();
+
 				res.writeHead(200, { "Content-Type": "application/json" });
-				res.end(JSON.stringify(imageModel.getAll()));
-				break;
+				res.end(JSON.stringify(images));
 			} else {
-				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/([0-9]+)/g) ?? []);
+				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)/g) ?? []);
 				const getPhotoTags = Array.from(
-					req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags/g) ?? []
+					req.url?.matchAll(/\/api\/photos\/(\w+)\/tags/g) ?? []
 				);
 
 				if (getPhoto.length > 0 && getPhotoTags.length === 0) {
-					for (const match of getPhoto) {
-						const id = parseInt(match[1]);
-						const image = imageModel.getAll().find((image) => image.id === id);
-						if (image) {
-							res.writeHead(200, { "Content-Type": "application/json" });
-							res.end(JSON.stringify(image));
-						} else {
-							res.writeHead(404).end();
-						}
+					const id = getPhoto[0][1];
+
+					try {
+						const image = await ImageModel.findById(id);
+
+						res.writeHead(200, { "Content-Type": "application/json" });
+						res.end(JSON.stringify(image));
+					} catch (error) {
+						res.writeHead(404).end();
 					}
 				} else if (getPhotoTags.length > 0) {
-					const imageId = parseInt(getPhotoTags[0][1]);
-					const tags = imageModel.getTags(imageId);
+					const id = getPhotoTags[0][1];
 
-					if (tags) {
+					try {
+						const image = await ImageModel.findById(id).populate("tags");
+
 						res.writeHead(200, { "Content-Type": "application/json" });
-						res.end(JSON.stringify(tags));
-					} else {
+						res.end(JSON.stringify(image?.tags));
+					} catch (error) {
 						res.writeHead(404).end();
 					}
 				}
-
-				break;
 			}
+			break;
 		}
 
 		case "POST": {
@@ -52,47 +53,29 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 						const data = await parseFormData(req);
 
 						if (Array.isArray(data.files)) {
-							(data.files as formidable.File[]).forEach((file) => {
-								imageModel.add({
-									id: imageModel.getAll().length,
-									album: data.fields.album as string,
-									originalName: file.name!,
-									url: file.path,
-									lastChange: new Date(),
-									history: [
-										{
-											status: "original",
-											timestamp: new Date(),
-										},
-									],
-									tags: [],
+							(data.files as formidable.File[]).forEach(async (file) => {
+								await ImageModel.create({
+									imageUrl: file.path,
 								});
 							});
 						} else {
 							const file = data.files.file as formidable.File;
-							imageModel.add({
-								id: imageModel.getAll().length,
-								album: data.fields.album as string,
-								originalName: file.name!,
-								url: file.path,
-								lastChange: new Date(),
-								history: [
-									{
-										status: "original",
-										timestamp: new Date(),
-									},
-								],
-								tags: [],
+							await ImageModel.create({
+								imageUrl: file.path,
 							});
 						}
+
 						res.writeHead(201).end();
 					} catch (error) {
-						res.writeHead(500).end();
+						if (error instanceof Error) {
+							res.writeHead(500).end(error.message);
+						}
 					}
 
 					break;
 				}
 			}
+			break;
 		}
 
 		case "DELETE": {
@@ -110,6 +93,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 					}
 				}
 			}
+			break;
 		}
 
 		case "PATCH": {
@@ -179,6 +163,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 					}
 				}
 			}
+			break;
 		}
 	}
 }

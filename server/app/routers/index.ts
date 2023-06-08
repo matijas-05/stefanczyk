@@ -3,7 +3,7 @@ import { pino } from "../logger";
 import { imageRouter } from "./imageRouter";
 import { tagRouter } from "./tagRouter";
 import { filterRouter } from "./filterRouter";
-import { getFileRouter } from "./getFileRouter";
+import { uploadsRouter } from "./uploadsRouter";
 import { userRouter } from "./userRouter";
 import * as Cookies from "cookie";
 
@@ -37,8 +37,8 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 		await tagRouter(req, res);
 	} else if (req.url?.startsWith("/api/filters")) {
 		await filterRouter(req, res);
-	} else if (req.url?.startsWith("/api/getFile")) {
-		await getFileRouter(req, res);
+	} else if (req.url?.startsWith("/api/uploads")) {
+		await uploadsRouter(req, res);
 	} else if (req.url?.startsWith("/api/user")) {
 		await userRouter(req, res, token);
 	} else {

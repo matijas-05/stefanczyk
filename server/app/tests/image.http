@@ -1,26 +1,23 @@
 GET http://localhost:3001/api/photos HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
 ###
 
-GET http://localhost:3001/api/photos/0 HTTP/1.1
+GET http://localhost:3001/api/photos/6482348f63ebc76f4ae62537 HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
 ###
 
 POST http://localhost:3001/api/photos HTTP/1.1
-Content-Type: multipart/form-data; boundary=----FormBoundary1234
+Content-Type: multipart/form-data; boundary=FormBoundary1234
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
-------FormBoundary1234
+--FormBoundary1234
 Content-Disposition: form-data; name="file"; filename="input.jpg"
 Content-Type: image/jpeg
 
 < ./input.jpg
-
-------FormBoundary1234
-Content-Disposition: form-data; name="album"
-Content-Type: text/plain
-
-nazwa_albumu
-------FormBoundary1234
+--FormBoundary1234--
 
 ###
 
@@ -46,7 +43,7 @@ nowa_nazwa_albumu
 
 ###
 
-PATCH http://localhost:3001/api/photos/0/tags HTTP/1.1
+PATCH http://localhost:3001/api/photos/6482348f63ebc76f4ae62537/tags HTTP/1.1
 Content-Type: application/json
 
 {
@@ -72,9 +69,11 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3001/api/photos/0/tags HTTP/1.1
+GET http://localhost:3001/api/photos/6482348f63ebc76f4ae62537/tags HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
 
 ###
 
-GET http://localhost:3001/api/getFile/0
+GET http://localhost:3001/api/uploads/upload_30ca0a4fcaa2c58326a92fcc1efa4802.jpg HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0

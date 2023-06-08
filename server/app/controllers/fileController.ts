@@ -1,5 +1,4 @@
 import type { IncomingMessage } from "node:http";
-import fs from "node:fs/promises";
 import path from "node:path";
 import formidable from "formidable";
 
@@ -24,10 +23,6 @@ export function parseFormData(req: IncomingMessage, dir?: string) {
 			});
 		}
 	);
-}
-
-export async function getFile(path: string) {
-	return fs.readFile(path);
 }
 
 export function getFullPath(url: string) {
