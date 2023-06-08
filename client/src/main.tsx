@@ -15,7 +15,7 @@ import AuthRoute from "./components/AuthRoute";
 import RootLayout from "./layouts/RootLayout";
 import "./styles.css";
 import EditProfile from "./routes/EditProfile";
-import { TooltipProvider } from "./components/ui/tooltip";
+import { TooltipProvider } from "./components/ui/Tooltip";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(

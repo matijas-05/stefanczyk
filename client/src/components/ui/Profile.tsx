@@ -1,11 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "./Avatar";
 import type { Profile } from "@server/types";
 import { Button } from "./Button";
-import { useNavigate } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { LogOut } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
 
 export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const { data: user } = useQuery<Profile>(["profile"], async () =>
@@ -43,7 +43,7 @@ export default function Profile({ className, ...props }: React.ComponentPropsWit
 			</div>
 
 			<Tooltip>
-				<TooltipTrigger>
+				<TooltipTrigger asChild>
 					<Button
 						variant={"ghost"}
 						className="px-2 text-primary hover:text-primary"
