@@ -10,7 +10,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluL
 
 POST http://localhost:3001/api/photos HTTP/1.1
 Content-Type: multipart/form-data; boundary=FormBoundary1234
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
 --FormBoundary1234
 Content-Disposition: form-data; name="file"; filename="input.jpg"
@@ -25,21 +25,16 @@ DELETE http://localhost:3001/api/photos/0 HTTP/1.1
 
 ###
 
-PATCH http://localhost:3001/api/photos/0 HTTP/1.1
-Content-Type: multipart/form-data; boundary=----FormBoundary12345
+PATCH http://localhost:3001/api/photos/ HTTP/1.1
+Content-Type: multipart/form-data; boundary=FormBoundary1234
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
-------FormBoundary12345
-Content-Disposition: form-data; name="file"; filename="input.jpg"
+--FormBoundary1234
+Content-Disposition: form-data; name="file"; filename="input_copy.webp"
 Content-Type: image/jpeg
 
-< ./input_copy.jpg
-
-------FormBoundary12345
-Content-Disposition: form-data; name="album"
-Content-Type: text/plain
-
-nowa_nazwa_albumu
-------FormBoundary12345
+< ./input_copy.webp
+--FormBoundary1234--
 
 ###
 
@@ -69,7 +64,13 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:3001/api/photos/6482348f63ebc76f4ae62537/tags HTTP/1.1
+DELETE http://localhost:3001/api/photos/64823e65f851de737be110b8 HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
+
+
+###
+
+GET http://localhost:3001/api/photos/648241c41fa7b3163da94ce5/tags HTTP/1.1
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
 

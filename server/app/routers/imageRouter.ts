@@ -1,15 +1,18 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import fs from "node:fs/promises";
 import formidable from "formidable";
-import { ImageModel } from "../models/imageModel";
+import { ImageModel, type ImageHistory } from "../models/imageModel";
 import * as tagModel from "../models/tagModel";
-import { parseFormData } from "../controllers/fileController";
+import { getFullPath, parseFormData } from "../controllers/fileController";
 import { parseJson } from "../controllers/jsonController";
+import { verifyToken } from "../controllers/userController";
+import { UserModel } from "../models/userModel";
 
-export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
+export async function imageRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
 			if (req.url === "/api/photos") {
-				const images = await ImageModel.find();
+				const images = await ImageModel.find().sort({ lastChange: -1 });
 
 				res.writeHead(200, { "Content-Type": "application/json" });
 				res.end(JSON.stringify(images));
@@ -21,113 +24,121 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse) {
 
 				if (getPhoto.length > 0 && getPhotoTags.length === 0) {
 					const id = getPhoto[0][1];
-
-					try {
-						const image = await ImageModel.findById(id);
-
-						res.writeHead(200, { "Content-Type": "application/json" });
-						res.end(JSON.stringify(image));
-					} catch (error) {
+					const image = await ImageModel.findById(id);
+					if (!image) {
 						res.writeHead(404).end();
+						return;
 					}
+
+					res.writeHead(200, { "Content-Type": "application/json" });
+					res.end(JSON.stringify(image));
 				} else if (getPhotoTags.length > 0) {
 					const id = getPhotoTags[0][1];
 
-					try {
-						const image = await ImageModel.findById(id).populate("tags");
-
-						res.writeHead(200, { "Content-Type": "application/json" });
-						res.end(JSON.stringify(image?.tags));
-					} catch (error) {
+					const image = await ImageModel.findById(id).populate("tags");
+					if (!image) {
 						res.writeHead(404).end();
+						return;
 					}
+
+					res.writeHead(200, { "Content-Type": "application/json" });
+					res.end(JSON.stringify(image?.tags));
 				}
 			}
 			break;
 		}
 
 		case "POST": {
-			switch (req.url) {
-				case "/api/photos": {
-					try {
-						const data = await parseFormData(req);
+			try {
+				const payload = verifyToken(token);
+				if (!payload) {
+					res.writeHead(401).end();
+					return;
+				}
 
-						if (Array.isArray(data.files)) {
-							(data.files as formidable.File[]).forEach(async (file) => {
-								await ImageModel.create({
-									imageUrl: file.path,
-								});
-							});
-						} else {
-							const file = data.files.file as formidable.File;
-							await ImageModel.create({
-								imageUrl: file.path,
-							});
-						}
+				const user = await UserModel.findOne({ email: payload.email });
+				const data = await parseFormData(req);
 
-						res.writeHead(201).end();
-					} catch (error) {
-						if (error instanceof Error) {
-							res.writeHead(500).end(error.message);
-						}
-					}
+				if (Array.isArray(data.files)) {
+					(data.files as formidable.File[]).forEach(async (file) => {
+						await ImageModel.create({
+							user: user!._id,
+							url: file.path,
+							history: [{ status: "original", timestamp: new Date() }],
+							lastChange: new Date(),
+						});
+					});
+				} else {
+					const file = data.files.file as formidable.File;
+					await ImageModel.create({
+						user: user!._id,
+						url: file.path,
+						history: [{ status: "original", timestamp: new Date() }],
+						lastChange: new Date(),
+					});
+				}
 
-					break;
+				res.writeHead(201).end();
+			} catch (error) {
+				if (error instanceof Error) {
+					res.writeHead(500).end(error.message);
 				}
 			}
+
 			break;
 		}
 
 		case "DELETE": {
-			const matches = req.url?.matchAll(/\/api\/photos\/([0-9]+)/g);
+			const matches = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)/g) ?? []);
 
 			if (matches) {
-				for (const match of matches) {
-					const id = parseInt(match[1]);
-					const image = imageModel.getAll().find((image) => image.id === id);
-					if (image) {
-						imageModel.remove(image);
-						res.writeHead(204).end();
-					} else {
-						res.writeHead(404).end();
-					}
+				const id = matches[0][1];
+				const image = await ImageModel.findByIdAndDelete(id);
+
+				if (!image) {
+					res.writeHead(404).end();
+					return;
 				}
+
+				await fs.rm(getFullPath(image!.url.toString()));
+				res.writeHead(204).end();
 			}
+
 			break;
 		}
 
 		case "PATCH": {
-			const editPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/([0-9]+)$/g) ?? []);
+			const editPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)$/g) ?? []);
 			const addTagToPhoto = Array.from(
-				req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags$/g) ?? []
+				req.url?.matchAll(/\/api\/photos\/(\w+)\/tags$/g) ?? []
 			);
 			const addTagsToPhoto = Array.from(
-				req.url?.matchAll(/\/api\/photos\/([0-9]+)\/tags\/mass$/g) ?? []
+				req.url?.matchAll(/\/api\/photos\/(\w+)\/tags\/mass$/g) ?? []
 			);
 
 			if (editPhoto.length > 0) {
-				for (const match of editPhoto) {
-					const id = parseInt(match[1]);
-					const image = imageModel.getAll().find((image) => image.id === id);
+				const id = editPhoto[0][1];
+				const data = await parseFormData(req);
+				const file = data.files.file as formidable.File;
 
-					if (image) {
-						const data = await parseFormData(req);
-						imageModel.update(id, {
-							album: data.fields.album as string,
-							lastChange: new Date(),
-							originalName: (data.files.file as formidable.File).name!,
-							url: (data.files.file as formidable.File).path,
-							history: [
-								...image.history,
-								{ status: "edited", timestamp: new Date() },
-							],
-						});
-
-						res.writeHead(204).end();
-					} else {
-						res.writeHead(404).end();
-					}
+				const image = await ImageModel.findByIdAndUpdate(id, {
+					$set: {
+						url: file.path,
+					},
+					$push: {
+						history: {
+							status: "edited",
+							timestamp: new Date(),
+						} satisfies ImageHistory,
+					},
+				});
+				if (!image) {
+					res.writeHead(404).end();
+					return;
 				}
+
+				await fs.rm(getFullPath(image.url.toString()));
+				res.writeHead(204).end();
 			} else if (addTagToPhoto.length > 0) {
 				for (const match of addTagToPhoto) {
 					const imageId = parseInt(match[1]);

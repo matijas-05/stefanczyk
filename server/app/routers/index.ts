@@ -32,7 +32,7 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 	}
 
 	if (req.url?.startsWith("/api/photos")) {
-		await imageRouter(req, res);
+		await imageRouter(req, res, token);
 	} else if (req.url?.startsWith("/api/tags")) {
 		await tagRouter(req, res);
 	} else if (req.url?.startsWith("/api/filters")) {
@@ -47,7 +47,9 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 
 	if (res.statusCode <= 399) {
 		pino.info(`Response: ${res.statusCode}`);
-	} else {
+	} else if (res.statusCode <= 499) {
 		pino.warn(`Response: ${res.statusCode}`);
+	} else {
+		pino.error(`Response: ${res.statusCode}`);
 	}
 }
