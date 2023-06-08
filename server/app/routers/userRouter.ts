@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs/promises";
 import { parseJson } from "../controllers/jsonController";
-import * as userModel from "../models/userModel";
+import { UserModel, type User } from "../models/userModel";
 import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
 import formidable from "formidable";
@@ -11,7 +11,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 	switch (req?.method?.toUpperCase()) {
 		case "POST": {
 			if (req.url === "/api/user/register") {
-				const user = await parseJson<userModel.User>(req);
+				const user = await parseJson<User>(req);
 				if (!user) {
 					res.writeHead(400).end();
 					return;
@@ -65,7 +65,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 					return;
 				}
 
-				const user = userModel.get(payload.email)!;
+				const user = await UserModel.findOne({ email: payload.email });
 				if (!user) {
 					res.writeHead(404).end();
 					return;
@@ -81,11 +81,10 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 						return;
 					}
 
-					const user = userModel.get(payload.email)!;
-					userModel.update({
-						...user,
-						profilePicture: (files.file as formidable.File).path,
-					});
+					await UserModel.updateOne(
+						{ email: payload.email },
+						{ profilePicture: (files.file as formidable.File).path }
+					);
 
 					res.writeHead(201).end();
 				} catch (error) {
@@ -105,7 +104,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 				}
 
 				try {
-					userController.confirm(token);
+					await userController.confirm(token);
 					res.writeHead(200).end();
 				} catch (error) {
 					res.writeHead(400).end();
@@ -118,7 +117,12 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 						return;
 					}
 
-					const user = userModel.get(payload.email)!;
+					const user = await UserModel.findOne({ email: payload.email });
+					if (!user) {
+						res.writeHead(404).end();
+						return;
+					}
+
 					res.writeHead(200, { "Content-Type": "application/json" }).end(
 						JSON.stringify({
 							name: user.name,
@@ -138,7 +142,7 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 				}
 
 				try {
-					userController.logout(payload.email, token);
+					await userController.logout(payload.email, token);
 					res.setHeader(
 						"Set-Cookie",
 						Cookies.serialize("token", "", {
@@ -164,14 +168,17 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 						return;
 					}
 
-					const user = userModel.get(payload.email)!;
-					const newUser = await parseJson<Pick<userModel.User, "name" | "lastName">>(req);
+					const user = await UserModel.findOne({ email: payload.email });
+					const newUser = await parseJson<Pick<User, "name" | "lastName">>(req);
 					if (!newUser) {
 						res.writeHead(400).end();
 						return;
 					}
 
-					userModel.update({ ...user, name: newUser.name, lastName: newUser.lastName });
+					await UserModel.updateOne(
+						{ email: payload.email },
+						{ name: newUser.name, lastName: newUser.lastName }
+					);
 					res.writeHead(200).end();
 				} catch (error) {
 					res.writeHead(500).end();

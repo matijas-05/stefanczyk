@@ -1,5 +1,6 @@
+import mongoose from "mongoose";
+
 export interface User {
-	id: number;
 	name: string;
 	lastName: string;
 	email: string;
@@ -7,29 +8,16 @@ export interface User {
 	confirmed: boolean;
 	profilePicture?: string;
 }
+const userSchema = new mongoose.Schema<User>({
+	name: { type: String, required: true },
+	lastName: { type: String, required: true },
+	email: { type: String, required: true },
+	password: { type: String, required: true },
+	confirmed: { type: Boolean, required: true },
+	profilePicture: { type: String },
+});
+export const UserModel = mongoose.model("User", userSchema);
+
 export interface JwtPayload {
 	email: string;
-}
-
-const users: User[] = [];
-
-export function add(user: Omit<User, "id">) {
-	if (users.find((x) => user.email === x.email)) {
-		throw new Error("User already exists");
-	}
-
-	users.push({ ...user, id: users.length + 1 });
-}
-
-export function get(email: string) {
-	return users.find((user) => user.email === email);
-}
-
-export function update(user: User) {
-	const index = users.findIndex((u) => u.email === user.email);
-	if (index === -1) {
-		throw new Error("User not found");
-	}
-
-	users[index] = user;
 }
