@@ -19,6 +19,7 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 			"Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
 			"Access-Control-Allow-Headers": "Content-Type",
 		}).end();
+		pino.info(`Response: ${res.statusCode}`);
 		return;
 	}
 
@@ -26,20 +27,27 @@ export async function router(req: IncomingMessage, res: ServerResponse) {
 
 	if (!token && whitelist.filter((url) => req.url?.startsWith(url)).length === 0) {
 		res.writeHead(401).end();
+		pino.info(`Response: ${res.statusCode}`);
 		return;
 	}
 
 	if (req.url?.startsWith("/api/photos")) {
-		return await imageRouter(req, res);
+		await imageRouter(req, res);
 	} else if (req.url?.startsWith("/api/tags")) {
-		return await tagRouter(req, res);
+		await tagRouter(req, res);
 	} else if (req.url?.startsWith("/api/filters")) {
-		return await filterRouter(req, res);
+		await filterRouter(req, res);
 	} else if (req.url?.startsWith("/api/getFile")) {
-		return await getFileRouter(req, res);
+		await getFileRouter(req, res);
 	} else if (req.url?.startsWith("/api/user")) {
-		return await userRouter(req, res, token);
+		await userRouter(req, res, token);
 	} else {
 		pino.warn("Route not matched: " + req.url);
+	}
+
+	if (res.statusCode <= 399) {
+		pino.info(`Response: ${res.statusCode}`);
+	} else {
+		pino.warn(`Response: ${res.statusCode}`);
 	}
 }
