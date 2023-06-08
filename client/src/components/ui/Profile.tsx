@@ -29,7 +29,9 @@ export default function Profile({ className, ...props }: React.ComponentPropsWit
 		<div className={cn("flex items-center gap-4", className)} {...props}>
 			<div className="flex items-center gap-3">
 				<Avatar>
-					<AvatarImage src={"http://localhost:3001/api/" + user?.profilePicture} />
+					{user?.profilePicture && (
+						<AvatarImage src={"http://localhost:3001/api/" + user.profilePicture} />
+					)}
 					<AvatarFallback>
 						{user?.name.charAt(0).toLocaleUpperCase()}
 						{user?.lastName.charAt(0).toLocaleUpperCase()}
