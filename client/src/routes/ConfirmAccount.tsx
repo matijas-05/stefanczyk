@@ -22,7 +22,7 @@ export default function ConfirmAccount() {
 	};
 
 	return (
-		<div className="m-8 mx-auto w-fit space-y-2">
+		<div className="mx-auto w-fit space-y-2 p-8">
 			<Card className="flex flex-col items-center gap-4 p-8">
 				<Logo />
 				<Button className="w-full" onClick={onSubmit} loading={mutation.isLoading}>
