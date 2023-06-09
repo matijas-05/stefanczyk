@@ -59,7 +59,7 @@ export default function Carousel({ imageUrls }: { imageUrls: string[] }) {
 					<ChevronRight className="text-white" />
 				</button>
 			)}
-			<div className="absolute bottom-1 left-0 right-0 mx-auto flex w-fit gap-1 text-white">
+			<div className="absolute bottom-1 left-1/2 flex -translate-x-1/2 gap-1 text-white">
 				{[...Array(imageUrls.length)].map((_, i) => (
 					<button
 						key={i}
