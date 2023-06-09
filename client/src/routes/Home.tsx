@@ -16,7 +16,7 @@ export default function Home() {
 	return (
 		<div className="flex flex-col items-center gap-4">
 			{posts?.map((post, i) => (
-				<div key={i} className="flex w-[25rem] overflow-x-auto">
+				<div key={i} className="flex w-[30rem] overflow-x-auto">
 					<Post data={post} />
 				</div>
 			))}

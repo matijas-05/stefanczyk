@@ -4,6 +4,7 @@ import { Card } from "./Card";
 import { ProfilePicture } from "./Avatar";
 import { Separator } from "./Separator";
 import { TypographySmall } from "./Typography";
+import Carousel from "./Carousel";
 
 interface Props {
 	data: Post;
@@ -11,7 +12,7 @@ interface Props {
 
 export default function Post({ data }: Props) {
 	return (
-		<Card className="flex flex-col gap-2 p-4">
+		<Card className="flex w-full flex-col gap-3 p-4">
 			<span className="flex items-center gap-3">
 				<ProfilePicture user={data.user} />
 				<Link to={`/profile/${data.user.username}`}>
@@ -22,15 +23,17 @@ export default function Post({ data }: Props) {
 
 			{data.images.length === 1 ? (
 				<img
-					className="my-1 rounded-sm object-contain"
+					className="rounded-sm object-contain"
 					src={`http://localhost:3001/api/${data.images[0]}`}
 				/>
-			) : null}
+			) : (
+				<Carousel
+					imageUrls={data.images.map((image) => `http://localhost:3001/api/${image}`)}
+				/>
+			)}
 			<Separator />
 
-			<div>
-				<TypographySmall className="font-normal">{data.description}</TypographySmall>
-			</div>
+			<TypographySmall className="font-normal">{data.description}</TypographySmall>
 		</Card>
 	);
 }
