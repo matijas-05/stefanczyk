@@ -5,3 +5,7 @@ export function TypographyH2({ className, ...props }: React.ComponentPropsWithou
 		<h1 className={cn("scroll-m-20 text-3xl font-bold tracking-tight", className)} {...props} />
 	);
 }
+
+export function TypographyMuted({ className, ...props }: React.ComponentPropsWithoutRef<"p">) {
+	return <p className={cn("text-sm text-muted-foreground", className)} {...props} />;
+}

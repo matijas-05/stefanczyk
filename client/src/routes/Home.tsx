@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { Image } from "@server/types";
 
 export default function Home() {
-	const { data: images } = useQuery<Image[]>(
-		["images"],
+	const { data: photos } = useQuery<Image[]>(
+		["photos"],
 		() =>
 			fetch("http://localhost:3001/api/photos", {
 				method: "GET",
@@ -14,7 +14,7 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col items-center gap-4">
-			{images?.map((image, i) => (
+			{photos?.map((image, i) => (
 				<img
 					key={i}
 					src={"http://localhost:3001/api/" + image.url}

@@ -73,7 +73,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 						await ImageModel.create(newImage(file, data.fields));
 					});
 				} else {
-					const file = data.files.file as formidable.File;
+					const file = data.files.files as formidable.File;
 					await ImageModel.create(newImage(file, data.fields));
 				}
 
@@ -118,7 +118,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 			if (editPhoto.length > 0) {
 				const id = editPhoto[0][1];
 				const data = await parseFormData(req);
-				const file = data.files.file as formidable.File;
+				const file = data.files.files as formidable.File;
 
 				const image = await ImageModel.findByIdAndUpdate(id, {
 					$set: {

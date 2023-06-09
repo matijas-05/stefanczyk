@@ -156,7 +156,7 @@ export default function SignIn() {
 
 			<Card className="px-4 py-2 text-center text-sm">
 				Have an account?{" "}
-				<Button variant={"link"} asChild>
+				<Button variant={"link"} type="submit" asChild>
 					<Link to={"/signin"}>Sign in</Link>
 				</Button>
 			</Card>

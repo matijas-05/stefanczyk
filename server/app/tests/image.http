@@ -13,7 +13,7 @@ Content-Type: multipart/form-data; boundary=FormBoundary1234
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
 --FormBoundary1234
-Content-Disposition: form-data; name="file"; filename="input.jpg"
+Content-Disposition: form-data; name="files"; filename="input.jpg"
 Content-Type: image/jpeg
 
 < ./input.jpg
@@ -27,7 +27,8 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3001/api/photos/0 HTTP/1.1
+DELETE http://localhost:3001/api/photos/648342321f2bf08abd6ba566 HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
 ###
 
