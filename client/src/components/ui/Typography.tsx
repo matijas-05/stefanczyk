@@ -9,3 +9,7 @@ export function TypographyH2({ className, ...props }: React.ComponentPropsWithou
 export function TypographyMuted({ className, ...props }: React.ComponentPropsWithoutRef<"p">) {
 	return <p className={cn("text-sm text-muted-foreground", className)} {...props} />;
 }
+
+export function TypographySmall({ className, ...props }: React.ComponentPropsWithoutRef<"small">) {
+	return <small className={cn("text-sm font-medium leading-none", className)} {...props} />;
+}

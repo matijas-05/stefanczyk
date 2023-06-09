@@ -16,11 +16,26 @@ import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 
+const nameRegex = /^\S+$/;
 const schema = z
 	.object({
 		email: z.string().nonempty({ message: "Required" }).email(),
-		name: z.string().nonempty({ message: "Required" }),
-		lastName: z.string().nonempty({ message: "Required" }),
+		username: z
+			.string()
+			.nonempty({ message: "Required" })
+			.regex(/^[a-zA-Z0-9_]+$/, {
+				message: "Username must contain only letters, numbers and underscores",
+			})
+			.min(3, { message: "Username must be at least 3 characters long" })
+			.max(16, { message: "Username must be at most 16 characters long" }),
+		name: z
+			.string()
+			.nonempty({ message: "Required" })
+			.regex(nameRegex, { message: "No spaces allowed" }),
+		lastName: z
+			.string()
+			.nonempty({ message: "Required" })
+			.regex(nameRegex, { message: "No spaces allowed" }),
 		password: z
 			.string()
 			.min(6, { message: "Password must be at least 6 characters long" })
@@ -39,30 +54,34 @@ export default function SignIn() {
 	const mutation = useMutation((data: Inputs) => {
 		return fetch("http://localhost:3001/api/user/register", {
 			method: "POST",
-			body: JSON.stringify(data),
 			headers: {
 				"Content-Type": "application/json",
 			},
+			body: JSON.stringify(data),
 		});
 	});
 	const navigate = useNavigate();
 
-	const form = useForm<Inputs>({ resolver: zodResolver(schema) });
+	const form = useForm<Inputs>({ resolver: zodResolver(schema), mode: "onChange" });
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		try {
-			const res = await mutation.mutateAsync(data);
+		const res = await mutation.mutateAsync(data);
 
-			if (res.status === 409) {
+		if (res.status === 409) {
+			const error = await res.text();
+			if (error === "email") {
 				form.setError("email", {
 					type: "manual",
 					message: "User with this email already exists",
 				});
-			} else if (res.ok) {
-				const { token } = await res.json();
-				navigate("/confirm?token=" + token, { replace: true });
-			} else throw Error();
-		} catch (error) {
-			console.log(error);
+			} else if (error === "username") {
+				form.setError("username", {
+					type: "manual",
+					message: "User with this username already exists",
+				});
+			}
+		} else if (res.ok) {
+			const { token } = await res.json();
+			navigate("/confirm?token=" + token, { replace: true });
 		}
 	};
 
@@ -85,6 +104,20 @@ export default function SignIn() {
 											placeholder="user@domain.com"
 											{...field}
 										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="username"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Username</FormLabel>
+									<FormControl>
+										<Input type="text" placeholder="johndoe" {...field} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>

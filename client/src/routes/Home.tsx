@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import type { Post } from "@server/types";
+import type { Post as PostType } from "@server/types";
+import Post from "@/components/ui/Post";
 
 export default function Home() {
-	const { data: posts } = useQuery<Post[]>(
+	const { data: posts } = useQuery<PostType[]>(
 		["posts"],
 		() =>
 			fetch("http://localhost:3001/api/photos", {
@@ -16,13 +17,7 @@ export default function Home() {
 		<div className="flex flex-col items-center gap-4">
 			{posts?.map((post, i) => (
 				<div key={i} className="flex w-[25rem] overflow-x-auto">
-					{post.images.map((image, i) => (
-						<img
-							key={i}
-							src={"http://localhost:3001/api/" + image}
-							className="w-[25rem] object-contain"
-						/>
-					))}
+					<Post data={post} />
 				</div>
 			))}
 		</div>

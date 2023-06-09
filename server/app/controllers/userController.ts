@@ -11,13 +11,14 @@ export async function register(user: Omit<User, "confirmed">) {
 	});
 
 	if (await UserModel.findOne({ email: user.email })) {
-		throw new Error("User already exists");
+		throw new Error("email");
+	}
+	if (await UserModel.findOne({ username: user.username })) {
+		throw new Error("username");
 	}
 
 	await UserModel.create({
-		name: user.name,
-		lastName: user.lastName,
-		email: user.email,
+		...user,
 		password: hashed,
 		confirmed: false,
 	});

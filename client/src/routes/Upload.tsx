@@ -29,8 +29,6 @@ export default function Upload() {
 
 	const form = useForm<Inputs>();
 	const onSubmit = async (data: Inputs) => {
-		console.log(data);
-
 		if (data.files.length === 0) {
 			form.setError("files", {
 				type: "manual",

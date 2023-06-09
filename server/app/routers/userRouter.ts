@@ -21,7 +21,9 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 				try {
 					token = await userController.register(user);
 				} catch (error) {
-					res.writeHead(409).end();
+					if (error instanceof Error) {
+						res.writeHead(409).end(error.message);
+					}
 					return;
 				}
 

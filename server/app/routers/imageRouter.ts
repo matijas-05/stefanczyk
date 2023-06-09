@@ -14,7 +14,6 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 			if (req.url === "/api/photos") {
 				const posts = await PostModel.find()
 					.sort({ lastChange: -1 })
-					.populate("images")
 					.populate("user", "-password -confirmed");
 
 				res.writeHead(200, { "Content-Type": "application/json" });

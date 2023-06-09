@@ -8,7 +8,7 @@ import { Skeleton } from "./Skeleton";
 
 export default function Nav() {
 	return (
-		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border p-8">
+		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border p-10">
 			<Logo className="text-4xl" />
 
 			<ul className="w-full space-y-1">
@@ -29,7 +29,7 @@ function NavItem({ href, label, icon }: { href: string; label: string; icon: Rea
 		<li>
 			<Link to={href}>
 				<Button
-					className="flex h-12 w-full justify-start gap-2 text-base text-foreground"
+					className="-ml-1 flex h-12 w-full justify-start gap-3 text-lg text-foreground"
 					variant={"ghost"}
 					icon={icon}
 				>
