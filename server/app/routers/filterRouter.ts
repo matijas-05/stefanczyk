@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs/promises";
-import * as imageModel from "../models/imageModel";
 import * as filterModel from "../models/filterModel";
 import * as filterController from "../controllers/filterController";
 import * as fileController from "../controllers/fileController";

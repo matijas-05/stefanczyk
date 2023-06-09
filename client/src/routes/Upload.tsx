@@ -23,7 +23,7 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema> & { files: File[] };
 
 export default function Upload() {
-	const mutation = useMutation(["photos"], (body: FormData) =>
+	const mutation = useMutation(["posts"], (body: FormData) =>
 		fetch("http://localhost:3001/api/photos", { method: "POST", credentials: "include", body })
 	);
 
@@ -39,7 +39,7 @@ export default function Upload() {
 
 		const formData = new FormData();
 		data.files.forEach((file) => formData.append("photos", file));
-		formData.append("tags", JSON.stringify([]));
+		formData.set("tags", JSON.stringify([]));
 
 		await mutation.mutateAsync(formData);
 		form.setValue("files", []);

@@ -1,23 +1,24 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs/promises";
 import formidable from "formidable";
-import { ImageModel, type ImageHistory } from "../models/imageModel";
 import * as tagModel from "../models/tagModel";
 import { getFullPath, parseFormData } from "../controllers/fileController";
 import { parseJson } from "../controllers/jsonController";
 import { verifyToken } from "../controllers/userController";
 import { UserModel } from "../models/userModel";
+import { PostModel, type ImageHistory } from "../models/postModel";
 
 export async function imageRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req.method?.toUpperCase()) {
 		case "GET": {
 			if (req.url === "/api/photos") {
-				const images = await ImageModel.find()
+				const posts = await PostModel.find()
 					.sort({ lastChange: -1 })
+					.populate("images")
 					.populate("user", "-password -confirmed");
 
 				res.writeHead(200, { "Content-Type": "application/json" });
-				res.end(JSON.stringify(images));
+				res.end(JSON.stringify(posts));
 			} else {
 				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)/g) ?? []);
 				const getPhotoTags = Array.from(
@@ -26,18 +27,21 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 				if (getPhoto.length > 0 && getPhotoTags.length === 0) {
 					const id = getPhoto[0][1];
-					const image = await ImageModel.findById(id);
-					if (!image) {
+					const post = await PostModel.findById(id).populate(
+						"user",
+						"-password -confirmed"
+					);
+					if (!post) {
 						res.writeHead(404).end();
 						return;
 					}
 
 					res.writeHead(200, { "Content-Type": "application/json" });
-					res.end(JSON.stringify(image));
+					res.end(JSON.stringify(post));
 				} else if (getPhotoTags.length > 0) {
 					const id = getPhotoTags[0][1];
 
-					const image = await ImageModel.findById(id).populate("tags");
+					const image = await PostModel.findById(id).populate("tags");
 					if (!image) {
 						res.writeHead(404).end();
 						return;
@@ -60,22 +64,23 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 				const user = await UserModel.findOne({ email: payload.email });
 				const data = await parseFormData(req);
-				const newImage = (file: formidable.File, fields: formidable.Fields) => ({
-					user: user!._id,
-					url: file.path,
-					history: [{ status: "original", timestamp: new Date() }],
-					lastChange: new Date(),
-					tags: JSON.parse(fields.tags as string),
-				});
+				const images: string[] = [];
 
 				if (Array.isArray(data.files.photos)) {
 					(data.files.photos as formidable.File[]).forEach(async (file) => {
-						await ImageModel.create(newImage(file, data.fields));
+						images.push(file.path);
 					});
 				} else {
 					const file = data.files.photos as formidable.File;
-					await ImageModel.create(newImage(file, data.fields));
+					images.push(file.path);
 				}
+
+				await PostModel.create({
+					user: user!._id,
+					images,
+					lastChange: new Date(),
+					history: [{ status: "original", timestamp: new Date() } satisfies ImageHistory],
+				});
 
 				res.writeHead(201).end();
 			} catch (error) {
@@ -92,14 +97,14 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 			if (matches) {
 				const id = matches[0][1];
-				const image = await ImageModel.findByIdAndDelete(id);
+				const post = await PostModel.findByIdAndDelete(id);
 
-				if (!image) {
+				if (!post) {
 					res.writeHead(404).end();
 					return;
 				}
 
-				await fs.rm(getFullPath(image!.url.toString()));
+				await Promise.all(post.images.map((image) => fs.rm(getFullPath(image))));
 				res.writeHead(204).end();
 			}
 
