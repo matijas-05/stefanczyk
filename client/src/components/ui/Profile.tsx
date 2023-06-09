@@ -9,7 +9,7 @@ import { Button } from "./Button";
 export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const { data: user } = useQuery<Profile>(
 		["profile"],
-		async () =>
+		() =>
 			fetch("http://localhost:3001/api/user/profile", {
 				method: "GET",
 				credentials: "include",
@@ -46,7 +46,9 @@ export default function Profile({ className, ...props }: React.ComponentPropsWit
 						return navigate("/signin");
 					}
 				}}
-			>Sign out</Button>
+			>
+				Sign out
+			</Button>
 		</div>
 	);
 }
