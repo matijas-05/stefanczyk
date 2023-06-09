@@ -9,18 +9,19 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/Form";
+import { Textarea } from "@/components/ui/Textarea";
 import { TypographyH2 } from "@/components/ui/Typography";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 
-const schema = z.object({
-	tags: z.array(z.string()).nonempty(),
-});
-type Inputs = z.infer<typeof schema> & { files: File[] };
+interface Inputs {
+	files: File[];
+	description: string;
+	tags: string[];
+}
 
 export default function Upload() {
 	const mutation = useMutation(["posts"], (body: FormData) =>
@@ -29,6 +30,8 @@ export default function Upload() {
 
 	const form = useForm<Inputs>();
 	const onSubmit = async (data: Inputs) => {
+		console.log(data);
+
 		if (data.files.length === 0) {
 			form.setError("files", {
 				type: "manual",
@@ -39,10 +42,11 @@ export default function Upload() {
 
 		const formData = new FormData();
 		data.files.forEach((file) => formData.append("photos", file));
+		formData.set("description", data.description);
 		formData.set("tags", JSON.stringify([]));
 
 		await mutation.mutateAsync(formData);
-		form.setValue("files", []);
+		form.reset({ files: [] });
 	};
 
 	const dropzone = useDropzone({
@@ -61,10 +65,7 @@ export default function Upload() {
 
 			<Card className="w-fit p-4">
 				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="flex flex-col items-center gap-2"
-					>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
 						<FormField
 							control={form.control}
 							name="files"
@@ -84,6 +85,27 @@ export default function Upload() {
 									<FormMessage />
 								</FormItem>
 							)}
+							rules={{ required: "You must upload at least one photo" }}
+						/>
+
+						<FormField
+							control={form.control}
+							name="description"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Description</FormLabel>
+									<FormControl>
+										<Textarea
+											className="w-full rounded border p-2"
+											minRows={3}
+											maxRows={10}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							rules={{ required: "You must provide a description" }}
 						/>
 
 						<Button type="submit" className="mt-2 w-full" loading={mutation.isLoading}>

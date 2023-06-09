@@ -78,6 +78,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 				await PostModel.create({
 					user: user!._id,
 					images,
+					description: data.fields.description as string,
 					lastChange: new Date(),
 					history: [{ status: "original", timestamp: new Date() } satisfies ImageHistory],
 				});
