@@ -159,7 +159,11 @@ export default function EditProfile() {
 							)}
 						/>
 
-						<Button className="mt-2" type="submit" loading={updateDetails.isLoading}>
+						<Button
+							className="mt-2"
+							type="submit"
+							loading={updateDetails.isLoading || updatePicture.isLoading}
+						>
 							Save
 						</Button>
 					</form>

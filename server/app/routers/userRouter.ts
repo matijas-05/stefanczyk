@@ -79,6 +79,9 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 						return;
 					}
 
+					if (user.profilePicture) {
+						await fs.rm(fileController.getFullPath(user.profilePicture));
+					}
 					await UserModel.updateOne(
 						{ email: payload.email },
 						{ profilePicture: photo.path }
