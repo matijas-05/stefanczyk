@@ -12,6 +12,7 @@ import {
 import { TypographyH2 } from "@/components/ui/Typography";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
+import { Check } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -41,6 +42,7 @@ export default function Upload() {
 		formData.append("tags", JSON.stringify([]));
 
 		await mutation.mutateAsync(formData);
+		form.setValue("files", []);
 	};
 
 	const dropzone = useDropzone({
@@ -84,8 +86,8 @@ export default function Upload() {
 							)}
 						/>
 
-						<Button type="submit" className="mt-2 w-full">
-							Upload
+						<Button type="submit" className="mt-2 w-full" loading={mutation.isLoading}>
+							Upload {mutation.isSuccess && <Check className="mt-px w-4" />}
 						</Button>
 					</form>
 				</Form>
