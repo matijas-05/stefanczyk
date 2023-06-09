@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/Form";
 import { Textarea } from "@/components/ui/Textarea";
 import { TypographyH2 } from "@/components/ui/Typography";
-import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -73,13 +72,10 @@ export default function Upload() {
 								<FormItem>
 									<FormControl>
 										<Dropzone
-											className={cn(
-												form.formState.errors.files && "border-destructive",
-												dropzone.isDragActive && "border-ring"
-											)}
 											dropzone={dropzone}
 											files={form.getValues("files") || []}
 											setFiles={(files) => form.setValue("files", files)}
+											error={!!form.formState.errors.files}
 										/>
 									</FormControl>
 									<FormMessage />

@@ -73,15 +73,15 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 
 				try {
 					const data = await fileController.parseFormData(req);
-					const file = data.files.file as formidable.File;
-					if (!file) {
+					const photo = data.files.photo as formidable.File;
+					if (!photo) {
 						res.writeHead(400).end();
 						return;
 					}
 
 					await UserModel.updateOne(
 						{ email: payload.email },
-						{ profilePicture: file.path }
+						{ profilePicture: photo.path }
 					);
 
 					res.writeHead(201).end();

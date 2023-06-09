@@ -1,8 +1,6 @@
 import * as React from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
 	Form,
 	FormControl,
@@ -15,19 +13,17 @@ import { TypographyH2 } from "@/components/ui/Typography";
 import { Input } from "@/components/ui/Input";
 import type { Profile } from "@server/types";
 import { Button } from "@/components/ui/Button";
+import Dropzone from "@/components/ui/Dropzone";
+import { cn } from "@/lib/utils";
+import { useDropzone } from "react-dropzone";
+import { Card } from "@/components/ui/Card";
 
+interface Inputs {
+	name: string;
+	lastName: string;
+	photo?: File;
+}
 const regex = /^\S+$/;
-const schema = z.object({
-	name: z
-		.string()
-		.nonempty({ message: "Required" })
-		.regex(regex, { message: "No spaces allowed" }),
-	lastName: z
-		.string()
-		.nonempty({ message: "Required" })
-		.regex(regex, { message: "No spaces allowed" }),
-});
-type Inputs = z.infer<typeof schema>;
 
 export default function EditProfile() {
 	const queryClient = useQueryClient();
@@ -38,7 +34,7 @@ export default function EditProfile() {
 			credentials: "include",
 		}).then((res) => res.json())
 	);
-	const mutation = useMutation(
+	const updateDetails = useMutation(
 		(data: Inputs) =>
 			fetch("http://localhost:3001/api/user/profile", {
 				method: "PATCH",
@@ -50,53 +46,125 @@ export default function EditProfile() {
 			}),
 		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
 	);
+	const updatePicture = useMutation(
+		(data: FormData) =>
+			fetch("http://localhost:3001/api/user/profile", {
+				method: "POST",
+				credentials: "include",
+				body: data,
+			}),
+		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
+	);
 
 	const form = useForm<Inputs>({
 		defaultValues: React.useMemo(() => data, [data]),
-		resolver: zodResolver(schema),
 	});
-	const onSubmit: SubmitHandler<Inputs> = (data) => mutation.mutate(data);
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		await updateDetails.mutateAsync(data);
+
+		if (data.photo) {
+			const formData = new FormData();
+			formData.set("photo", data.photo);
+			await updatePicture.mutateAsync(formData);
+		}
+	};
+
+	const dropzone = useDropzone({
+		onDropAccepted: (files) => {
+			form.setValue("photo", files[0]);
+		},
+		accept: {
+			"image/*": [],
+		},
+	});
 
 	React.useEffect(() => {
 		form.reset(data);
 	}, [data, form]);
 
 	return (
-		<form onSubmit={form.handleSubmit(onSubmit)} className="flex w-64 flex-col gap-2">
-			<Form {...form}>
-				<TypographyH2 className="mb-2">Edit profile</TypographyH2>
+		<div className="grid place-content-center">
+			<TypographyH2 className="mb-4">Edit profile</TypographyH2>
 
-				<FormField
-					control={form.control}
-					name="name"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Name</FormLabel>
-							<FormControl>
-								<Input type="text" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name="lastName"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Last name</FormLabel>
-							<FormControl>
-								<Input type="text" {...field} />
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
+			<Card className="w-fit p-4">
+				<Form {...form}>
+					<form
+						onSubmit={form.handleSubmit(onSubmit)}
+						className="flex w-64 flex-col gap-2"
+					>
+						<FormField
+							control={form.control}
+							name="name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Name</FormLabel>
+									<FormControl>
+										<Input type="text" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							rules={{
+								required: "Required",
+								pattern: {
+									value: regex,
+									message: "No spaces allowed",
+								},
+							}}
+						/>
+						<FormField
+							control={form.control}
+							name="lastName"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Last name</FormLabel>
+									<FormControl>
+										<Input type="text" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							rules={{
+								required: "Required",
+								pattern: {
+									value: regex,
+									message: "No spaces allowed",
+								},
+							}}
+						/>
 
-				<Button className="mt-2" type="submit" loading={mutation.isLoading}>
-					Save
-				</Button>
-			</Form>
-		</form>
+						<FormField
+							control={form.control}
+							name="photo"
+							render={() => (
+								<FormItem>
+									<FormLabel>Profile picture</FormLabel>
+									<FormControl>
+										<Dropzone
+											className={cn(
+												"w-full",
+												dropzone.isDragActive && "border-ring"
+											)}
+											dropzone={dropzone}
+											files={
+												form.getValues("photo")
+													? [form.getValues("photo") as File]
+													: []
+											}
+											setFiles={(files) => form.setValue("photo", files[0])}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<Button className="mt-2" type="submit" loading={updateDetails.isLoading}>
+							Save
+						</Button>
+					</form>
+				</Form>
+			</Card>
+		</div>
 	);
 }

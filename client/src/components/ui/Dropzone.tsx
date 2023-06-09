@@ -11,17 +11,19 @@ interface Props extends React.ComponentPropsWithoutRef<"div"> {
 	dropzone: DropzoneState;
 	files: File[];
 	setFiles: (files: File[]) => void;
+	error?: boolean;
 }
 
-export default function Dropzone({ className, dropzone, files, setFiles }: Props) {
+export default function Dropzone({ className, dropzone, files, setFiles, error }: Props) {
 	const [parent] = useAutoAnimate({ duration: 200 });
 
 	return (
-		<div className="flex w-[25rem] flex-col gap-2">
+		<div className={cn("flex w-[25rem] flex-col gap-2", className)}>
 			<div
 				className={cn(
 					"grid h-32 place-content-center gap-2 rounded-md border-2 border-dashed border-border transition-colors hover:cursor-pointer hover:border-ring",
-					className
+					dropzone.isDragActive && "border-ring",
+					error && "border-destructive"
 				)}
 				{...dropzone.getRootProps()}
 			>
