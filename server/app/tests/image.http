@@ -13,7 +13,7 @@ Content-Type: multipart/form-data; boundary=FormBoundary1234
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
 --FormBoundary1234
-Content-Disposition: form-data; name="files"; filename="input.jpg"
+Content-Disposition: form-data; name="photos"; filename="input.jpg"
 Content-Type: image/jpeg
 
 < ./input.jpg
@@ -37,7 +37,7 @@ Content-Type: multipart/form-data; boundary=FormBoundary1234
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
 --FormBoundary1234
-Content-Disposition: form-data; name="file"; filename="input_copy.webp"
+Content-Disposition: form-data; name="photo"; filename="input_copy.webp"
 Content-Type: image/jpeg
 
 < ./input_copy.webp

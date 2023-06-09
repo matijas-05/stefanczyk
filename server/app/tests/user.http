@@ -45,7 +45,7 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluL
 Content-Type: multipart/form-data; boundary=FormBoundary1234
 
 --FormBoundary1234
-Content-Disposition: form-data; name="file"; filename="input.jpg"
+Content-Disposition: form-data; name="photo"; filename="input.jpg"
 Content-Type: image/jpg
 
 < ./input.jpg

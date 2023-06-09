@@ -28,7 +28,6 @@ export default function Upload() {
 
 	const form = useForm<Inputs>();
 	const onSubmit = async (data: Inputs) => {
-		console.log(data);
 		if (data.files.length === 0) {
 			form.setError("files", {
 				type: "manual",
@@ -36,11 +35,18 @@ export default function Upload() {
 			});
 			return;
 		}
+
+		const formData = new FormData();
+		data.files.forEach((file) => formData.append("photos", file));
+		formData.append("tags", JSON.stringify([]));
+
+		await mutation.mutateAsync(formData);
 	};
 
 	const dropzone = useDropzone({
 		onDropAccepted: (files) => {
 			form.setValue("files", [...form.getValues("files"), ...files]);
+			form.clearErrors("files");
 		},
 		accept: {
 			"image/*": [],

@@ -68,12 +68,12 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					tags: JSON.parse(fields.tags as string),
 				});
 
-				if (Array.isArray(data.files)) {
-					(data.files as formidable.File[]).forEach(async (file) => {
+				if (Array.isArray(data.files.photos)) {
+					(data.files.photos as formidable.File[]).forEach(async (file) => {
 						await ImageModel.create(newImage(file, data.fields));
 					});
 				} else {
-					const file = data.files.files as formidable.File;
+					const file = data.files.photos as formidable.File;
 					await ImageModel.create(newImage(file, data.fields));
 				}
 
