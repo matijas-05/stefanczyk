@@ -15,7 +15,11 @@ export default function Home() {
 	return (
 		<div className="flex flex-col items-center gap-4">
 			{images?.map((image, i) => (
-				<img key={i} src={"http://localhost:3001/api/" + image.url} className="w-1/2" />
+				<img
+					key={i}
+					src={"http://localhost:3001/api/" + image.url}
+					className="w-[25rem] transition-all hover:scale-[102%] hover:shadow-xl"
+				/>
 			))}
 		</div>
 	);

@@ -8,10 +8,10 @@ import { Skeleton } from "./Skeleton";
 
 export default function Nav() {
 	return (
-		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border px-4 py-8">
-			<Logo />
+		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border p-8">
+			<Logo className="text-4xl" />
 
-			<ul className="w-full space-y-1">
+			<ul className="space-y-1 w-full">
 				<NavItem href="/" label="Home" icon={<Home />} />
 				<NavItem href="/upload" label="Upload" icon={<Upload />} />
 				<NavItem href="/profile" label="Profile" icon={<User />} />
@@ -29,7 +29,7 @@ function NavItem({ href, label, icon }: { href: string; label: string; icon: Rea
 		<li>
 			<Link to={href}>
 				<Button
-					className="flex h-12 w-full justify-start text-base"
+					className="flex h-12 w-full justify-start text-base text-foreground"
 					variant={"ghost"}
 					icon={icon}
 				>
