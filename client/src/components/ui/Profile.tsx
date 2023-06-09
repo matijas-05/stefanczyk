@@ -41,10 +41,8 @@ export default function Profile({ className, ...props }: React.ComponentPropsWit
 				className="text-base"
 				icon={<LogOut className="w-5" />}
 				onClick={async () => {
-					const res = await logOut.mutateAsync();
-					if (res.ok) {
-						return navigate("/signin");
-					}
+					await logOut.mutateAsync();
+					return navigate("/signin");
 				}}
 			>
 				Sign out
