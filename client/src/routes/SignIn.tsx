@@ -32,7 +32,6 @@ export default function SignIn() {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(data),
-			credentials: "include",
 		})
 	);
 	const navigate = useNavigate();

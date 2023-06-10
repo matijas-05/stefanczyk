@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/Form";
 import { Textarea } from "@/components/ui/Textarea";
 import { TypographyH2 } from "@/components/ui/Typography";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
@@ -23,8 +23,10 @@ interface Inputs {
 }
 
 export default function Upload() {
-	const mutation = useMutation(["posts"], (body: FormData) =>
-		fetch("/api/photos", { method: "POST", credentials: "include", body })
+	const queryClient = useQueryClient();
+	const mutation = useMutation(
+		(body: FormData) => fetch("/api/photos", { method: "POST", body }),
+		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
 	);
 
 	const form = useForm<Inputs>();

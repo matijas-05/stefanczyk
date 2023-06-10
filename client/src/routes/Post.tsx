@@ -11,5 +11,5 @@ export default function Post() {
 		{ suspense: true, cacheTime: 0 }
 	);
 
-	return <PostComp data={data!} className="mx-auto w-1/2 max-w-xl" />;
+	return <PostComp data={data!} className="mx-auto w-1/2 max-w-2xl" />;
 }

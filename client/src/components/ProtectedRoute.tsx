@@ -7,10 +7,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
 	React.useEffect(() => {
 		(async () => {
-			const res = await fetch("/api/user/profile", {
-				method: "GET",
-				credentials: "include",
-			});
+			const res = await fetch("/api/user/profile");
 			if (!res.ok) {
 				Cookies.remove("token", { sameSite: "strict" }); // options set to avoid warning in firefox
 				return navigate("/signin");

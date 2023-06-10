@@ -6,6 +6,7 @@ import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
 import * as Cookies from "cookie";
 import type formidable from "formidable";
+import type { Profile } from "@/types";
 
 export async function userRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req?.method?.toUpperCase()) {
@@ -131,8 +132,9 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 							name: user.name,
 							lastName: user.lastName,
 							email: user.email,
+							username: user.username,
 							profilePicture: user.profilePicture,
-						})
+						} satisfies Profile)
 					);
 				} catch (error) {
 					res.writeHead(500).end();

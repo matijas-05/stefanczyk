@@ -6,12 +6,7 @@ import type { Profile } from "@server/types";
 import { Button } from "./Button";
 
 export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-	const logOut = useMutation(() =>
-		fetch("/api/user/logout", {
-			method: "GET",
-			credentials: "include",
-		})
-	);
+	const logOut = useMutation(() => fetch("/api/user/logout"));
 	const navigate = useNavigate();
 
 	return (

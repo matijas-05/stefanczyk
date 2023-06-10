@@ -29,10 +29,7 @@ export default function EditProfile() {
 	const queryClient = useQueryClient();
 
 	const { data } = useQuery<Profile>(["profile"], () =>
-		fetch("/api/user/profile", {
-			method: "GET",
-			credentials: "include",
-		}).then((res) => res.json())
+		fetch("/api/user/profile").then((res) => res.json())
 	);
 	const updateDetails = useMutation(
 		(data: Inputs) =>
@@ -42,7 +39,6 @@ export default function EditProfile() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(data),
-				credentials: "include",
 			}),
 		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
 	);
@@ -50,7 +46,6 @@ export default function EditProfile() {
 		(data: FormData) =>
 			fetch("/api/user/profile", {
 				method: "POST",
-				credentials: "include",
 				body: data,
 			}),
 		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
