@@ -7,7 +7,7 @@ import { Button } from "./Button";
 
 export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const logOut = useMutation(() =>
-		fetch("http://localhost:3001/api/user/logout", {
+		fetch("/api/user/logout", {
 			method: "GET",
 			credentials: "include",
 		})

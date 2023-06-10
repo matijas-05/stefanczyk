@@ -9,7 +9,7 @@ export default function ConfirmAccount() {
 	const navigate = useNavigate();
 
 	const mutation = useMutation((token: string) =>
-		fetch("http://localhost:3001/api/user/confirm/" + token, {
+		fetch("/api/user/confirm/" + token, {
 			method: "GET",
 		})
 	);

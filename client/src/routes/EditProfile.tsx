@@ -29,14 +29,14 @@ export default function EditProfile() {
 	const queryClient = useQueryClient();
 
 	const { data } = useQuery<Profile>(["profile"], () =>
-		fetch("http://localhost:3001/api/user/profile", {
+		fetch("/api/user/profile", {
 			method: "GET",
 			credentials: "include",
 		}).then((res) => res.json())
 	);
 	const updateDetails = useMutation(
 		(data: Inputs) =>
-			fetch("http://localhost:3001/api/user/profile", {
+			fetch("/api/user/profile", {
 				method: "PATCH",
 				headers: {
 					"Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function EditProfile() {
 	);
 	const updatePicture = useMutation(
 		(data: FormData) =>
-			fetch("http://localhost:3001/api/user/profile", {
+			fetch("/api/user/profile", {
 				method: "POST",
 				credentials: "include",
 				body: data,

@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
 	React.useEffect(() => {
 		(async () => {
-			const res = await fetch("http://localhost:3001/api/user/profile", {
+			const res = await fetch("/api/user/profile", {
 				method: "GET",
 				credentials: "include",
 			});

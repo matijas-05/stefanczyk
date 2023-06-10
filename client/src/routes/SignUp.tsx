@@ -52,7 +52,7 @@ type Inputs = z.infer<typeof schema>;
 
 export default function SignIn() {
 	const mutation = useMutation((data: Inputs) => {
-		return fetch("http://localhost:3001/api/user/register", {
+		return fetch("/api/user/register", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

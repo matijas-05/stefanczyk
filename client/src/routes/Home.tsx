@@ -6,7 +6,7 @@ export default function Home() {
 	const { data: posts } = useQuery<PostType[]>(
 		["posts"],
 		() =>
-			fetch("http://localhost:3001/api/photos", {
+			fetch("/api/photos", {
 				method: "GET",
 				credentials: "include",
 			}).then((res) => res.json()),

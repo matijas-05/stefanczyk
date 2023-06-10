@@ -24,7 +24,7 @@ interface Inputs {
 
 export default function Upload() {
 	const mutation = useMutation(["posts"], (body: FormData) =>
-		fetch("http://localhost:3001/api/photos", { method: "POST", credentials: "include", body })
+		fetch("/api/photos", { method: "POST", credentials: "include", body })
 	);
 
 	const form = useForm<Inputs>();
