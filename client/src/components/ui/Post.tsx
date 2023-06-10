@@ -1,18 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Post } from "@server/types";
 import { Card } from "./Card";
 import { ProfilePicture } from "./Avatar";
 import { Separator } from "./Separator";
 import { TypographySmall } from "./Typography";
 import Carousel from "./Carousel";
+import React from "react";
+import { cn } from "@/lib/utils";
 
-interface Props {
+interface Props extends React.ComponentPropsWithoutRef<typeof Card> {
 	data: Post;
 }
 
-export default function Post({ data }: Props) {
+export default function Post({ data, className, ...props }: Props) {
+	const navigate = useNavigate();
+
 	return (
-		<Card className="flex w-full flex-col gap-3 p-4">
+		<Card className={cn("flex w-full flex-col gap-3 p-4", className)} {...props}>
 			<span className="flex items-center gap-3">
 				<ProfilePicture user={data.user} />
 				<Link to={`/profile/${data.user.username}`}>
@@ -23,12 +27,14 @@ export default function Post({ data }: Props) {
 
 			{data.images.length === 1 ? (
 				<img
-					className="rounded-sm object-contain"
-					src={`http://localhost:3001/api/${data.images[0]}`}
+					className="cursor-pointer rounded-sm object-contain"
+					src={`/api/${data.images[0]}`}
+					onClick={() => navigate(`/post/${data._id}`)}
 				/>
 			) : (
 				<Carousel
-					imageUrls={data.images.map((image) => `http://localhost:3001/api/${image}`)}
+					imageUrls={data.images.map((image) => `/api/${image}`)}
+					postId={data._id}
 				/>
 			)}
 			<Separator />

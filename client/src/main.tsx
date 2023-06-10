@@ -18,6 +18,7 @@ import AuthRoute from "./components/AuthRoute";
 import RootLayout from "./layouts/RootLayout";
 import { TooltipProvider } from "./components/ui/Tooltip";
 import "./styles.css";
+import Post from "./routes/Post";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -40,6 +41,15 @@ const router = createBrowserRouter(
 				/>
 				<Route path="/upload" element={<Upload />} />
 				<Route path="/profile" element={<EditProfile />} />
+
+				<Route
+					path="/post/:post"
+					element={
+						<Suspense>
+							<Post />
+						</Suspense>
+					}
+				/>
 			</Route>
 
 			<Route

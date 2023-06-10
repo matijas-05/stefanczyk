@@ -46,9 +46,7 @@ AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
 const ProfilePicture = ({ user }: { user: Profile | undefined }) => (
 	<Avatar>
-		{user?.profilePicture && (
-			<AvatarImage src={"http://localhost:3001/api/" + user.profilePicture} />
-		)}
+		{user?.profilePicture && <AvatarImage src={"/api/" + user.profilePicture} />}
 		<AvatarFallback>
 			{user?.name.charAt(0).toLocaleUpperCase()}
 			{user?.lastName.charAt(0).toLocaleUpperCase()}

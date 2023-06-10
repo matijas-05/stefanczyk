@@ -2,13 +2,16 @@ import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
-export default function Carousel({ imageUrls }: { imageUrls: string[] }) {
+export default function Carousel({ imageUrls, postId }: { imageUrls: string[]; postId: string }) {
 	const [emblaRef, emblaApi] = useEmblaCarousel({ duration: 20 });
 
 	const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
 	const [nextBtnEnabled, setNextBtnEnabled] = useState(true);
 	const [selected, setSelected] = useState(0);
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!emblaApi) {
@@ -36,8 +39,9 @@ export default function Carousel({ imageUrls }: { imageUrls: string[] }) {
 					{imageUrls.map((url, i) => (
 						<img
 							key={i}
-							className="relative min-w-0 flex-[0_0_100%] rounded-sm"
+							className="relative min-w-0 flex-[0_0_100%] cursor-pointer rounded-sm"
 							src={url}
+							onClick={() => navigate(`/post/${postId}`)}
 						/>
 					))}
 				</div>
