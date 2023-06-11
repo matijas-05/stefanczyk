@@ -14,12 +14,24 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 		case "GET": {
 			if (req.url === "/api/photos") {
 				const posts = await PostModel.find()
-					.sort({ lastChange: "desc" })
 					.populate("user", "-password -confirmed")
 					.populate("tags");
 
+				const postSorted = posts.sort((a, b) => {
+					const aPopularity = a.tags.reduce(
+						(acc, tag) => acc + (tag as unknown as Tag).popularity,
+						0
+					);
+					const bPopularity = b.tags.reduce(
+						(acc, tag) => acc + (tag as unknown as Tag).popularity,
+						0
+					);
+
+					return bPopularity - aPopularity;
+				});
+
 				res.writeHead(200, { "Content-Type": "application/json" });
-				res.end(JSON.stringify(posts));
+				res.end(JSON.stringify(postSorted));
 			} else if (req.url?.startsWith("/api/photos/user/")) {
 				const username = req.url.split("/api/photos/user/")[1];
 				const userId = await UserModel.findOne({ username }).select("_id");
@@ -140,11 +152,11 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					return;
 				}
 
-				const postTags = post.tags.map((tag) => (tag as unknown as Tag).name);
-				const removedTags = postTags.filter((tag) => !data.tags.includes(tag));
+				const postTagNames = post.tags.map((tag) => (tag as unknown as Tag).name);
+				const removedTagNames = postTagNames.filter((tag) => !data.tags.includes(tag));
 				const tagIds = await getTagIdsFromTagNames(data.tags, false);
 
-				for (const tagName of removedTags) {
+				for (const tagName of removedTagNames) {
 					const tag = await TagModel.findOne({ name: tagName });
 
 					if (tag!.popularity > 1) {
