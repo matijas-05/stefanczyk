@@ -47,7 +47,7 @@ export default function Post({ data, className, ...props }: Props) {
 						onClick={async () => {
 							await deleteMutation.mutateAsync();
 							if (location.pathname.startsWith("/post")) {
-								navigate("/");
+								navigate(-1);
 							}
 						}}
 					/>

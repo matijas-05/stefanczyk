@@ -7,8 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import type { Profile } from "@server/types";
 
 export default function Nav() {
-	const { data: currentUser } = useQuery<Profile>(["currentUser"], () =>
-		fetch("/api/user/profile").then((res) => res.json())
+	const { data: currentUser } = useQuery<Profile>(
+		["profile"],
+		() => fetch("/api/user/profile").then((res) => res.json()),
+		{ refetchOnWindowFocus: false }
 	);
 
 	return (

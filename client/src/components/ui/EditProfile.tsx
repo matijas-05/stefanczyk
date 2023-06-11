@@ -1,6 +1,6 @@
 import * as React from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	Form,
 	FormControl,
@@ -9,14 +9,13 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/Form";
-import { TypographyH2 } from "@/components/ui/Typography";
 import { Input } from "@/components/ui/Input";
 import type { Profile } from "@server/types";
 import { Button } from "@/components/ui/Button";
 import Dropzone from "@/components/ui/Dropzone";
 import { cn } from "@/lib/utils";
 import { useDropzone } from "react-dropzone";
-import { Card } from "@/components/ui/Card";
+import { Dialog, DialogContent, DialogHeader } from "./Dialog";
 
 interface Inputs {
 	name: string;
@@ -25,12 +24,14 @@ interface Inputs {
 }
 const regex = /^\S+$/;
 
-export default function EditProfile() {
-	const queryClient = useQueryClient();
+interface Props {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+	profile: Profile;
+}
 
-	const { data } = useQuery<Profile>(["profile"], () =>
-		fetch("/api/user/profile").then((res) => res.json())
-	);
+export default function EditProfileDialog(props: Props) {
+	const queryClient = useQueryClient();
 	const updateDetails = useMutation(
 		(data: Inputs) =>
 			fetch("/api/user/profile", {
@@ -40,7 +41,7 @@ export default function EditProfile() {
 				},
 				body: JSON.stringify(data),
 			}),
-		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
+		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-posts"] }) }
 	);
 	const updatePicture = useMutation(
 		(data: FormData) =>
@@ -48,11 +49,11 @@ export default function EditProfile() {
 				method: "POST",
 				body: data,
 			}),
-		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
+		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-posts"] }) }
 	);
 
 	const form = useForm<Inputs>({
-		defaultValues: React.useMemo(() => data, [data]),
+		defaultValues: React.useMemo(() => props.profile, [props.profile]),
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		await updateDetails.mutateAsync(data);
@@ -61,7 +62,10 @@ export default function EditProfile() {
 			const formData = new FormData();
 			formData.set("photo", data.photo);
 			await updatePicture.mutateAsync(formData);
+			form.resetField("photo");
 		}
+
+		props.onOpenChange(false);
 	};
 
 	const dropzone = useDropzone({
@@ -74,14 +78,14 @@ export default function EditProfile() {
 	});
 
 	React.useEffect(() => {
-		form.reset(data);
-	}, [data, form]);
+		form.reset(props.profile);
+	}, [props.profile, form]);
 
 	return (
-		<div className="grid place-content-center">
-			<TypographyH2 className="mb-4">Edit profile</TypographyH2>
+		<Dialog open={props.open} onOpenChange={props.onOpenChange}>
+			<DialogContent className="w-fit">
+				<DialogHeader className="text-xl font-bold">Edit profile</DialogHeader>
 
-			<Card className="w-fit p-4">
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
@@ -163,7 +167,7 @@ export default function EditProfile() {
 						</Button>
 					</form>
 				</Form>
-			</Card>
-		</div>
+			</DialogContent>
+		</Dialog>
 	);
 }
