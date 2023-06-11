@@ -21,10 +21,10 @@ const postHistorySchema = new mongoose.Schema<ImageHistory>({
 const postSchema = new mongoose.Schema<Post>({
 	user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 	images: { type: [String], required: true },
-	description: { type: String, required: true },
+	description: { type: String, required: false },
 	history: { type: [postHistorySchema], required: true },
 	lastChange: { type: Date, required: true },
-	tags: { type: [mongoose.Schema.Types.ObjectId], required: true, ref: "Tag" },
+	tags: { type: [mongoose.Schema.Types.ObjectId], required: false, ref: "Tag" },
 });
 
 export const PostModel = mongoose.model<Post>("Post", postSchema);

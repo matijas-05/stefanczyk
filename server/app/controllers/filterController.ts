@@ -1,4 +1,4 @@
-import sharp, { AvailableFormatInfo, FormatEnum } from "sharp";
+import sharp, { type AvailableFormatInfo, type FormatEnum } from "sharp";
 
 export function crop(image: sharp.Sharp, region: sharp.Region) {
 	image.extract(region);
@@ -33,5 +33,5 @@ export function negate(image: sharp.Sharp) {
 }
 
 export function tint(image: sharp.Sharp, r: number, g: number, b: number) {
-	image.tint({ r: r, g: g, b: b });
+	image.tint({ r, g, b });
 }

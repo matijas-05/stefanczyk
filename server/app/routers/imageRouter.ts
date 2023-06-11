@@ -1,9 +1,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs/promises";
 import formidable from "formidable";
-import * as tagModel from "../models/tagModel";
+import { TagModel } from "../models/tagModel";
 import { getFullPath, parseFormData } from "../controllers/fileController";
-import { parseJson } from "../controllers/jsonController";
 import { verifyToken } from "../controllers/userController";
 import { UserModel } from "../models/userModel";
 import { PostModel, type ImageHistory } from "../models/postModel";
@@ -14,7 +13,8 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 			if (req.url === "/api/photos") {
 				const posts = await PostModel.find()
 					.sort({ lastChange: -1 })
-					.populate("user", "-password -confirmed");
+					.populate("user", "-password -confirmed")
+					.populate("tags");
 
 				res.writeHead(200, { "Content-Type": "application/json" });
 				res.end(JSON.stringify(posts));
@@ -28,22 +28,19 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 				const posts = await PostModel.find({ user: userId })
 					.sort({ lastChange: -1 })
-					.populate("user", "-password -confirmed");
+					.populate("user", "-password -confirmed")
+					.populate("tags");
 
 				res.writeHead(200, { "Content-Type": "application/json" });
 				res.end(JSON.stringify(posts));
 			} else {
 				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)/g) ?? []);
-				const getPhotoTags = Array.from(
-					req.url?.matchAll(/\/api\/photos\/(\w+)\/tags/g) ?? []
-				);
 
-				if (getPhoto.length > 0 && getPhotoTags.length === 0) {
+				if (getPhoto.length > 0) {
 					const id = getPhoto[0][1];
-					const post = await PostModel.findById(id).populate(
-						"user",
-						"-password -confirmed"
-					);
+					const post = await PostModel.findById(id)
+						.populate("user", "-password -confirmed")
+						.populate("tags");
 					if (!post) {
 						res.writeHead(404).end();
 						return;
@@ -51,17 +48,6 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 					res.writeHead(200, { "Content-Type": "application/json" });
 					res.end(JSON.stringify(post));
-				} else if (getPhotoTags.length > 0) {
-					const id = getPhotoTags[0][1];
-
-					const image = await PostModel.findById(id).populate("tags");
-					if (!image) {
-						res.writeHead(404).end();
-						return;
-					}
-
-					res.writeHead(200, { "Content-Type": "application/json" });
-					res.end(JSON.stringify(image?.tags));
 				}
 			}
 			break;
@@ -88,12 +74,34 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					images.push(file.path);
 				}
 
+				const tagNames = JSON.parse(data.fields.tags as string) as string[];
+				const tags = [];
+
+				for (const tagName of tagNames) {
+					const tag = await TagModel.findOne({ name: tagName });
+
+					if (tag) {
+						await tag.updateOne({
+							$inc: { popularity: 1 },
+						});
+						tags.push(tag);
+					} else {
+						tags.push(
+							await TagModel.create({
+								name: tagName,
+								popularity: 1,
+							})
+						);
+					}
+				}
+
 				await PostModel.create({
 					user: user!._id,
 					images,
 					description: data.fields.description as string,
 					lastChange: new Date(),
 					history: [{ status: "original", timestamp: new Date() } satisfies ImageHistory],
+					tags: tags.map((tag) => tag._id),
 				});
 
 				res.writeHead(201).end();
@@ -118,6 +126,16 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					return;
 				}
 
+				for (const tagId of post.tags) {
+					const tag = await TagModel.findById(tagId);
+
+					if (tag!.popularity > 1) {
+						await TagModel.updateOne({ _id: tagId }, { $inc: { popularity: -1 } });
+					} else {
+						await TagModel.findByIdAndDelete(tagId);
+					}
+				}
+
 				await Promise.all(post.images.map((image) => fs.rm(getFullPath(image))));
 				res.writeHead(204).end();
 			}
@@ -126,73 +144,73 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 		}
 
 		case "PATCH": {
-			const editPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)$/g) ?? []);
-			const addTagToPhoto = Array.from(
-				req.url?.matchAll(/\/api\/photos\/(\w+)\/tags$/g) ?? []
-			);
-			const addTagsToPhoto = Array.from(
-				req.url?.matchAll(/\/api\/photos\/(\w+)\/tags\/mass$/g) ?? []
-			);
+			// const editPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)$/g) ?? []);
+			// const addTagToPhoto = Array.from(
+			// 	req.url?.matchAll(/\/api\/photos\/(\w+)\/tags$/g) ?? []
+			// );
+			// const addTagsToPhoto = Array.from(
+			// 	req.url?.matchAll(/\/api\/photos\/(\w+)\/tags\/mass$/g) ?? []
+			// );
 
-			if (editPhoto.length > 0) {
-				const id = editPhoto[0][1];
-				const data = await parseFormData(req);
-				const file = data.files.files as formidable.File;
+			// if (editPhoto.length > 0) {
+			// 	const id = editPhoto[0][1];
+			// 	const data = await parseFormData(req);
+			// 	const file = data.files.files as formidable.File;
 
-				const image = await ImageModel.findByIdAndUpdate(id, {
-					$set: {
-						url: file.path,
-						lastChange: new Date(),
-					},
-					$push: {
-						history: {
-							status: "edited",
-							timestamp: new Date(),
-						} satisfies ImageHistory,
-					},
-				});
-				if (!image) {
-					res.writeHead(404).end();
-					return;
-				}
+			// 	const image = await ImageModel.findByIdAndUpdate(id, {
+			// 		$set: {
+			// 			url: file.path,
+			// 			lastChange: new Date(),
+			// 		},
+			// 		$push: {
+			// 			history: {
+			// 				status: "edited",
+			// 				timestamp: new Date(),
+			// 			} satisfies ImageHistory,
+			// 		},
+			// 	});
+			// 	if (!image) {
+			// 		res.writeHead(404).end();
+			// 		return;
+			// 	}
 
-				await fs.rm(getFullPath(image.url.toString()));
-				res.writeHead(204).end();
-			} else if (addTagToPhoto.length > 0) {
-				for (const match of addTagToPhoto) {
-					const imageId = parseInt(match[1]);
-					const image = imageModel.get(imageId);
-					const tag = await parseJson<tagModel.Tag>(req);
+			// 	await fs.rm(getFullPath(image.url.toString()));
+			// 	res.writeHead(204).end();
+			// } else if (addTagToPhoto.length > 0) {
+			// 	for (const match of addTagToPhoto) {
+			// 		const imageId = parseInt(match[1]);
+			// 		const image = imageModel.get(imageId);
+			// 		const tag = await parseJson<tagModel.Tag>(req);
 
-					if (image && tag) {
-						try {
-							imageModel.addTag(imageId, tag);
-							res.writeHead(204).end();
-						} catch (error) {
-							res.writeHead(409).end();
-						}
-					} else {
-						res.writeHead(404).end();
-					}
-				}
-			} else if (addTagsToPhoto.length > 0) {
-				for (const match of addTagsToPhoto) {
-					const imageId = parseInt(match[1]);
-					const image = imageModel.get(imageId);
-					const tags = await parseJson<tagModel.Tag[]>(req);
+			// 		if (image && tag) {
+			// 			try {
+			// 				imageModel.addTag(imageId, tag);
+			// 				res.writeHead(204).end();
+			// 			} catch (error) {
+			// 				res.writeHead(409).end();
+			// 			}
+			// 		} else {
+			// 			res.writeHead(404).end();
+			// 		}
+			// 	}
+			// } else if (addTagsToPhoto.length > 0) {
+			// 	for (const match of addTagsToPhoto) {
+			// 		const imageId = parseInt(match[1]);
+			// 		const image = imageModel.get(imageId);
+			// 		const tags = await parseJson<tagModel.Tag[]>(req);
 
-					if (image && tags) {
-						try {
-							imageModel.addTags(imageId, tags);
-							res.writeHead(204).end();
-						} catch (error) {
-							res.writeHead(409).end();
-						}
-					} else {
-						res.writeHead(404).end();
-					}
-				}
-			}
+			// 		if (image && tags) {
+			// 			try {
+			// 				imageModel.addTags(imageId, tags);
+			// 				res.writeHead(204).end();
+			// 			} catch (error) {
+			// 				res.writeHead(409).end();
+			// 			}
+			// 		} else {
+			// 			res.writeHead(404).end();
+			// 		}
+			// 	}
+			// }
 			break;
 		}
 	}

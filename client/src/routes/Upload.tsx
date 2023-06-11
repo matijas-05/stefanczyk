@@ -19,7 +19,7 @@ import { useForm } from "react-hook-form";
 interface Inputs {
 	files: File[];
 	description: string;
-	tags: string[];
+	tags: string;
 }
 
 export default function Upload() {
@@ -42,7 +42,9 @@ export default function Upload() {
 		const formData = new FormData();
 		data.files.forEach((file) => formData.append("photos", file));
 		formData.set("description", data.description);
-		formData.set("tags", JSON.stringify([]));
+
+		const tags = data.tags.trim().includes(" ") ? data.tags.trim().split(" ") : [data.tags];
+		formData.set("tags", data.tags !== "" ? JSON.stringify(tags) : JSON.stringify([]));
 
 		await mutation.mutateAsync(formData);
 		form.reset({ files: [] });
@@ -101,7 +103,25 @@ export default function Upload() {
 									<FormMessage />
 								</FormItem>
 							)}
-							rules={{ required: "You must provide a description" }}
+						/>
+
+						<FormField
+							control={form.control}
+							name="tags"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Tags</FormLabel>
+									<FormControl>
+										<Textarea
+											className="w-full rounded border p-2"
+											minRows={2}
+											maxRows={5}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
 
 						<Button type="submit" className="mt-2 w-full" loading={mutation.isLoading}>

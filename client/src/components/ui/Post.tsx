@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { Post, Profile } from "@server/types";
 import { Card } from "./Card";
 import { ProfilePicture } from "./Avatar";
@@ -17,7 +17,6 @@ interface Props extends React.ComponentPropsWithoutRef<typeof Card> {
 
 export default function Post({ data, className, ...props }: Props) {
 	const navigate = useNavigate();
-	const location = useLocation();
 
 	const queryClient = useQueryClient();
 	const { data: currentUser } = useQuery<Profile>(
@@ -46,7 +45,7 @@ export default function Post({ data, className, ...props }: Props) {
 						loading={deleteMutation.isLoading}
 						onClick={async () => {
 							await deleteMutation.mutateAsync();
-							if (location.pathname.startsWith("/post")) {
+							if (window.location.pathname.startsWith("/post")) {
 								navigate(-1);
 							}
 						}}
@@ -67,9 +66,24 @@ export default function Post({ data, className, ...props }: Props) {
 					postId={data._id}
 				/>
 			)}
-			<Separator />
 
-			<TypographySmall className="font-normal">{data.description}</TypographySmall>
+			{(data.description || data.tags.length > 0) && (
+				<>
+					<Separator />
+					<div>
+						<TypographySmall className="font-normal">
+							{data.description}
+						</TypographySmall>
+						<div className="flex gap-2">
+							{data.tags.map((tag, i) => (
+								<Link key={i} to={`/search?tags=${encodeURIComponent(tag.name)}`}>
+									<TypographySmall>{tag.name}</TypographySmall>
+								</Link>
+							))}
+						</div>
+					</div>
+				</>
+			)}
 		</Card>
 	);
 }
