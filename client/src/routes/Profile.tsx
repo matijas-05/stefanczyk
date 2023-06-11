@@ -6,39 +6,43 @@ import { Separator } from "@/components/ui/Separator";
 import type { Post, Profile } from "@server/types";
 import { useQuery } from "@tanstack/react-query";
 import { Layers } from "lucide-react";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function Profile() {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const username = useParams<{ username: string }>().username;
 
-	const { data: posts } = useQuery<Post[]>(
+	const posts = useQuery<Post[]>(
 		["user-posts"],
 		() => fetch(`/api/photos/user/${username}`).then((res) => res.json()),
 		{ suspense: true, cacheTime: 0 }
 	);
-
-	const postUser = posts![0].user;
+	const postUser = posts.data![0].user;
 
 	const { data: currentUser } = useQuery<Profile>(
 		["profile"],
 		() => fetch("/api/user/profile").then((res) => res.json()),
-		{ refetchOnWindowFocus: false, suspense: true, cacheTime: 0 }
+		{ refetchOnWindowFocus: false, suspense: true }
 	);
 
 	const [editProfile, setEditProfile] = useState(false);
+	useEffect(() => {
+		posts.refetch();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [location]);
 
 	return (
 		<>
 			<Card className="mx-auto flex w-[50vw] flex-col gap-8 p-6">
 				<div className="flex items-center gap-8">
-					<ProfilePicture className="h-36 w-36 text-5xl" user={posts![0].user} />
+					<ProfilePicture className="h-36 w-36 text-5xl" user={postUser} />
 
 					<div className="flex flex-col gap-4">
 						<span className="flex items-center gap-4 text-2xl">
-							{username}
-							{currentUser?.username === username && (
+							{postUser.username}
+							{currentUser?.username === postUser.username && (
 								<Button variant={"secondary"} onClick={() => setEditProfile(true)}>
 									Edit profile
 								</Button>
@@ -53,7 +57,7 @@ export default function Profile() {
 				<Separator />
 
 				<div className="flex flex-wrap gap-4">
-					{posts!.map((post, i) => (
+					{posts.data!.map((post, i) => (
 						<div key={i} className="relative">
 							<img
 								className="h-32 w-32 cursor-pointer rounded object-cover"

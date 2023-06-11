@@ -50,11 +50,14 @@ const ProfilePicture = ({
 	...props
 }: { user: Profile | undefined } & React.ComponentPropsWithoutRef<typeof Avatar>) => (
 	<Avatar className={className} {...props}>
-		{user?.profilePicture && <AvatarImage src={"/api/" + user.profilePicture} />}
-		<AvatarFallback>
-			{user?.name.charAt(0).toLocaleUpperCase()}
-			{user?.lastName.charAt(0).toLocaleUpperCase()}
-		</AvatarFallback>
+		{user?.profilePicture ? (
+			<AvatarImage src={"/api/" + user.profilePicture} />
+		) : (
+			<AvatarFallback>
+				{user?.name.charAt(0).toLocaleUpperCase()}
+				{user?.lastName.charAt(0).toLocaleUpperCase()}
+			</AvatarFallback>
+		)}
 	</Avatar>
 );
 
