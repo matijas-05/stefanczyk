@@ -3,7 +3,7 @@ import type { Post, Profile } from "@server/types";
 import { Card } from "./Card";
 import { ProfilePicture } from "./Avatar";
 import { Separator } from "./Separator";
-import { TypographySmall } from "./Typography";
+import { TypographyMuted, TypographySmall } from "./Typography";
 import Carousel from "./Carousel";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,33 @@ import EditPost from "./EditPost";
 
 interface Props extends React.ComponentPropsWithoutRef<typeof Card> {
 	post: Post;
+}
+
+function getRelativeTime(date: Date) {
+	const diff = Date.now() - date.getTime();
+	const seconds = Math.floor(diff / 1000);
+	const minutes = Math.floor(seconds / 60);
+	const hours = Math.floor(minutes / 60);
+	const days = Math.floor(hours / 24);
+	const weeks = Math.floor(days / 7);
+	const months = Math.floor(days / 30);
+	const years = Math.floor(days / 365);
+
+	if (seconds < 60) {
+		return "Just now";
+	} else if (minutes < 60) {
+		return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+	} else if (hours < 24) {
+		return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+	} else if (days < 7) {
+		return `${days} day${days === 1 ? "" : "s"} ago`;
+	} else if (weeks < 4) {
+		return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
+	} else if (months < 12) {
+		return `${months} month${months === 1 ? "" : "s"} ago`;
+	} else {
+		return `${years} year${years === 1 ? "" : "s"} ago`;
+	}
 }
 
 export default function Post({ post, className, ...props }: Props) {
@@ -52,6 +79,7 @@ export default function Post({ post, className, ...props }: Props) {
 				<Link to={`/profile/${post.user.username}`}>
 					<TypographySmall>{post.user.username}</TypographySmall>
 				</Link>
+				<TypographyMuted>{getRelativeTime(new Date(post.lastChange))}</TypographyMuted>
 
 				{currentUser?.username === post.user.username && (
 					<div className="ml-auto flex gap-2">

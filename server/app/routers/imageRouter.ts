@@ -170,6 +170,11 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					$set: {
 						description: data.description,
 						tags: tagIds,
+						lastChange: new Date(),
+						history: [
+							...post.history,
+							{ status: "edited", timestamp: new Date() } satisfies ImageHistory,
+						],
 					},
 				});
 
