@@ -18,6 +18,7 @@ import { useDropzone } from "react-dropzone";
 import { Dialog, DialogContent, DialogHeader } from "./Dialog";
 
 interface Inputs {
+	username: string;
 	name: string;
 	lastName: string;
 	photo?: File;
@@ -41,7 +42,11 @@ export default function EditProfileDialog(props: Props) {
 				},
 				body: JSON.stringify(data),
 			}),
-		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-posts"] }) }
+		{
+			onSuccess: () =>
+				props.profile.username === form.getValues().username &&
+				queryClient.invalidateQueries({ queryKey: ["user-posts"] }),
+		}
 	);
 	const updatePicture = useMutation(
 		(data: FormData) =>
@@ -49,14 +54,24 @@ export default function EditProfileDialog(props: Props) {
 				method: "POST",
 				body: data,
 			}),
-		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["user-posts"] }) }
+		{
+			onSuccess: () =>
+				props.profile.username === form.getValues().username &&
+				queryClient.invalidateQueries({ queryKey: ["user-posts"] }),
+		}
 	);
 
 	const form = useForm<Inputs>({
 		defaultValues: React.useMemo(() => props.profile, [props.profile]),
 	});
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
-		await updateDetails.mutateAsync(data);
+		const res = await updateDetails.mutateAsync(data);
+		if (res.status === 409) {
+			form.setError("username", {
+				message: "This username is already taken",
+			});
+			return;
+		}
 
 		if (data.photo) {
 			const formData = new FormData();
@@ -66,6 +81,9 @@ export default function EditProfileDialog(props: Props) {
 		}
 
 		props.onOpenChange(false);
+		if (props.profile.username !== data.username) {
+			window.location.pathname = `/profile/${data.username}`;
+		}
 	};
 
 	const dropzone = useDropzone({
@@ -91,6 +109,27 @@ export default function EditProfileDialog(props: Props) {
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="flex w-64 flex-col gap-2"
 					>
+						<FormField
+							control={form.control}
+							name="username"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Username</FormLabel>
+									<FormControl>
+										<Input type="text" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+							rules={{
+								pattern: {
+									value: /^[a-zA-Z0-9_]+$/,
+									message:
+										"Username must contain only letters, numbers and underscores",
+								},
+							}}
+						/>
+
 						<FormField
 							control={form.control}
 							name="name"

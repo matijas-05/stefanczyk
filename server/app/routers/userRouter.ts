@@ -173,16 +173,27 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 						return;
 					}
 
-					const user = await UserModel.findOne({ email: payload.email });
-					const newUser = await parseJson<Pick<User, "name" | "lastName">>(req);
+					const newUser = await parseJson<
+						Pick<Profile, "name" | "lastName" | "username">
+					>(req);
 					if (!newUser) {
 						res.writeHead(400).end();
 						return;
 					}
 
+					const conflict = await UserModel.findOne({ username: newUser.username });
+					if (conflict && conflict.email !== payload.email) {
+						res.writeHead(409).end();
+						return;
+					}
+
 					await UserModel.updateOne(
 						{ email: payload.email },
-						{ name: newUser.name, lastName: newUser.lastName }
+						{
+							name: newUser.name,
+							lastName: newUser.lastName,
+							username: newUser.username,
+						}
 					);
 					res.writeHead(200).end();
 				} catch (error) {
