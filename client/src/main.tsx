@@ -10,16 +10,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Home from "./routes/Home";
 import Upload from "./routes/Upload";
-import EditProfile from "./routes/EditProfile";
 import SignIn from "./routes/SignIn";
 import SignUp from "./routes/SignUp";
 import ConfirmAccount from "./routes/ConfirmAccount";
 import AuthRoute from "./components/AuthRoute";
 import RootLayout from "./layouts/RootLayout";
 import { TooltipProvider } from "./components/ui/Tooltip";
-import "./styles.css";
 import Post from "./routes/Post";
 import Profile from "./routes/Profile";
+import "./styles.css";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -41,7 +40,6 @@ const router = createBrowserRouter(
 					}
 				/>
 				<Route path="/upload" element={<Upload />} />
-				<Route path="/profile" element={<EditProfile />} />
 
 				<Route
 					path="/post/:post"

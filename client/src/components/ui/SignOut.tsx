@@ -2,10 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Profile } from "@server/types";
 import { Button } from "./Button";
 
-export default function Profile({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+export default function SignOut({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
 	const logOut = useMutation(() => fetch("/api/user/logout"));
 	const navigate = useNavigate();
 

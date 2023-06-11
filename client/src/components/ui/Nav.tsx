@@ -1,21 +1,31 @@
 import { Link } from "react-router-dom";
+import { Home, Upload, User } from "lucide-react";
 import { Button } from "./Button";
 import Logo from "./Logo";
-import { Home, Upload, User } from "lucide-react";
-import Profile from "./Profile";
+import SignOut from "./SignOut";
+import { useQuery } from "@tanstack/react-query";
+import type { Profile } from "@server/types";
 
 export default function Nav() {
+	const { data: currentUser } = useQuery<Profile>(["currentUser"], () =>
+		fetch("/api/user/profile").then((res) => res.json())
+	);
+
 	return (
 		<nav className="flex h-full flex-col items-center gap-2 border-r border-r-border px-12 pb-6 pt-10">
 			<Logo className="text-4xl" />
 
-			<ul className="w-full space-y-1">
+			<ul className="w-full space-y-2">
 				<NavItem href="/" label="Home" icon={<Home />} />
 				<NavItem href="/upload" label="Upload" icon={<Upload />} />
-				<NavItem href="/profile" label="Profile" icon={<User />} />
+				<NavItem
+					href={`/profile/${currentUser?.username}`}
+					label="Profile"
+					icon={<User />}
+				/>
 			</ul>
 
-			<Profile className="mt-auto" />
+			<SignOut className="mt-auto" />
 		</nav>
 	);
 }

@@ -26,7 +26,7 @@ export default function Upload() {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
 		(body: FormData) => fetch("/api/photos", { method: "POST", body }),
-		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile"] }) }
+		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile", "posts"] }) }
 	);
 
 	const form = useForm<Inputs>();
