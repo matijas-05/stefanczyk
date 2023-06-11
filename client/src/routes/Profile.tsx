@@ -15,7 +15,7 @@ export default function Profile() {
 	const username = useParams<{ username: string }>().username;
 
 	const posts = useQuery<Post[]>(
-		["user-posts"],
+		[username],
 		() => fetch(`/api/photos/user/${username}`).then((res) => res.json()),
 		{ suspense: true, cacheTime: 0 }
 	);

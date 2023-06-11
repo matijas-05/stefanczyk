@@ -1,5 +1,5 @@
 GET http://localhost:3001/api/photos HTTP/1.1
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjUwNTI2MSwiZXhwIjoxNjg3MTEwMDYxfQ.WICrI7hBbztp0O4AHYdFhDRed-KLk81H1i5Eteyk3bw
 
 ###
 
@@ -9,8 +9,8 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluL
 ###
 
 POST http://localhost:3001/api/photos HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjUwNTI2MSwiZXhwIjoxNjg3MTEwMDYxfQ.WICrI7hBbztp0O4AHYdFhDRed-KLk81H1i5Eteyk3bw
 Content-Type: multipart/form-data; boundary=FormBoundary1234
-Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
 
 --FormBoundary1234
 Content-Disposition: form-data; name="photos"; filename="input.jpg"
@@ -19,10 +19,16 @@ Content-Type: image/jpeg
 < ./input.jpg
 
 --FormBoundary1234
+Content-Disposition: form-data; name="description"
+Content-Type: text/plain
+
+description
+
+--FormBoundary1234
 Content-Disposition: form-data; name="tags"
 Content-Type: application/json
 
-[]
+["#dupa", "#sraka"]
 --FormBoundary1234--
 
 ###
@@ -32,42 +38,15 @@ Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluL
 
 ###
 
-# PATCH http://localhost:3001/api/photos/64825628456233deb7e3606d HTTP/1.1
-# Content-Type: multipart/form-data; boundary=FormBoundary1234
-# Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjI1OTgwNSwiZXhwIjoxNjg2MzQ2MjA1fQ.oCQtYY9lXM8VKDL99fTKyM9bkGkU-ROv3qWZv3S1GHU
-
-# --FormBoundary1234
-# Content-Disposition: form-data; name="photo"; filename="input_copy.webp"
-# Content-Type: image/jpeg
-
-# < ./input_copy.webp
-# --FormBoundary1234--
-
-###
-
-PATCH http://localhost:3001/api/photos/6482348f63ebc76f4ae62537/tags HTTP/1.1
+PATCH http://localhost:3001/api/photos/6482348f63ebc76f4ae62537 HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjUwNTI2MSwiZXhwIjoxNjg3MTEwMDYxfQ.WICrI7hBbztp0O4AHYdFhDRed-KLk81H1i5Eteyk3bw
 Content-Type: application/json
 
 {
-	"name": "#new-tag",
-	"popularity": 1233
+	"description": "new description",
+	"tags": ["#new-tag", "#new-tag2"]
 }
 
-###
-
-PATCH http://localhost:3001/api/photos/0/tags/mass HTTP/1.1
-Content-Type: application/json
-
-[
-	{
-		"name": "#new-tag",
-		"popularity": 1233
-	},
-	{
-		"name": "#new-tag2",
-		"popularity": 1233
-	}
-]
 
 ###
 

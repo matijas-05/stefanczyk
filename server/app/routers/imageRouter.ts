@@ -6,6 +6,8 @@ import { getFullPath, parseFormData } from "../controllers/fileController";
 import { verifyToken } from "../controllers/userController";
 import { UserModel } from "../models/userModel";
 import { PostModel, type ImageHistory } from "../models/postModel";
+import { parseJson } from "../controllers/jsonController";
+import type { Tag } from "@/types";
 
 export async function imageRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req.method?.toUpperCase()) {
@@ -74,26 +76,9 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					images.push(file.path);
 				}
 
-				const tagNames = JSON.parse(data.fields.tags as string) as string[];
-				const tags = [];
-
-				for (const tagName of tagNames) {
-					const tag = await TagModel.findOne({ name: tagName });
-
-					if (tag) {
-						await tag.updateOne({
-							$inc: { popularity: 1 },
-						});
-						tags.push(tag);
-					} else {
-						tags.push(
-							await TagModel.create({
-								name: tagName.startsWith("#") ? tagName : `#${tagName}`,
-								popularity: 1,
-							})
-						);
-					}
-				}
+				const tagIds = await getTagIdsFromTagNames(
+					JSON.parse(data.fields.tags as string) as string[]
+				);
 
 				await PostModel.create({
 					user: user!._id,
@@ -101,7 +86,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					description: data.fields.description as string,
 					lastChange: new Date(),
 					history: [{ status: "original", timestamp: new Date() } satisfies ImageHistory],
-					tags: tags.map((tag) => tag._id),
+					tags: tagIds,
 				});
 
 				res.writeHead(201).end();
@@ -144,74 +129,66 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 		}
 
 		case "PATCH": {
-			// const editPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)$/g) ?? []);
-			// const addTagToPhoto = Array.from(
-			// 	req.url?.matchAll(/\/api\/photos\/(\w+)\/tags$/g) ?? []
-			// );
-			// const addTagsToPhoto = Array.from(
-			// 	req.url?.matchAll(/\/api\/photos\/(\w+)\/tags\/mass$/g) ?? []
-			// );
+			if (req.url?.startsWith("/api/photos/")) {
+				const id = req.url.split("/api/photos/")[1];
+				const data = await parseJson<{ description: string; tags: string[] }>(req);
 
-			// if (editPhoto.length > 0) {
-			// 	const id = editPhoto[0][1];
-			// 	const data = await parseFormData(req);
-			// 	const file = data.files.files as formidable.File;
+				const post = await PostModel.findById(id).populate("tags");
 
-			// 	const image = await ImageModel.findByIdAndUpdate(id, {
-			// 		$set: {
-			// 			url: file.path,
-			// 			lastChange: new Date(),
-			// 		},
-			// 		$push: {
-			// 			history: {
-			// 				status: "edited",
-			// 				timestamp: new Date(),
-			// 			} satisfies ImageHistory,
-			// 		},
-			// 	});
-			// 	if (!image) {
-			// 		res.writeHead(404).end();
-			// 		return;
-			// 	}
+				if (!post) {
+					res.writeHead(404).end();
+					return;
+				}
 
-			// 	await fs.rm(getFullPath(image.url.toString()));
-			// 	res.writeHead(204).end();
-			// } else if (addTagToPhoto.length > 0) {
-			// 	for (const match of addTagToPhoto) {
-			// 		const imageId = parseInt(match[1]);
-			// 		const image = imageModel.get(imageId);
-			// 		const tag = await parseJson<tagModel.Tag>(req);
+				const postTags = post.tags.map((tag) => (tag as unknown as Tag).name);
+				const removedTags = postTags.filter((tag) => !data.tags.includes(tag));
+				const tagIds = await getTagIdsFromTagNames(data.tags, false);
 
-			// 		if (image && tag) {
-			// 			try {
-			// 				imageModel.addTag(imageId, tag);
-			// 				res.writeHead(204).end();
-			// 			} catch (error) {
-			// 				res.writeHead(409).end();
-			// 			}
-			// 		} else {
-			// 			res.writeHead(404).end();
-			// 		}
-			// 	}
-			// } else if (addTagsToPhoto.length > 0) {
-			// 	for (const match of addTagsToPhoto) {
-			// 		const imageId = parseInt(match[1]);
-			// 		const image = imageModel.get(imageId);
-			// 		const tags = await parseJson<tagModel.Tag[]>(req);
+				for (const tagName of removedTags) {
+					const tag = await TagModel.findOne({ name: tagName });
 
-			// 		if (image && tags) {
-			// 			try {
-			// 				imageModel.addTags(imageId, tags);
-			// 				res.writeHead(204).end();
-			// 			} catch (error) {
-			// 				res.writeHead(409).end();
-			// 			}
-			// 		} else {
-			// 			res.writeHead(404).end();
-			// 		}
-			// 	}
-			// }
-			break;
+					if (tag!.popularity > 1) {
+						await tag!.updateOne({ $inc: { popularity: -1 } });
+					} else {
+						await tag!.deleteOne();
+					}
+				}
+
+				await post.updateOne({
+					$set: {
+						description: data.description,
+						tags: tagIds,
+					},
+				});
+
+				res.writeHead(204).end();
+			}
 		}
 	}
+}
+
+async function getTagIdsFromTagNames(tagNames: string[], incrementPopularity = true) {
+	const tags = [];
+
+	for (const tagName of tagNames) {
+		const tag = await TagModel.findOne({ name: tagName });
+
+		if (tag) {
+			if (incrementPopularity) {
+				await tag.updateOne({
+					$inc: { popularity: 1 },
+				});
+			}
+			tags.push(tag);
+		} else {
+			tags.push(
+				await TagModel.create({
+					name: tagName.startsWith("#") ? tagName : `#${tagName}`,
+					popularity: 1,
+				})
+			);
+		}
+	}
+
+	return tags.map((tag) => tag._id);
 }

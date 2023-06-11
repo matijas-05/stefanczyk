@@ -45,7 +45,7 @@ export default function EditProfileDialog(props: Props) {
 		{
 			onSuccess: () =>
 				props.profile.username === form.getValues().username &&
-				queryClient.invalidateQueries({ queryKey: ["user-posts"] }),
+				queryClient.invalidateQueries({ queryKey: [props.profile.username] }),
 		}
 	);
 	const updatePicture = useMutation(
@@ -57,7 +57,7 @@ export default function EditProfileDialog(props: Props) {
 		{
 			onSuccess: () => {
 				if (props.profile.username === form.getValues().username) {
-					queryClient.invalidateQueries({ queryKey: ["user-posts"] });
+					queryClient.invalidateQueries({ queryKey: [props.profile.username] });
 					queryClient.invalidateQueries({ queryKey: ["profile"] });
 				}
 			},

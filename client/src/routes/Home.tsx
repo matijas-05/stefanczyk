@@ -15,7 +15,7 @@ export default function Home() {
 			{posts && posts.length > 0 ? (
 				posts.map((post, i) => (
 					<div key={i} className="flex w-[35rem] overflow-x-auto">
-						<Post data={post} />
+						<Post post={post} />
 					</div>
 				))
 			) : (
