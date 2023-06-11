@@ -55,9 +55,12 @@ export default function EditProfileDialog(props: Props) {
 				body: data,
 			}),
 		{
-			onSuccess: () =>
-				props.profile.username === form.getValues().username &&
-				queryClient.invalidateQueries({ queryKey: ["user-posts"] }),
+			onSuccess: () => {
+				if (props.profile.username === form.getValues().username) {
+					queryClient.invalidateQueries({ queryKey: ["user-posts"] });
+					queryClient.invalidateQueries({ queryKey: ["profile"] });
+				}
+			},
 		}
 	);
 
