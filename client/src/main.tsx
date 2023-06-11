@@ -19,6 +19,7 @@ import RootLayout from "./layouts/RootLayout";
 import { TooltipProvider } from "./components/ui/Tooltip";
 import "./styles.css";
 import Post from "./routes/Post";
+import Profile from "./routes/Profile";
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -47,6 +48,14 @@ const router = createBrowserRouter(
 					element={
 						<Suspense>
 							<Post />
+						</Suspense>
+					}
+				/>
+				<Route
+					path="/profile/:username"
+					element={
+						<Suspense>
+							<Profile />
 						</Suspense>
 					}
 				/>

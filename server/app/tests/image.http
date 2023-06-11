@@ -74,6 +74,10 @@ Content-Type: application/json
 GET http://localhost:3001/api/photos/648241c41fa7b3163da94ce5/tags HTTP/1.1
 Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
+###
+
+GET http://localhost:3001/api/photos/user/mwojtyna HTTP/1.1
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZG9tYWluLmNvbSIsImlhdCI6MTY4NjAzNjQ3NiwiZXhwIjoxNjg2MTIyODc2fQ._HXvj2oTGvR3pAaemByMv3mK4qJJ36_Y5GGjvo51YN0
 
 ###
 

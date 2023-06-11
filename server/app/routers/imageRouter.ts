@@ -18,6 +18,20 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 				res.writeHead(200, { "Content-Type": "application/json" });
 				res.end(JSON.stringify(posts));
+			} else if (req.url?.startsWith("/api/photos/user/")) {
+				const username = req.url.split("/api/photos/user/")[1];
+				const userId = await UserModel.findOne({ username }).select("_id");
+				if (!userId) {
+					res.writeHead(404).end();
+					return;
+				}
+
+				const posts = await PostModel.find({ user: userId })
+					.sort({ lastChange: -1 })
+					.populate("user", "-password -confirmed");
+
+				res.writeHead(200, { "Content-Type": "application/json" });
+				res.end(JSON.stringify(posts));
 			} else {
 				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)/g) ?? []);
 				const getPhotoTags = Array.from(
