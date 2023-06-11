@@ -122,6 +122,12 @@ export default function Upload() {
 									<FormMessage />
 								</FormItem>
 							)}
+							rules={{
+								pattern: {
+									value: /^(#\w+\s*)+$/,
+									message: "Tags must be in the format: #tag1 #tag2 #tag3",
+								},
+							}}
 						/>
 
 						<Button type="submit" className="mt-2 w-full" loading={mutation.isLoading}>

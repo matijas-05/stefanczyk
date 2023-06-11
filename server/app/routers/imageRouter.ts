@@ -12,7 +12,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 		case "GET": {
 			if (req.url === "/api/photos") {
 				const posts = await PostModel.find()
-					.sort({ lastChange: -1 })
+					.sort({ lastChange: "desc" })
 					.populate("user", "-password -confirmed")
 					.populate("tags");
 
@@ -88,7 +88,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 					} else {
 						tags.push(
 							await TagModel.create({
-								name: tagName,
+								name: tagName.startsWith("#") ? tagName : `#${tagName}`,
 								popularity: 1,
 							})
 						);
