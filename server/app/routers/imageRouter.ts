@@ -78,6 +78,7 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 				const user = await UserModel.findOne({ email: payload.email });
 				const data = await parseFormData(req);
 				const images: string[] = [];
+				const filters = JSON.parse(data.fields.filters as string) as string[];
 
 				if (Array.isArray(data.files.photos)) {
 					(data.files.photos as formidable.File[]).forEach(async (file) => {

@@ -19,6 +19,7 @@ export default function Profile() {
 		() => fetch(`/api/photos/user/${username}`).then((res) => res.json()),
 		{ suspense: true, cacheTime: 0 }
 	);
+
 	const postUser = posts.data![0].user;
 
 	const { data: currentUser } = useQuery<Profile>(

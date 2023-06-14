@@ -20,6 +20,7 @@ interface Inputs {
 	files: File[];
 	description: string;
 	tags: string;
+	filters: string[];
 }
 
 export default function Upload() {
@@ -29,7 +30,7 @@ export default function Upload() {
 		{ onSuccess: () => queryClient.invalidateQueries({ queryKey: ["profile", "posts"] }) }
 	);
 
-	const form = useForm<Inputs>();
+	const form = useForm<Inputs>({ defaultValues: { filters: [] } });
 	const onSubmit = async (data: Inputs) => {
 		if (data.files.length === 0) {
 			form.setError("files", {
@@ -39,20 +40,24 @@ export default function Upload() {
 			return;
 		}
 
+		console.log(data.filters);
+
 		const formData = new FormData();
 		data.files.forEach((file) => formData.append("photos", file));
+		formData.set("filters", JSON.stringify(data.filters));
 		formData.set("description", data.description);
 
 		const tags = data.tags.trim().includes(" ") ? data.tags.trim().split(" ") : [data.tags];
 		formData.set("tags", data.tags !== "" ? JSON.stringify(tags) : JSON.stringify([]));
 
 		await mutation.mutateAsync(formData);
-		form.reset({ files: [] });
+		form.reset({ files: [], filters: [] });
 	};
 
 	const dropzone = useDropzone({
 		onDropAccepted: (files) => {
 			form.setValue("files", [...form.getValues("files"), ...files]);
+			form.setValue("filters", [...form.getValues("filters"), ...files.map(() => "")]);
 			form.clearErrors("files");
 		},
 		accept: {
@@ -77,6 +82,11 @@ export default function Upload() {
 											dropzone={dropzone}
 											files={form.getValues("files") || []}
 											setFiles={(files) => form.setValue("files", files)}
+											filters={form.getValues("filters")}
+											setFilters={(value) => {
+												form.setValue("filters", value);
+												form.trigger("filters");
+											}}
 											error={!!form.formState.errors.files}
 										/>
 									</FormControl>

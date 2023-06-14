@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/Button";
 import Dropzone from "@/components/ui/Dropzone";
 import { cn } from "@/lib/utils";
 import { useDropzone } from "react-dropzone";
-import { Dialog, DialogContent, DialogHeader } from "./Dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 
 interface Inputs {
 	username: string;
@@ -105,7 +105,9 @@ export default function EditProfileDialog(props: Props) {
 	return (
 		<Dialog open={props.open} onOpenChange={props.onOpenChange}>
 			<DialogContent className="w-fit">
-				<DialogHeader className="text-xl font-bold">Edit profile</DialogHeader>
+				<DialogHeader>
+					<DialogTitle>Edit profile</DialogTitle>
+				</DialogHeader>
 
 				<Form {...form}>
 					<form
@@ -187,12 +189,12 @@ export default function EditProfileDialog(props: Props) {
 												dropzone.isDragActive && "border-ring"
 											)}
 											dropzone={dropzone}
-											files={
+											photos={
 												form.getValues("photo")
 													? [form.getValues("photo") as File]
 													: []
 											}
-											setFiles={(files) => form.setValue("photo", files[0])}
+											setPhotos={(files) => form.setValue("photo", files[0])}
 										/>
 									</FormControl>
 									<FormMessage />
