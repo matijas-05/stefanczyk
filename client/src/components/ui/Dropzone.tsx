@@ -63,7 +63,7 @@ export default function Dropzone({
 
 						<Button
 							className="absolute right-1 top-1 h-fit p-0.5"
-							variant={"secondary"}
+							variant={"destructive"}
 							onClick={() => {
 								const newFiles = [...files];
 								newFiles.splice(i, 1);
@@ -76,7 +76,7 @@ export default function Dropzone({
 							icon={<X className="h-5 w-5" />}
 						/>
 						{filters[i] !== "" && (
-							<Sparkles className="pointer-events-none absolute left-1 top-1" />
+							<Sparkles className="pointer-events-none absolute left-1 top-1 rounded-md bg-secondary p-0.5" />
 						)}
 
 						<FilterDialog

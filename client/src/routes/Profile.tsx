@@ -67,7 +67,7 @@ export default function Profile() {
 								onClick={() => navigate(`/post/${post._id}`)}
 							/>
 							{post.images.length > 1 && (
-								<Layers className="pointer-events-none absolute right-1.5 top-1.5 w-5 text-white" />
+								<Layers className="pointer-events-none absolute right-1 top-1 rounded-md bg-secondary p-[3px]" />
 							)}
 						</div>
 					))}
