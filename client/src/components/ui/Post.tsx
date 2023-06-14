@@ -156,7 +156,7 @@ export default function Post({ post, className, ...props }: Props) {
 						</TypographySmall>
 						<div className="flex gap-2">
 							{post.tags.map((tag, i) => (
-								<Link key={i} to={`/search?tags=${encodeURIComponent(tag.name)}`}>
+								<Link key={i} to={`/?tag=${encodeURIComponent(tag.name)}`}>
 									<TypographySmall>{tag.name}</TypographySmall>
 								</Link>
 							))}

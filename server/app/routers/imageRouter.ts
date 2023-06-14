@@ -48,22 +48,18 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 
 				res.writeHead(200, { "Content-Type": "application/json" });
 				res.end(JSON.stringify(posts));
-			} else {
-				const getPhoto = Array.from(req.url?.matchAll(/\/api\/photos\/(\w+)/g) ?? []);
-
-				if (getPhoto.length > 0) {
-					const id = getPhoto[0][1];
-					const post = await PostModel.findById(id)
-						.populate("user", "-password -confirmed")
-						.populate("tags");
-					if (!post) {
-						res.writeHead(404).end();
-						return;
-					}
-
-					res.writeHead(200, { "Content-Type": "application/json" });
-					res.end(JSON.stringify(post));
+			} else if (req.url?.startsWith("/api/photos/")) {
+				const photoId = req.url.split("/api/photos/")[1];
+				const post = await PostModel.findById(photoId)
+					.populate("user", "-password -confirmed")
+					.populate("tags");
+				if (!post) {
+					res.writeHead(404).end();
+					return;
 				}
+
+				res.writeHead(200, { "Content-Type": "application/json" });
+				res.end(JSON.stringify(post));
 			}
 			break;
 		}
