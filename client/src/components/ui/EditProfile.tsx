@@ -22,6 +22,7 @@ interface Inputs {
 	name: string;
 	lastName: string;
 	photo?: File;
+	filters?: string[];
 }
 const regex = /^\S+$/;
 
@@ -189,12 +190,17 @@ export default function EditProfileDialog(props: Props) {
 												dropzone.isDragActive && "border-ring"
 											)}
 											dropzone={dropzone}
-											photos={
+											files={
 												form.getValues("photo")
 													? [form.getValues("photo") as File]
 													: []
 											}
-											setPhotos={(files) => form.setValue("photo", files[0])}
+											setFiles={(files) => form.setValue("photo", files[0])}
+											filters={form.getValues("filters") ?? [""]}
+											setFilters={(filters) => {
+												form.setValue("filters", filters);
+												form.trigger("filters");
+											}}
 										/>
 									</FormControl>
 									<FormMessage />
