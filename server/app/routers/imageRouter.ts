@@ -15,7 +15,8 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 			if (req.url === "/api/photos") {
 				const posts = await PostModel.find()
 					.populate("user", "-password -confirmed")
-					.populate("tags");
+					.populate("tags")
+					.sort({ lastChange: -1 });
 
 				const postSorted = posts.sort((a, b) => {
 					const aPopularity = a.tags.reduce(
