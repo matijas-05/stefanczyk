@@ -40,8 +40,6 @@ export default function Upload() {
 			return;
 		}
 
-		console.log(data.filters);
-
 		const formData = new FormData();
 		data.files.forEach((file) => formData.append("photos", file));
 		formData.set("filters", JSON.stringify(data.filters));

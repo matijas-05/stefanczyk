@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { DropzoneState } from "react-dropzone";
-import { UploadCloud, X } from "lucide-react";
+import { Sparkles, UploadCloud, X } from "lucide-react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { cn } from "@/lib/utils";
 import { TypographyMuted } from "./Typography";
@@ -60,6 +60,7 @@ export default function Dropzone({
 								setFiltersOpen(true);
 							}}
 						/>
+
 						<Button
 							className="absolute right-1 top-1 h-fit p-0.5"
 							variant={"secondary"}
@@ -74,6 +75,9 @@ export default function Dropzone({
 							}}
 							icon={<X className="h-5 w-5" />}
 						/>
+						{filters[i] !== "" && (
+							<Sparkles className="pointer-events-none absolute left-1 top-1" />
+						)}
 
 						<FilterDialog
 							open={filtersOpen}
