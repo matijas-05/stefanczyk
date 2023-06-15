@@ -6,7 +6,9 @@ import * as userController from "../controllers/userController";
 import * as fileController from "../controllers/fileController";
 import * as Cookies from "cookie";
 import type formidable from "formidable";
-import type { Profile } from "@/types";
+import type { FilterName, Profile } from "@/types";
+import { getSharpObject } from "../models/filterModel";
+import { filterFunctions } from "../controllers/filterController";
 
 export async function userRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req?.method?.toUpperCase()) {
@@ -80,6 +82,13 @@ export async function userRouter(req: IncomingMessage, res: ServerResponse, toke
 					if (!photo) {
 						res.writeHead(400).end();
 						return;
+					}
+
+					if (data.fields.filter) {
+						const sharp = getSharpObject(photo.path);
+						filterFunctions[data.fields.filter as FilterName](sharp);
+						const buffer = await sharp.toBuffer();
+						await fs.writeFile(fileController.getFullPath(photo.path), buffer);
 					}
 
 					if (user.profilePicture) {

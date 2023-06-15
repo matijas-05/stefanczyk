@@ -19,14 +19,13 @@ export default function Profile() {
 		() => fetch(`/api/photos/user/${username}`).then((res) => res.json()),
 		{ suspense: true, cacheTime: 0 }
 	);
-
-	const postUser = posts.data![0].user;
-
 	const { data: currentUser } = useQuery<Profile>(
 		["profile"],
 		() => fetch("/api/user/profile").then((res) => res.json()),
 		{ refetchOnWindowFocus: false, suspense: true }
 	);
+
+	const postUser = posts.data!.length > 0 ? posts.data![0].user : currentUser!;
 
 	const [editProfile, setEditProfile] = useState(false);
 	useEffect(() => {

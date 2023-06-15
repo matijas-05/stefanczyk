@@ -18,7 +18,7 @@ export const filterClasses: Record<FilterName, string> = {
 	grayscale: "grayscale",
 	negate: "invert",
 };
-const filterNames = ["crop", "rotate", "grayscale", "flip", "flop", "negate"];
+const filterNames = ["grayscale", "flip", "flop", "negate"];
 const data: ComboboxData[] = filterNames.sort().map((name) => ({
 	value: name,
 	label: name.charAt(0).toUpperCase() + name.slice(1),

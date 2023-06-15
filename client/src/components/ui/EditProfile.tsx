@@ -80,8 +80,11 @@ export default function EditProfileDialog(props: Props) {
 		if (data.photo) {
 			const formData = new FormData();
 			formData.set("photo", data.photo);
+			if (data.filters) formData.set("filter", data.filters[0]);
 			await updatePicture.mutateAsync(formData);
+
 			form.resetField("photo");
+			form.resetField("filters");
 		}
 
 		props.onOpenChange(false);

@@ -10,7 +10,6 @@ module.exports = {
 	parserOptions: { ecmaVersion: "latest", sourceType: "module" },
 	plugins: ["react-refresh"],
 	rules: {
-		"react-refresh/only-export-components": "warn",
 		"@typescript-eslint/no-non-null-assertion": "off",
 		"@typescript-eslint/consistent-type-imports": "warn",
 		"@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true }],

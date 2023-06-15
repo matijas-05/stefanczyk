@@ -2,7 +2,7 @@ import sharp from "sharp";
 import { getFullPath } from "../controllers/fileController";
 import type { FilterName } from "@/types";
 
-export const filterNames = ["crop", "rotate", "grayscale", "flip", "flop", "negate"] as const;
+export const filterNames = ["grayscale", "flip", "flop", "negate"] as const;
 
 export function getSharpObject(imagePath: string) {
 	return sharp(getFullPath(imagePath));
