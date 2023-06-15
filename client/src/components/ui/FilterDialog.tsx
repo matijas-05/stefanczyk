@@ -1,6 +1,8 @@
+import { cn } from "@/lib/utils";
 import { Combobox, type ComboboxData } from "./Combobox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 import { FormItem, FormLabel } from "./Form";
+import type { FilterName } from "@server/types";
 
 interface Props {
 	open: boolean;
@@ -10,6 +12,12 @@ interface Props {
 	setFilter: (value: string) => void;
 }
 
+export const filterClasses: Record<FilterName, string> = {
+	flip: "scale-y-[-1]",
+	flop: "scale-x-[-1]",
+	grayscale: "grayscale",
+	negate: "invert",
+};
 const filterNames = ["crop", "rotate", "grayscale", "flip", "flop", "negate"];
 const data: ComboboxData[] = filterNames.sort().map((name) => ({
 	value: name,
@@ -27,7 +35,10 @@ export default function FilterDialog(props: Props) {
 
 				<div className="flex flex-col gap-4">
 					<img
-						className="aspect-square h-fit overflow-auto object-contain"
+						className={cn(
+							"aspect-square h-fit overflow-auto object-contain",
+							filterClasses[props.filter as FilterName]
+						)}
 						src={props.file ? URL.createObjectURL(props.file) : ""}
 						alt={props.file?.name}
 					/>

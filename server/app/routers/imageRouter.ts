@@ -7,7 +7,9 @@ import { verifyToken } from "../controllers/userController";
 import { UserModel } from "../models/userModel";
 import { PostModel, type ImageHistory } from "../models/postModel";
 import { parseJson } from "../controllers/jsonController";
-import type { Tag } from "@/types";
+import type { FilterName, Tag } from "@/types";
+import { filterFunctions } from "../controllers/filterController";
+import { getSharpObject } from "../models/filterModel";
 
 export async function imageRouter(req: IncomingMessage, res: ServerResponse, token: string) {
 	switch (req.method?.toUpperCase()) {
@@ -84,6 +86,21 @@ export async function imageRouter(req: IncomingMessage, res: ServerResponse, tok
 				} else {
 					const file = data.files.photos as formidable.File;
 					images.push(file.path);
+				}
+
+				for (let i = 0; i < images.length; i++) {
+					const image = images[i];
+					const filter = filters[i];
+
+					if (filter === "") {
+						continue;
+					}
+
+					const sharp = getSharpObject(image);
+					filterFunctions[filter as FilterName](sharp);
+
+					const buffer = await sharp.toBuffer();
+					await fs.writeFile(getFullPath(image), buffer);
 				}
 
 				const tagIds = await getTagIdsFromTagNames(

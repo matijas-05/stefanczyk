@@ -5,7 +5,8 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { cn } from "@/lib/utils";
 import { TypographyMuted } from "./Typography";
 import { Button } from "./Button";
-import FilterDialog from "./FilterDialog";
+import FilterDialog, { filterClasses } from "./FilterDialog";
+import type { FilterName } from "@server/types";
 
 interface Props extends React.ComponentPropsWithoutRef<"div"> {
 	className?: string;
@@ -52,7 +53,10 @@ export default function Dropzone({
 					<div key={i} className="relative cursor-pointer">
 						<img
 							src={URL.createObjectURL(file)}
-							className="h-32 w-32 rounded-md object-cover"
+							className={cn(
+								"h-32 w-32 rounded-md object-cover",
+								filterClasses[filters[i] as FilterName]
+							)}
 							title={file.name}
 							onClick={() => {
 								setFilteredFile(file);
