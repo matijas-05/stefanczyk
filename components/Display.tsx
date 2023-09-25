@@ -1,13 +1,17 @@
 import { View, Text, StyleSheet } from "react-native";
 
-export const Display = () => {
+interface Props {
+    input: string;
+    result: string;
+}
+export function Display(props: Props) {
     return (
         <View style={styles.display}>
-            <Text style={styles.text}>2+2</Text>
-            <Text style={styles.text}>4</Text>
+            <Text style={styles.text}>{props.input}</Text>
+            <Text style={styles.text}>{props.result}</Text>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     display: {

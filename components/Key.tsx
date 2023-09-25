@@ -1,9 +1,17 @@
 import React from "react";
 import { Text, StyleSheet, TouchableHighlight } from "react-native";
 
-export function Key(props: { title: string }) {
+interface Props {
+    title: string;
+    onPress: (char: string) => void;
+}
+export function Key(props: Props) {
     return (
-        <TouchableHighlight style={styles.key} underlayColor="#eee" onPress={() => false}>
+        <TouchableHighlight
+            style={styles.key}
+            underlayColor="#eee"
+            onPress={() => props.onPress(props.title)}
+        >
             <Text style={styles.keyText}>{props.title}</Text>
         </TouchableHighlight>
     );
