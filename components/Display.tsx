@@ -17,13 +17,14 @@ const styles = StyleSheet.create({
     display: {
         backgroundColor: "green",
         flexDirection: "column",
-        gap: 40,
+        gap: 10,
         paddingHorizontal: 10,
-        paddingTop: 30,
+        paddingTop: 25,
         paddingBottom: 10,
+        height: "30%",
     },
     text: {
-        fontSize: 50,
+        fontSize: 30,
         textAlign: "right",
         fontFamily: "monospace",
     },

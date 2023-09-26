@@ -1,4 +1,5 @@
-import React from "react";
+import * as ScreenOrientation from "expo-screen-orientation";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Key } from "./Key";
@@ -10,6 +11,7 @@ const inputs = [
     [".", "0", "="],
 ];
 const actions = ["Del", "C", "/", "*", "-", "+"];
+const landscapeActions = ["Sqrt", "Pow", "Sin", "Cos"];
 
 interface Props {
     input: string;
@@ -17,52 +19,114 @@ interface Props {
     setResult: React.Dispatch<React.SetStateAction<string>>;
 }
 export default function Keypad(props: Props) {
+    const [landscape, setLandscape] = useState(false);
+    useEffect(() => {
+        // Get initial orientation
+        (async () => {
+            const orientation = await ScreenOrientation.getOrientationAsync();
+            setLandscape(
+                orientation === ScreenOrientation.Orientation.LANDSCAPE_LEFT ||
+                    orientation === ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
+            );
+        })();
+
+        // Listen for orientation changes
+        const sub = ScreenOrientation.addOrientationChangeListener((e) => {
+            setLandscape(
+                e.orientationInfo.orientation === ScreenOrientation.Orientation.LANDSCAPE_LEFT ||
+                    e.orientationInfo.orientation === ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
+            );
+        });
+        return () => ScreenOrientation.removeOrientationChangeListener(sub);
+    }, []);
+
     function setInput(char: string) {
         if (
             (char.charCodeAt(0) >= "0".charCodeAt(0) && char.charCodeAt(0) <= "9".charCodeAt(0)) ||
             char === "."
         ) {
             props.setInput((prev) => prev + char);
-        } else {
-            switch (char) {
-                case "Del": {
-                    props.setInput((prev) => prev.slice(0, -1));
-                    break;
-                }
-                case "C": {
-                    props.setInput("");
-                    props.setResult("");
-                    break;
-                }
-                case "/": {
-                    props.setInput((prev) => prev + "/");
-                    break;
-                }
-                case "*": {
-                    props.setInput((prev) => prev + "*");
-                    break;
-                }
-                case "-": {
-                    props.setInput((prev) => prev + "-");
-                    break;
-                }
-                case "+": {
-                    props.setInput((prev) => prev + "+");
-                    break;
-                }
-                case "=": {
-                    try {
-                        const result = Number(eval(props.input));
-                        if (!isNaN(result)) {
-                            props.setResult(Number(result.toFixed(9)).toString());
-                        } else {
-                            props.setResult("");
-                        }
-                    } catch (_) {
-                        props.setResult("Err");
+            return;
+        }
+
+        switch (char) {
+            case "Del": {
+                props.setInput((prev) => prev.slice(0, -1));
+                break;
+            }
+            case "C": {
+                props.setInput("");
+                props.setResult("");
+                break;
+            }
+            case "/": {
+                props.setInput((prev) => prev + "/");
+                break;
+            }
+            case "*": {
+                props.setInput((prev) => prev + "*");
+                break;
+            }
+            case "-": {
+                props.setInput((prev) => prev + "-");
+                break;
+            }
+            case "+": {
+                props.setInput((prev) => prev + "+");
+                break;
+            }
+            case "Sqrt": {
+                props.setResult((prev) => {
+                    if (prev !== "") {
+                        return Math.sqrt(Number(prev)).toString();
+                    } else {
+                        return "";
                     }
-                    break;
+                });
+                break;
+            }
+            case "Pow": {
+                props.setResult((prev) => {
+                    if (prev !== "") {
+                        return Math.pow(Number(prev), 2).toString();
+                    } else {
+                        return "";
+                    }
+                });
+                break;
+            }
+            case "Sin": {
+                props.setResult((prev) => {
+                    if (prev !== "") {
+                        return Math.sin(Number(prev)).toString();
+                    } else {
+                        return "";
+                    }
+                });
+                break;
+            }
+            case "Cos": {
+                props.setResult((prev) => {
+                    if (prev !== "") {
+                        return Math.cos(Number(prev)).toString();
+                    } else {
+                        return "";
+                    }
+                });
+                break;
+            }
+            case "=": {
+                try {
+                    const result = Number(eval(props.input));
+                    if (!isNaN(result)) {
+                        props.setResult(Number(result.toFixed(9)).toString());
+                    } else {
+                        props.setResult("");
+                    }
+                } catch (_) {
+                    props.setResult("Err");
                 }
+                break;
             }
         }
     }
@@ -78,6 +142,13 @@ export default function Keypad(props: Props) {
                     </View>
                 ))}
             </View>
+            {landscape && (
+                <View style={styles.actions}>
+                    {landscapeActions.map((item) => (
+                        <Key key={item} title={item} onPress={setInput} />
+                    ))}
+                </View>
+            )}
             <View style={styles.actions}>
                 {actions.map((item) => (
                     <Key key={item} title={item} onPress={setInput} />
