@@ -1,16 +1,28 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 
+import { NavigationStackParamList, URL } from "../../App";
 import Button from "../Button";
 
-export default function Main() {
+export default function Main(props: NativeStackScreenProps<NavigationStackParamList>) {
     const [login, setLogin] = useState("");
     const [password, setPassword] = useState("");
-
     const passwordRef = useRef<TextInput>(null);
 
-    function onSubmit() {
-        alert(`${login}, ${password}`);
+    async function onSubmit() {
+        const res = await fetch(`${URL}/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ login, password }),
+        });
+        if (res.status === 201) {
+            props.navigation.push("Users");
+        } else if (res.status === 409) {
+            alert("User already exists!");
+        }
     }
 
     return (
@@ -45,6 +57,7 @@ export default function Main() {
                 />
 
                 <Button title="REGISTER" onPress={onSubmit} />
+                <Button title="DEBUG" onPress={() => props.navigation.push("Users")} />
             </View>
         </View>
     );
