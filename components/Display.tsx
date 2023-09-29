@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, StatusBar } from "react-native";
 
 interface Props {
     input: string;
@@ -7,6 +7,7 @@ interface Props {
 export function Display(props: Props) {
     return (
         <View style={styles.display}>
+            <StatusBar />
             <Text style={styles.text}>{props.input}</Text>
             <Text style={styles.text}>{props.result}</Text>
         </View>
@@ -19,7 +20,6 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         gap: 10,
         paddingHorizontal: 10,
-        paddingTop: 25,
         paddingBottom: 10,
         height: "30%",
     },

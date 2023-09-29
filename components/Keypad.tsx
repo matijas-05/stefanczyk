@@ -32,9 +32,10 @@ export default function Keypad(props: Props) {
 
         // Listen for orientation changes
         const sub = ScreenOrientation.addOrientationChangeListener((e) => {
+            const orientation = e.orientationInfo.orientation;
             setLandscape(
-                e.orientationInfo.orientation === ScreenOrientation.Orientation.LANDSCAPE_LEFT ||
-                    e.orientationInfo.orientation === ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
+                orientation === ScreenOrientation.Orientation.LANDSCAPE_LEFT ||
+                    orientation === ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
             );
         });
         return () => ScreenOrientation.removeOrientationChangeListener(sub);
@@ -59,6 +60,27 @@ export default function Keypad(props: Props) {
                 props.setResult("");
                 break;
             }
+            case "=": {
+                try {
+                    const result = Number(eval(props.input));
+                    if (!isNaN(result)) {
+                        props.setResult(Number(result.toFixed(9)).toString());
+                    } else {
+                        props.setResult("");
+                    }
+                } catch (_) {
+                    props.setResult("Err");
+                }
+                break;
+            }
+        }
+
+        // Forbid multiple operators together
+        if (isNaN(Number(props.input.at(-1))) && isNaN(Number(char))) {
+            return;
+        }
+
+        switch (char) {
             case "/": {
                 props.setInput((prev) => prev + "/");
                 break;
@@ -113,19 +135,6 @@ export default function Keypad(props: Props) {
                         return "";
                     }
                 });
-                break;
-            }
-            case "=": {
-                try {
-                    const result = Number(eval(props.input));
-                    if (!isNaN(result)) {
-                        props.setResult(Number(result.toFixed(9)).toString());
-                    } else {
-                        props.setResult("");
-                    }
-                } catch (_) {
-                    props.setResult("Err");
-                }
                 break;
             }
         }
