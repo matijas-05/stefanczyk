@@ -19,7 +19,7 @@ export default function Main(props: NativeStackScreenProps<NavigationStackParamL
             body: JSON.stringify({ login, password }),
         });
         if (res.status === 201) {
-            props.navigation.push("Users");
+            props.navigation.navigate("Users");
         } else if (res.status === 409) {
             alert("User already exists!");
         }
@@ -57,7 +57,7 @@ export default function Main(props: NativeStackScreenProps<NavigationStackParamL
                 />
 
                 <Button title="REGISTER" onPress={onSubmit} />
-                <Button title="DEBUG" onPress={() => props.navigation.push("Users")} />
+                <Button title="DEBUG" onPress={() => props.navigation.navigate("Users")} />
             </View>
         </View>
     );
