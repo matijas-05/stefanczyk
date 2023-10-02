@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef, useState } from "react";
 import { View, Text, StyleSheet, TextInput } from "react-native";
 
-import { NavigationStackParamList, URL } from "../../App";
+import { NavigationStackParamList } from "../../App";
 import Button from "../Button";
 
 export default function Main(props: NativeStackScreenProps<NavigationStackParamList>) {
@@ -11,7 +11,7 @@ export default function Main(props: NativeStackScreenProps<NavigationStackParamL
     const passwordRef = useRef<TextInput>(null);
 
     async function onSubmit() {
-        const res = await fetch(`${URL}/register`, {
+        const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/users`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

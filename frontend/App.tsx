@@ -6,11 +6,10 @@ import Users from "./components/screens/Users";
 
 const Stack = createNativeStackNavigator();
 export type NavigationStackParamList = {
-    Home: undefined;
+    Main: undefined;
     Users: undefined;
+    Details: { login: string };
 };
-
-export const URL = "http://192.168.119.66:3000";
 
 export default function App() {
     return (

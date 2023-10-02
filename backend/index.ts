@@ -11,9 +11,19 @@ interface User {
     password: string;
     date: string;
 }
-const users: User[] = [];
+const users: User[] = [
+    {
+        login: "admin",
+        password: "admin",
+        date: new Date().toString(),
+    },
+];
 
-app.post("/register", (req, res) => {
+app.get("/users", (_, res) => {
+    res.send(users);
+});
+
+app.post("/users", (req, res) => {
     const login = req.body.login as string;
     const password = req.body.password as string;
 
@@ -28,8 +38,14 @@ app.post("/register", (req, res) => {
     }
 });
 
-app.get("/users", (_, res) => {
-    res.send(users);
+app.delete("/users/:login", (req, res) => {
+    const user = users.find((user) => user.login === req.params.login);
+    if (!user) {
+        res.sendStatus(404);
+        return;
+    }
+    users.splice(users.indexOf(user), 1);
+    res.sendStatus(200);
 });
 
 app.listen(PORT, () => {
