@@ -1,20 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer, NavigationProp } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useFonts } from "expo-font";
+import React from "react";
+
+import Main from "./components/screens/Main";
+import PositionList from "./components/screens/PositionList";
+
+const Stack = createNativeStackNavigator();
+
+export type NavigationStackParamList = {
+    Main: undefined;
+    PositionList: undefined;
+};
+export type StackNavigation = NavigationProp<NavigationStackParamList>;
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    const [fontsLoaded] = useFonts({
+        "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+    });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    if (!fontsLoaded) {
+        return null;
+    }
+
+    return (
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Main" component={Main} options={{ headerShown: false }} />
+                <Stack.Screen
+                    name="PositionList"
+                    component={PositionList}
+                    options={{
+                        headerTitle: "Zapis pozycji",
+                        headerStyle: {
+                            backgroundColor: "rgb(66 80 175)",
+                        },
+                    }}
+                />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
