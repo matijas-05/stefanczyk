@@ -14,13 +14,15 @@ export default function Button({ title, ...props }: Props) {
 
 const styles = StyleSheet.create({
     button: {
-        alignItems: "center",
-        backgroundColor: "green",
-        padding: 10,
+        backgroundColor: "rgb(66 80 175)",
+        padding: 8,
         borderRadius: 16,
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     },
     text: {
         fontWeight: "bold",
-        fontSize: 16,
+        textAlign: "center",
     },
 });
