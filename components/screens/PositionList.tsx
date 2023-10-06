@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Switch, Alert, FlatList, Text } from "react-native";
@@ -15,6 +16,12 @@ export default function PositionList() {
 
     useEffect(() => {
         Location.requestForegroundPermissionsAsync();
+        (async () => {
+            const positions = await AsyncStorage.getItem("positions");
+            if (positions) {
+                setPositions(JSON.parse(positions));
+            }
+        })();
     }, []);
 
     async function addPosition() {
@@ -23,7 +30,11 @@ export default function PositionList() {
             Alert.alert("Sukces", "Pobrano pozycję. Czy zapisać?", [
                 {
                     text: "Tak",
-                    onPress: () => setPositions([...positions, { position: pos, selected: false }]),
+                    onPress: async () => {
+                        const newPositions = [...positions, { position: pos, selected: false }];
+                        await AsyncStorage.setItem("positions", JSON.stringify(newPositions));
+                        setPositions(newPositions);
+                    },
                 },
                 {
                     text: "Nie",
@@ -33,21 +44,30 @@ export default function PositionList() {
             Alert.alert("Błąd", "Nie udało się pobrać pozycji");
         }
     }
-    function goToMap() {
-        if (positions.length === 0) {
-            alert("Zaznacz przynajmniej jedną pozycję.");
-        }
-    }
 
     return (
         <View style={styles.container}>
             <View style={styles.buttons}>
                 <Button title="POBIERZ I ZAPISZ POZYCJĘ" onPress={addPosition} />
-                <Button title="USUŃ WSZYSTKIE DANE" onPress={() => setPositions([])} />
+                <Button
+                    title="USUŃ WSZYSTKIE DANE"
+                    onPress={async () => {
+                        setPositions([]);
+                        await AsyncStorage.setItem("positions", JSON.stringify([]));
+                        alert("Usunięto wszystkie dane.");
+                    }}
+                />
             </View>
 
             <View style={styles.buttons}>
-                <Button title="PRZEJDŹ DO MAPY" onPress={goToMap} />
+                <Button
+                    title="PRZEJDŹ DO MAPY"
+                    onPress={() => {
+                        if (positions.length === 0) {
+                            alert("Zaznacz przynajmniej jedną pozycję.");
+                        }
+                    }}
+                />
                 <Switch
                     value={allSelected}
                     onValueChange={(value) => {
