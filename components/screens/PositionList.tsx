@@ -4,13 +4,15 @@ import { View, StyleSheet, Switch, Alert, FlatList, Text } from "react-native";
 
 import Button from "../Button";
 
-interface Position {
-    location: Location.LocationObject;
-    toggle: boolean;
+interface PositionType {
+    position: Location.LocationObject;
+    selected: boolean;
 }
 
 export default function PositionList() {
-    const [positions, setPositions] = useState<Position[]>([]);
+    const [positions, setPositions] = useState<PositionType[]>([]);
+    const [allSelected, setAllSelected] = useState(false);
+
     useEffect(() => {
         Location.requestForegroundPermissionsAsync();
     }, []);
@@ -21,7 +23,7 @@ export default function PositionList() {
             Alert.alert("Sukces", "Pobrano pozycję. Czy zapisać?", [
                 {
                     text: "Tak",
-                    onPress: () => setPositions([...positions, { location: pos, toggle: false }]),
+                    onPress: () => setPositions([...positions, { position: pos, selected: false }]),
                 },
                 {
                     text: "Nie",
@@ -29,6 +31,11 @@ export default function PositionList() {
             ]);
         } catch (e) {
             Alert.alert("Błąd", "Nie udało się pobrać pozycji");
+        }
+    }
+    function goToMap() {
+        if (positions.length === 0) {
+            alert("Zaznacz przynajmniej jedną pozycję.");
         }
     }
 
@@ -40,14 +47,61 @@ export default function PositionList() {
             </View>
 
             <View style={styles.buttons}>
-                <Button title="PRZEJDŹ DO MAPY" />
-                <Switch />
+                <Button title="PRZEJDŹ DO MAPY" onPress={goToMap} />
+                <Switch
+                    value={allSelected}
+                    onValueChange={(value) => {
+                        setPositions(positions.map((pos) => ({ ...pos, selected: value })));
+                        setAllSelected(value);
+                    }}
+                />
             </View>
 
             <FlatList
                 data={positions}
-                renderItem={({ item }) => <Text>{JSON.stringify(item, null, 2)}</Text>}
+                renderItem={({ item, index }) => (
+                    <Position
+                        position={item}
+                        selectedChanged={(selected) =>
+                            setPositions(() => {
+                                const newPositions = positions.map((pos, i) =>
+                                    i === index ? { ...pos, selected } : pos,
+                                );
+                                if (newPositions.every((pos) => pos.selected)) {
+                                    setAllSelected(true);
+                                } else {
+                                    setAllSelected(false);
+                                }
+
+                                return newPositions;
+                            })
+                        }
+                    />
+                )}
             />
+        </View>
+    );
+}
+
+function Position({
+    position,
+    selectedChanged,
+}: {
+    position: PositionType;
+    selectedChanged: (value: boolean) => void;
+}) {
+    return (
+        <View style={styles.positionContainer}>
+            <View style={styles.position}>
+                <Text style={styles.positionHeader}>timestamp: {position.position.timestamp}</Text>
+                <Text style={styles.positionInfo}>
+                    latitude: {position.position.coords.latitude}
+                </Text>
+                <Text style={styles.positionInfo}>
+                    longitude: {position.position.coords.longitude}
+                </Text>
+            </View>
+            <Switch value={position.selected} onValueChange={(value) => selectedChanged(value)} />
         </View>
     );
 }
@@ -60,5 +114,20 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: "row",
         gap: 16,
+    },
+    positionContainer: {
+        flexDirection: "row",
+        gap: 16,
+    },
+    position: {
+        padding: 16,
+    },
+    positionHeader: {
+        fontSize: 20,
+        color: "rgb(66 80 175)",
+    },
+    positionInfo: {
+        fontSize: 16,
+        color: "gray",
     },
 });
