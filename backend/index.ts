@@ -11,13 +11,7 @@ interface User {
     password: string;
     date: string;
 }
-const users: User[] = [
-    {
-        login: "admin",
-        password: "admin",
-        date: new Date().toString(),
-    },
-];
+const users: User[] = [];
 
 app.get("/users", (_, res) => {
     res.send(users);
