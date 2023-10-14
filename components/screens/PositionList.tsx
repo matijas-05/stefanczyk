@@ -1,8 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Switch, Alert, FlatList, Text } from "react-native";
 
+import { StackNavigation } from "../../App";
 import Button from "../Button";
 
 interface PositionType {
@@ -11,6 +13,7 @@ interface PositionType {
 }
 
 export default function PositionList() {
+    const navigate = useNavigation<StackNavigation>();
     const [positions, setPositions] = useState<PositionType[]>([]);
     const [allSelected, setAllSelected] = useState(false);
 
@@ -63,8 +66,12 @@ export default function PositionList() {
                 <Button
                     title="PRZEJDŹ DO MAPY"
                     onPress={() => {
-                        if (positions.length === 0) {
+                        if (positions.every((pos) => !pos.selected)) {
                             alert("Zaznacz przynajmniej jedną pozycję.");
+                        } else {
+                            navigate.navigate("Map", {
+                                positions: positions.map((pos) => pos.position),
+                            });
                         }
                     }}
                 />
