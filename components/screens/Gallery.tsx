@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
@@ -14,16 +14,14 @@ export default function Gallery() {
     const navigation = useNavigation<Navigation>();
 
     useEffect(() => {
-        const cb = () => refreshGallery();
-        navigation.addListener("state", cb);
-
         (async () => {
             await MediaLibrary.requestPermissionsAsync();
             refreshGallery();
         })();
-
-        return () => navigation.removeListener("state", cb);
     }, []);
+    useFocusEffect(() => {
+        refreshGallery();
+    });
 
     async function refreshGallery() {
         const album = await MediaLibrary.getAlbumAsync("DCIM");

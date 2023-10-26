@@ -12,7 +12,7 @@ export default function Camera() {
 
     async function takePicture() {
         const picture = await cameraRef.current?.takePictureAsync();
-        await MediaLibrary.createAssetAsync(picture!.uri);
+        MediaLibrary.createAssetAsync(picture!.uri);
     }
     function switchCamera() {
         setCameraType(cameraType === CameraType.front ? CameraType.back : CameraType.front);
@@ -26,8 +26,8 @@ export default function Camera() {
         <View style={{ flex: 1 }}>
             <ExpoCamera ref={cameraRef} style={{ aspectRatio: 9 / 11 }} type={cameraType}>
                 <View style={styles.buttons}>
-                    <Button title="Photo" onPress={takePicture} />
                     <Button title="Switch" onPress={switchCamera} />
+                    <Button title="Photo" onPress={takePicture} />
                 </View>
             </ExpoCamera>
         </View>
