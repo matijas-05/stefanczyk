@@ -1,5 +1,6 @@
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import * as MediaLibrary from "expo-media-library";
+import * as Sharing from "expo-sharing";
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
 
@@ -27,7 +28,7 @@ export default function Photo() {
 
             <View style={styles.buttons}>
                 <Button title="DELETE" onPress={deletePhoto} />
-                <Button title="SHARE" onPress={() => false} />
+                <Button title="SHARE" onPress={() => Sharing.shareAsync(params.asset.uri)} />
             </View>
         </View>
     );
