@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet } from "react-native";
 
-import { StackNavigation } from "../../App";
+import { Navigation } from "../../App";
 
 export default function SplashScreen() {
-    const { navigate } = useNavigation<StackNavigation>();
+    const { navigate } = useNavigation<Navigation>();
 
     return (
         <View style={styles.container}>

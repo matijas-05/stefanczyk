@@ -44,8 +44,7 @@ export default function Gallery() {
                     numColumns={cols}
                     renderItem={({ item }) => (
                         <PhotoItem
-                            id={item.id}
-                            uri={item.uri}
+                            asset={item}
                             n={cols}
                             selected={selected}
                             setSelected={setSelected}

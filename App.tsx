@@ -1,19 +1,22 @@
 import { NavigationContainer, NavigationProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
+import { Asset } from "expo-media-library";
 import React from "react";
 import { StyleSheet } from "react-native";
 
 import Gallery from "./components/screens/Gallery";
+import Photo from "./components/screens/Photo";
 import SplashScreen from "./components/screens/SplashScreen";
 
 const Stack = createNativeStackNavigator();
 
-export type NavigationStackParamList = {
+export type NavigationParamMap = {
     Main: undefined;
     Gallery: undefined;
+    Photo: { asset: Asset };
 };
-export type StackNavigation = NavigationProp<NavigationStackParamList>;
+export type Navigation = NavigationProp<NavigationParamMap>;
 
 export default function App() {
     const [fontsLoaded] = useFonts({
@@ -37,6 +40,14 @@ export default function App() {
                     component={Gallery}
                     options={{
                         headerTitle: "Zdjęcia z folderu DCIM",
+                        headerStyle: style.header,
+                    }}
+                />
+                <Stack.Screen
+                    name="Photo"
+                    component={Photo}
+                    options={{
+                        headerTitle: "Wybrane zdjęcie",
                         headerStyle: style.header,
                     }}
                 />
