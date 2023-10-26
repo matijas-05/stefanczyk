@@ -70,7 +70,9 @@ export default function PositionList() {
                             alert("Zaznacz przynajmniej jedną pozycję.");
                         } else {
                             navigate.navigate("Map", {
-                                positions: positions.map((pos) => pos.position),
+                                positions: positions
+                                    .filter((pos) => pos.selected)
+                                    .map((pos) => pos.position),
                             });
                         }
                     }}
