@@ -6,7 +6,12 @@ interface Props extends TouchableOpacityProps {
 }
 export default function Button({ title, ...props }: Props) {
     return (
-        <TouchableOpacity {...props} style={StyleSheet.compose(styles.button, props.style)}>
+        <TouchableOpacity
+            {...props}
+            style={StyleSheet.compose(StyleSheet.compose(styles.button, props.style), {
+                opacity: props.disabled ? 0.5 : 1,
+            })}
+        >
             <Text style={styles.text}>{title}</Text>
         </TouchableOpacity>
     );

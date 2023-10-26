@@ -8,6 +8,7 @@ import PhotoItem from "../PhotoItem";
 export default function Gallery() {
     const [assets, setAssets] = useState<MediaLibrary.PagedInfo<MediaLibrary.Asset>>();
     const [cols, setCols] = useState(4);
+    const [selected, setSelected] = useState<MediaLibrary.AssetRef[]>([]);
 
     useEffect(() => {
         (async () => {
@@ -17,7 +18,15 @@ export default function Gallery() {
     }, []);
 
     async function refreshGallery() {
-        setAssets(await MediaLibrary.getAssetsAsync());
+        const album = await MediaLibrary.getAlbumAsync("Camera");
+        setAssets(await MediaLibrary.getAssetsAsync({ album }));
+        console.log("Refreshed gallery");
+    }
+
+    async function deleteSelected() {
+        await MediaLibrary.deleteAssetsAsync(selected);
+        setSelected([]);
+        refreshGallery();
     }
 
     return (
@@ -25,7 +34,7 @@ export default function Gallery() {
             <View style={styles.buttons}>
                 <Button title="LAYOUT" onPress={() => setCols(cols === 4 ? 1 : 4)} />
                 <Button title="CAMERA" onPress={() => false} />
-                <Button title="DELETE" onPress={() => false} />
+                <Button title="DELETE" onPress={deleteSelected} disabled={selected.length === 0} />
             </View>
 
             <View>
@@ -33,7 +42,15 @@ export default function Gallery() {
                     key={cols}
                     data={assets?.assets}
                     numColumns={cols}
-                    renderItem={({ item }) => <PhotoItem uri={item.uri} n={cols} />}
+                    renderItem={({ item }) => (
+                        <PhotoItem
+                            id={item.id}
+                            uri={item.uri}
+                            n={cols}
+                            selected={selected}
+                            setSelected={setSelected}
+                        />
+                    )}
                 />
             </View>
         </View>
