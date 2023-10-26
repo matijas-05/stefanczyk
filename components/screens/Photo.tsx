@@ -38,10 +38,13 @@ const styles = StyleSheet.create({
     container: {
         alignItems: "center",
         paddingTop: 12,
+        flex: 1,
     },
     buttons: {
+        position: "absolute",
+        bottom: 16,
         flexDirection: "row",
         gap: 16,
-        padding: 16,
+        paddingHorizontal: 16,
     },
 });
