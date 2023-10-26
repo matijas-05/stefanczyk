@@ -1,7 +1,9 @@
+import { useNavigation } from "@react-navigation/native";
 import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 
+import { Navigation } from "../../App";
 import Button from "../Button";
 import PhotoItem from "../PhotoItem";
 
@@ -9,18 +11,23 @@ export default function Gallery() {
     const [assets, setAssets] = useState<MediaLibrary.PagedInfo<MediaLibrary.Asset>>();
     const [cols, setCols] = useState(4);
     const [selected, setSelected] = useState<MediaLibrary.AssetRef[]>([]);
+    const navigation = useNavigation<Navigation>();
 
     useEffect(() => {
+        const cb = () => refreshGallery();
+        navigation.addListener("state", cb);
+
         (async () => {
             await MediaLibrary.requestPermissionsAsync();
             refreshGallery();
         })();
+
+        return () => navigation.removeListener("state", cb);
     }, []);
 
     async function refreshGallery() {
-        const album = await MediaLibrary.getAlbumAsync("Camera");
+        const album = await MediaLibrary.getAlbumAsync("DCIM");
         setAssets(await MediaLibrary.getAssetsAsync({ album }));
-        console.log("Refreshed gallery");
     }
 
     async function deleteSelected() {
@@ -33,7 +40,7 @@ export default function Gallery() {
         <View>
             <View style={styles.buttons}>
                 <Button title="LAYOUT" onPress={() => setCols(cols === 4 ? 1 : 4)} />
-                <Button title="CAMERA" onPress={() => false} />
+                <Button title="CAMERA" onPress={() => navigation.navigate("Camera")} />
                 <Button title="DELETE" onPress={deleteSelected} disabled={selected.length === 0} />
             </View>
 

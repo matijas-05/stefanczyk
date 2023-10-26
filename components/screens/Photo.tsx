@@ -12,7 +12,7 @@ export default function Photo() {
     const { navigate } = useNavigation<Navigation>();
 
     async function deletePhoto() {
-        await MediaLibrary.deleteAssetsAsync([params.asset]);
+        await MediaLibrary.deleteAssetsAsync([params.asset.id]);
         navigate("Gallery");
     }
 
