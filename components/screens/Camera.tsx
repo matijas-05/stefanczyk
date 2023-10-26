@@ -3,7 +3,7 @@ import * as MediaLibrary from "expo-media-library";
 import React, { useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-import Button from "../Button";
+import CircleButton from "../CircleButton";
 
 export default function Camera() {
     const [status] = ExpoCamera.useCameraPermissions({ request: true });
@@ -11,7 +11,7 @@ export default function Camera() {
     const [cameraType, setCameraType] = useState(CameraType.back);
 
     async function takePicture() {
-        const picture = await cameraRef.current?.takePictureAsync();
+        const picture = await cameraRef.current?.takePictureAsync({ isImageMirror: false });
         MediaLibrary.createAssetAsync(picture!.uri);
     }
     function switchCamera() {
@@ -23,11 +23,11 @@ export default function Camera() {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
             <ExpoCamera ref={cameraRef} style={{ aspectRatio: 9 / 11 }} type={cameraType}>
                 <View style={styles.buttons}>
-                    <Button title="Switch" onPress={switchCamera} />
-                    <Button title="Photo" onPress={takePicture} />
+                    <CircleButton title="s" onPress={switchCamera} />
+                    <CircleButton title="+" onPress={takePicture} />
                 </View>
             </ExpoCamera>
         </View>
