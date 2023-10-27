@@ -1,3 +1,4 @@
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { Asset, AssetRef } from "expo-media-library";
 import React from "react";
@@ -43,6 +44,12 @@ export default function PhotoItem(props: Props) {
                 ]}
                 source={{ uri: props.asset.uri }}
             />
+            <AntDesign
+                style={[styles.selected, isSelected ? { opacity: 1 } : { opacity: 0 }]}
+                name="plus"
+                size={80}
+                color="#EA1E63"
+            />
         </Pressable>
     );
 }
@@ -58,5 +65,11 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 32,
         opacity: 1,
+    },
+    selected: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: [{ translateX: -40 }, { translateY: -40 }],
     },
 });
