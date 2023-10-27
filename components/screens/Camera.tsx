@@ -10,7 +10,7 @@ import Settings from "../Settings";
 export default function Camera() {
     const [status] = ExpoCamera.useCameraPermissions({ request: true });
     const cameraRef = useRef<ExpoCamera>(null);
-    const [cameraType, setCameraType] = useState(CameraType.front);
+    const [cameraType, setCameraType] = useState(CameraType.back);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
     async function takePicture() {
