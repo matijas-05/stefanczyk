@@ -7,31 +7,35 @@ interface RadioGroupProps {
     setSelected: (selected: string) => void;
 }
 export default function RadioGroup(props: RadioGroupProps) {
+    if (props.options.length === 0) {
+        return <Text>No settings possible</Text>;
+    }
+
     return props.options.map((opt, i) => (
-        <View key={i} style={styles.radioButton}>
-            <RadioButton
-                toggled={props.selected === opt}
-                onToggled={() => props.setSelected(opt)}
-            />
-            <Text style={styles.radioButtonText}>{opt}</Text>
-        </View>
+        <RadioButton
+            key={i}
+            label={opt}
+            toggled={props.selected === opt}
+            onToggled={() => props.setSelected(opt)}
+        />
     ));
 }
 
 interface RadioButtonProps {
+    label: string;
     toggled: boolean;
     onToggled: () => void;
 }
 function RadioButton(props: RadioButtonProps) {
     return (
-        <Pressable
-            style={styles.radioButtonOuter}
-            onPress={() => {
-                props.onToggled();
-            }}
-        >
-            <View style={props.toggled && styles.radioButtonInner} />
-        </Pressable>
+        <View style={styles.radioButton}>
+            <Pressable style={styles.radioButtonOuter} onPress={props.onToggled}>
+                <View style={props.toggled && styles.radioButtonInner} />
+            </Pressable>
+            <Pressable onPress={props.onToggled}>
+                <Text style={styles.radioButtonText}>{props.label}</Text>
+            </Pressable>
+        </View>
     );
 }
 
