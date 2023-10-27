@@ -1,3 +1,4 @@
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { CameraType, Camera as ExpoCamera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import React, { useRef, useState } from "react";
@@ -26,8 +27,19 @@ export default function Camera() {
         <View style={{ flex: 1, justifyContent: "center" }}>
             <ExpoCamera ref={cameraRef} style={{ aspectRatio: 9 / 11 }} type={cameraType}>
                 <View style={styles.buttons}>
-                    <CircleButton title="s" onPress={switchCamera} />
-                    <CircleButton title="+" onPress={takePicture} />
+                    <CircleButton
+                        icon={<Ionicons name="settings" size={32} color="white" />}
+                        onPress={() => false}
+                    />
+                    <CircleButton
+                        icon={<Ionicons name="camera" size={48} color="white" />}
+                        onPress={takePicture}
+                        style={{ width: 80, height: 80 }}
+                    />
+                    <CircleButton
+                        icon={<Ionicons name="camera-reverse" size={32} color="white" />}
+                        onPress={switchCamera}
+                    />
                 </View>
             </ExpoCamera>
         </View>

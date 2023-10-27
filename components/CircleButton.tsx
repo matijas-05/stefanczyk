@@ -2,12 +2,12 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 interface Props extends TouchableOpacityProps {
-    title: string;
+    icon: React.ReactNode;
 }
-export default function CircleButton({ title, ...props }: Props) {
+export default function CircleButton({ icon, ...props }: Props) {
     return (
         <TouchableOpacity {...props} style={StyleSheet.compose(styles.button, props.style)}>
-            <Text style={styles.text}>{title}</Text>
+            <Text style={styles.text}>{icon}</Text>
         </TouchableOpacity>
     );
 }
