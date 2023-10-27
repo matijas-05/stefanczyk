@@ -2,7 +2,7 @@ import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import * as MediaLibrary from "expo-media-library";
 import * as Sharing from "expo-sharing";
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Text, ScrollView } from "react-native";
 
 import { Navigation, NavigationParamMap } from "../../App";
 import Button from "../Button";
@@ -17,7 +17,7 @@ export default function Photo() {
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <Image
                 style={{
                     width: "95%",
@@ -25,12 +25,15 @@ export default function Photo() {
                 }}
                 source={{ uri: params.asset.uri }}
             />
+            <Text style={styles.dimensions}>
+                {params.asset.width}x{params.asset.height}
+            </Text>
 
             <View style={styles.buttons}>
                 <Button title="DELETE" onPress={deletePhoto} />
                 <Button title="SHARE" onPress={() => Sharing.shareAsync(params.asset.uri)} />
             </View>
-        </View>
+        </ScrollView>
     );
 }
 
@@ -39,6 +42,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingTop: 12,
         flex: 1,
+        gap: 16,
     },
     buttons: {
         position: "absolute",
@@ -46,5 +50,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         gap: 16,
         paddingHorizontal: 16,
+    },
+    dimensions: {
+        fontSize: 32,
     },
 });
