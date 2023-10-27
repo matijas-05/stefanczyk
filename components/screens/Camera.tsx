@@ -5,11 +5,13 @@ import React, { useRef, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 import CircleButton from "../CircleButton";
+import Settings from "../Settings";
 
 export default function Camera() {
     const [status] = ExpoCamera.useCameraPermissions({ request: true });
     const cameraRef = useRef<ExpoCamera>(null);
-    const [cameraType, setCameraType] = useState(CameraType.back);
+    const [cameraType, setCameraType] = useState(CameraType.front);
+    const [settingsOpen, setSettingsOpen] = useState(false);
 
     async function takePicture() {
         const picture = await cameraRef.current?.takePictureAsync({ isImageMirror: false });
@@ -26,10 +28,11 @@ export default function Camera() {
     return (
         <View style={{ flex: 1, justifyContent: "center" }}>
             <ExpoCamera ref={cameraRef} style={{ aspectRatio: 9 / 11 }} type={cameraType}>
+                <Settings open={settingsOpen} setOpen={setSettingsOpen} />
                 <View style={styles.buttons}>
                     <CircleButton
                         icon={<Ionicons name="settings" size={32} color="white" />}
-                        onPress={() => false}
+                        onPress={() => setSettingsOpen(!settingsOpen)}
                     />
                     <CircleButton
                         icon={<Ionicons name="camera" size={48} color="white" />}

@@ -9,14 +9,13 @@ export default function SplashScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.logo} onPress={() => navigate("Gallery")}>
-                Camera App
+                Camera Settings App
             </Text>
             <View>
-                <Text style={styles.nav}>show gallery pictures</Text>
-                <Text style={styles.nav}>take picture from camera</Text>
-                <Text style={styles.nav}>save photo to device</Text>
-                <Text style={styles.nav}>delete photos from device</Text>
-                <Text style={styles.nav}>share photo</Text>
+                <Text style={styles.nav}>change camera white balance</Text>
+                <Text style={styles.nav}>change camera flash mode</Text>
+                <Text style={styles.nav}>change camera picture size</Text>
+                <Text style={styles.nav}>change camera camera ratio</Text>
             </View>
         </View>
     );
@@ -31,6 +30,7 @@ const styles = StyleSheet.create({
         gap: 16,
     },
     logo: {
+        textAlign: "center",
         fontFamily: "Poppins-Bold",
         fontSize: 52,
     },
