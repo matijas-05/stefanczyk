@@ -3,7 +3,9 @@ import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 
+import { UploadBody } from "../../../server/types";
 import { Navigation } from "../../App";
+import { Config } from "../../config";
 import Button from "../Button";
 import PhotoItem from "../PhotoItem";
 
@@ -33,6 +35,26 @@ export default function Gallery() {
         setSelected([]);
         refreshGallery();
     }
+    async function uploadSelected() {
+        const fd = new FormData();
+        selected.forEach((id) => {
+            const asset = assets?.assets.find((a) => a.id === id)!;
+            fd.append("photo", {
+                uri: asset.uri,
+                type: "image/jpeg",
+            } satisfies UploadBody);
+        });
+
+        const res = await fetch(`${Config.getApiUrl()}/upload`, {
+            method: "POST",
+            body: fd,
+        });
+        if (res.ok) {
+            alert("Photos uploaded successfully!");
+        } else {
+            alert("Something went wrong!");
+        }
+    }
 
     return (
         <View>
@@ -40,6 +62,7 @@ export default function Gallery() {
                 <Button title="LAYOUT" onPress={() => setCols(cols === 4 ? 1 : 4)} />
                 <Button title="CAMERA" onPress={() => navigation.navigate("Camera")} />
                 <Button title="DELETE" onPress={deleteSelected} disabled={selected.length === 0} />
+                <Button title="UPLOAD" onPress={uploadSelected} disabled={selected.length === 0} />
             </View>
 
             <View>

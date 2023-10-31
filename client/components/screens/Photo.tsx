@@ -4,7 +4,9 @@ import * as Sharing from "expo-sharing";
 import React from "react";
 import { View, Image, StyleSheet, Text, ScrollView } from "react-native";
 
+import { UploadBody } from "../../../server/types";
 import { Navigation, NavigationParamMap } from "../../App";
+import { Config } from "../../config";
 import Button from "../Button";
 
 export default function Photo() {
@@ -14,6 +16,24 @@ export default function Photo() {
     async function deletePhoto() {
         await MediaLibrary.deleteAssetsAsync([params.asset.id]);
         navigate("Gallery");
+    }
+    async function uploadPhoto() {
+        const fd = new FormData();
+        fd.append("photo", {
+            uri: params.asset.uri,
+            type: "image/jpeg",
+            name: params.asset.filename,
+        } satisfies UploadBody);
+
+        const res = await fetch(`${Config.getApiUrl()}/upload`, {
+            method: "POST",
+            body: fd,
+        });
+        if (res.ok) {
+            alert("Photo uploaded successfully!");
+        } else {
+            alert("Something went wrong!");
+        }
     }
 
     return (
@@ -30,8 +50,9 @@ export default function Photo() {
             </Text>
 
             <View style={styles.buttons}>
-                <Button title="DELETE" onPress={deletePhoto} />
                 <Button title="SHARE" onPress={() => Sharing.shareAsync(params.asset.uri)} />
+                <Button title="DELETE" onPress={deletePhoto} />
+                <Button title="UPLOAD" onPress={uploadPhoto} />
             </View>
         </ScrollView>
     );
