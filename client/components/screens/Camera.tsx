@@ -1,9 +1,11 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { CameraType, Camera as ExpoCamera } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
 
+import { Config } from "../../config";
 import CircleButton from "../CircleButton";
 import Settings, { CameraSettings } from "../Settings";
 
@@ -56,6 +58,44 @@ export default function Camera() {
     function switchCamera() {
         setCameraType(cameraType === CameraType.front ? CameraType.back : CameraType.front);
     }
+    async function pickImage() {
+        const pickerRes = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        if (!pickerRes.canceled) {
+            const fd = new FormData();
+            pickerRes.assets.forEach((asset) => {
+                // https://github.com/react-native-image-picker/react-native-image-picker/issues/1271#issuecomment-617699351
+                let path = asset.uri;
+                if (Platform.OS === "ios") {
+                    path = "~" + path.substring(path.indexOf("/Documents"));
+                }
+                if (!asset.fileName) {
+                    asset.fileName = path.split("/").pop();
+                }
+
+                // @ts-expect-error
+                fd.append("photo", {
+                    uri: asset.uri,
+                    type: "image/jpg",
+                    name: asset.fileName,
+                });
+            });
+
+            const res = await fetch(`${Config.getApiUrl()}/upload`, {
+                method: "POST",
+                body: fd,
+            });
+            if (res.ok) {
+                alert("Photos uploaded successfully!");
+            } else {
+                alert("Something went wrong!");
+            }
+        }
+    }
 
     if (status?.granted === false) {
         return <Text>No access to camera</Text>;
@@ -70,7 +110,9 @@ export default function Camera() {
                     aspectRatio: getCSSRatio(),
                 }}
                 type={cameraType}
+                // @ts-expect-error
                 whiteBalance={ExpoCamera.Constants.WhiteBalance[settings.whiteBalance]}
+                // @ts-expect-error
                 flashMode={ExpoCamera.Constants.FlashMode[settings.flashMode]}
                 ratio={settings.cameraRatio}
                 pictureSize={settings.pictureSize !== "" ? settings.pictureSize : undefined}
@@ -90,6 +132,11 @@ export default function Camera() {
                         onPress={() => setSettingsOpen(!settingsOpen)}
                     />
                 </View>
+                <CircleButton
+                    style={styles.imagePickerButton}
+                    icon={<Ionicons name="images" size={32} color="white" />}
+                    onPress={pickImage}
+                />
             </ExpoCamera>
 
             <Settings
@@ -117,5 +164,10 @@ const styles = StyleSheet.create({
         gap: 16,
         paddingBottom: 16,
         paddingHorizontal: 16,
+    },
+    imagePickerButton: {
+        position: "absolute",
+        top: 10,
+        right: 8,
     },
 });
