@@ -8,6 +8,7 @@ import { StyleSheet } from "react-native";
 import Camera from "./components/screens/Camera";
 import Gallery from "./components/screens/Gallery";
 import Photo from "./components/screens/Photo";
+import Settings from "./components/screens/Settings";
 import SplashScreen from "./components/screens/SplashScreen";
 
 const Stack = createNativeStackNavigator();
@@ -17,6 +18,7 @@ export type NavigationParamMap = {
     Gallery: undefined;
     Photo: { asset: Asset };
     Camera: undefined;
+    Settings: undefined;
 };
 export type Navigation = NavigationProp<NavigationParamMap>;
 
@@ -58,6 +60,14 @@ export default function App() {
                     component={Camera}
                     options={{
                         headerTitle: "Kamera",
+                        headerStyle: style.header,
+                    }}
+                />
+                <Stack.Screen
+                    name="Settings"
+                    component={Settings}
+                    options={{
+                        headerTitle: "Settings",
                         headerStyle: style.header,
                     }}
                 />

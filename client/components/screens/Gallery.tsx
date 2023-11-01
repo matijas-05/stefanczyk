@@ -46,7 +46,7 @@ export default function Gallery() {
             });
         });
 
-        const res = await fetch(`${Config.getApiUrl()}/upload`, {
+        const res = await fetch(`${await Config.getApiUrl()}/upload`, {
             method: "POST",
             body: fd,
         });
@@ -66,6 +66,7 @@ export default function Gallery() {
                 <Button title="CAMERA" onPress={() => navigation.navigate("Camera")} />
                 <Button title="DELETE" onPress={deleteSelected} disabled={selected.length === 0} />
                 <Button title="UPLOAD" onPress={uploadSelected} disabled={selected.length === 0} />
+                <Button title="CONFIG" onPress={() => navigation.navigate("Settings")} />
             </View>
 
             <View>
@@ -89,9 +90,9 @@ export default function Gallery() {
 
 const styles = StyleSheet.create({
     buttons: {
-        padding: 16,
+        paddingVertical: 16,
         flexDirection: "row",
         justifyContent: "space-around",
-        gap: 16,
+        gap: 6,
     },
 });
