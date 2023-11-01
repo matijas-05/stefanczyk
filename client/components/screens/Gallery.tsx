@@ -3,7 +3,6 @@ import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 
-import { UploadBody } from "../../../server/types";
 import { Navigation } from "../../App";
 import { Config } from "../../config";
 import Button from "../Button";
@@ -39,10 +38,12 @@ export default function Gallery() {
         const fd = new FormData();
         selected.forEach((id) => {
             const asset = assets?.assets.find((a) => a.id === id)!;
+            // @ts-expect-error
             fd.append("photo", {
                 uri: asset.uri,
-                type: "image/jpeg",
-            } satisfies UploadBody);
+                type: "image/jpg",
+                name: asset.filename,
+            });
         });
 
         const res = await fetch(`${Config.getApiUrl()}/upload`, {
@@ -54,6 +55,8 @@ export default function Gallery() {
         } else {
             alert("Something went wrong!");
         }
+
+        setSelected([]);
     }
 
     return (

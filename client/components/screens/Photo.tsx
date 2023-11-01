@@ -4,7 +4,6 @@ import * as Sharing from "expo-sharing";
 import React from "react";
 import { View, Image, StyleSheet, Text, ScrollView } from "react-native";
 
-import { UploadBody } from "../../../server/types";
 import { Navigation, NavigationParamMap } from "../../App";
 import { Config } from "../../config";
 import Button from "../Button";
@@ -19,11 +18,12 @@ export default function Photo() {
     }
     async function uploadPhoto() {
         const fd = new FormData();
+        // @ts-expect-error
         fd.append("photo", {
             uri: params.asset.uri,
-            type: "image/jpeg",
+            type: "image/jpg",
             name: params.asset.filename,
-        } satisfies UploadBody);
+        });
 
         const res = await fetch(`${Config.getApiUrl()}/upload`, {
             method: "POST",
