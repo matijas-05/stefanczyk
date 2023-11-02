@@ -46,7 +46,7 @@ export default function Gallery() {
             });
         });
 
-        const res = await fetch(`${await Config.getApiUrl()}/upload`, {
+        const res = await fetch(`${await Config.getApiUrl()}/image`, {
             method: "POST",
             body: fd,
         });

@@ -25,7 +25,7 @@ export default function Photo() {
             name: params.asset.filename,
         });
 
-        const res = await fetch(`${await Config.getApiUrl()}/upload`, {
+        const res = await fetch(`${await Config.getApiUrl()}/image`, {
             method: "POST",
             body: fd,
         });

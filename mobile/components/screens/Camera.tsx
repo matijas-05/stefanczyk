@@ -85,7 +85,7 @@ export default function Camera() {
                 });
             });
 
-            const res = await fetch(`${await Config.getApiUrl()}/upload`, {
+            const res = await fetch(`${await Config.getApiUrl()}/image`, {
                 method: "POST",
                 body: fd,
             });
