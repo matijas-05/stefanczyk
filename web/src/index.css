@@ -1,3 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    button {
+        border: 1px solid white;
+        border-radius: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        @apply transition-colors;
+    }
+    button:hover {
+        background-color: #555;
+    }
+}
