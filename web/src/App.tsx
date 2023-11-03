@@ -32,7 +32,11 @@ function App() {
         fetchImages();
     }
     async function renameImage(name: string) {
-        const newName = prompt("New name:");
+        const split = name.split(".");
+        split.pop();
+        const placeholder = split.join(".");
+
+        const newName = prompt("New name:", placeholder);
         if (!newName) {
             return;
         }
