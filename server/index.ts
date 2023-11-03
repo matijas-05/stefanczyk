@@ -13,10 +13,8 @@ app.get("/image", async (_, res) => {
     const files = await fs.readdir("./uploads/", { withFileTypes: true });
     const images = files
         .filter((file) => file.name.endsWith(".jpg"))
-        .map((file) => ({
-            name: file.name,
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+        .map((file) => file.name)
+        .sort((a, b) => a.localeCompare(b));
 
     res.send(JSON.stringify(images));
 });

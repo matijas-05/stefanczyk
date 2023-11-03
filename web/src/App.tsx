@@ -17,10 +17,10 @@ function App() {
 
     async function fetchImages() {
         const res = await fetch(`${apiUrl}/image`);
-        const names: Array<{ name: string }> = await res.json();
+        const names: string[] = await res.json();
 
         const newImages: Image[] = [];
-        for (const { name } of names) {
+        for (const name of names) {
             const res = await fetch(`${apiUrl}/image/${name}`);
             const data = await res.blob();
             newImages.push({ name, data });
@@ -32,11 +32,15 @@ function App() {
         fetchImages();
     }
     async function renameImage(name: string) {
-        const newName = prompt("New name:") + ".jpg";
+        const newName = prompt("New name:");
+        if (!newName) {
+            return;
+        }
+
         const res = await fetch(`${apiUrl}/image/${name}`, {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ newName }),
+            body: JSON.stringify({ newName: newName + ".jpg" }),
         });
 
         if (res.status === 409) {
