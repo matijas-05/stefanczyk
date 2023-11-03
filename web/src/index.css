@@ -8,8 +8,12 @@
         border-radius: 0.25rem;
         padding: 0.125rem 0.5rem;
         @apply transition-colors;
-    }
-    button:hover {
-        background-color: #555;
+
+        &:hover:not(:disabled) {
+            background-color: #555;
+        }
+        &:disabled {
+            opacity: 0.5;
+        }
     }
 }
