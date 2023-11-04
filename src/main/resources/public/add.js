@@ -31,7 +31,7 @@ submitBtn.addEventListener("click", async () => {
         color: colorEl.value,
     };
 
-    const res = await fetch("/add", { method: "post", body: JSON.stringify(data) });
+    const res = await fetch("/car", { method: "POST", body: JSON.stringify(data) });
     if (!res.ok) {
         alert("Błąd podczas dodawania samochodu");
     } else {

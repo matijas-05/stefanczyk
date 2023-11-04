@@ -14,10 +14,18 @@ public class Main {
     public static void main(String[] args) {
         port(3000);
         staticFiles.externalLocation("src/main/resources/public");
-        post("/add", (req, res) -> add(req, res));
+
+        get("/car", (req, res) -> getCars(req, res));
+        post("/car", (req, res) -> addCar(req, res));
+        delete("/car/:id", (req, res) -> deleteCar(req, res));
     }
 
-    static String add(Request req, Response res) {
+    static String getCars(Request req, Response res) {
+        res.type("application/json");
+        Gson gson = new Gson();
+        return gson.toJson(cars);
+    }
+    static String addCar(Request req, Response res) {
         try {
             Gson gson = new Gson();
             Car car = gson.fromJson(req.body(), Car.class);
@@ -29,6 +37,13 @@ public class Main {
         }
 
         res.status(201);
+        return "";
+    }
+    static String deleteCar(Request req, Response res) {
+        UUID id = UUID.fromString(req.params(":id"));
+        cars.removeIf(car -> car.id.equals(id));
+
+        res.status(200);
         return "";
     }
 }
