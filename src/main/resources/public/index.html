@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <script src="add.js" type="module" defer></script>
+        <title>Samochody</title>
+    </head>
+
+    <body>
+        <nav>
+            <a href="index.html">index</a>
+            <a href="cars.html">edit/update cars</a>
+        </nav>
+
+        <main>
+            <div>
+                <input type="text" name="model" id="model" />
+                <label for="model">model</label>
+            </div>
+
+            <div>
+                <input
+                    type="number"
+                    min="1900"
+                    max="2099"
+                    step="1"
+                    value="2016"
+                    name="year"
+                    id="year"
+                />
+                <label for="year">rok</label>
+            </div>
+
+            <div>
+                <input type="checkbox" name="driver-airbag" id="driver-airbag" />
+                <input type="checkbox" name="passanger-airbag" id="passanger-airbag" />
+                <input type="checkbox" name="back-airbag" id="back-airbag" />
+                <input type="checkbox" name="back-side-airbag" id="back-side-airbag" />
+                <label>
+                    poduszki powietrzne
+                    <br />
+                    kierowca | pasażer | tylna kanapa | boczne z tyłu
+                </label>
+            </div>
+
+            <div>
+                <input type="color" name="color" id="color" />
+                <label for="color">kolor</label>
+            </div>
+
+            <button type="submit">dodaj na serwer</button>
+        </main>
+    </body>
+</html>
