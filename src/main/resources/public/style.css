@@ -22,3 +22,7 @@ nav {
     list-style: none;
     gap: 1rem;
 }
+button {
+    font-size: 1rem;
+    padding: 0.125rem 0.25rem;
+}
