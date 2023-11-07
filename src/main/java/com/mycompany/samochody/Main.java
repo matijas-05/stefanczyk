@@ -8,6 +8,9 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.UUID;
 import spark.Request;
@@ -23,10 +26,11 @@ public class Main {
 
         get("/car", (req, res) -> getCars(req, res));
         post("/car", (req, res) -> addCar(req, res));
-        delete("/car/id", (req, res) -> deleteCar(req, res));
-        patch("/car/id", (req, res) -> updateCar(req, res));
+        delete("/car/:id", (req, res) -> deleteCar(req, res));
+        patch("/car/:id", (req, res) -> updateCar(req, res));
 
-        post("/invoice/id", (req, res) -> generateInvoice(req, res));
+        get("/invoice/:id", (req, res) -> downloadInvoice(req, res));
+        post("/invoice/:id", (req, res) -> generateInvoice(req, res));
     }
 
     static String getCars(Request req, Response res) {
@@ -49,14 +53,14 @@ public class Main {
         return "";
     }
     static String deleteCar(Request req, Response res) {
-        UUID id = UUID.fromString(req.params("id"));
+        UUID id = UUID.fromString(req.params(":id"));
         cars.removeIf(car -> car.id.equals(id));
 
         res.status(200);
         return "";
     }
     static String updateCar(Request req, Response res) {
-        UUID id = UUID.fromString(req.params("id"));
+        UUID id = UUID.fromString(req.params(":id"));
         Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
         if (car == null) {
             res.status(404);
@@ -77,8 +81,33 @@ public class Main {
         return "";
     }
 
+    static String downloadInvoice(Request req, Response res) {
+        UUID id = UUID.fromString(req.params(":id"));
+        Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
+        if (car == null) {
+            res.status(404);
+            return "Car with id '" + id + "' not found";
+        }
+        if (!car.hasInvoice) {
+            res.status(404);
+            return "Car with id '" + id + "' has no invoice";
+        }
+
+        String fileName = car.id + ".pdf";
+        res.type("application/octet-stream");
+        res.header("Content-Disposition", "attachment; filename=" + fileName);
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of("invoices/" + fileName)));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
     static String generateInvoice(Request req, Response res) {
-        UUID id = UUID.fromString(req.params("id"));
+        UUID id = UUID.fromString(req.params(":id"));
         Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
         if (car == null) {
             res.status(404);
@@ -141,7 +170,7 @@ class Car {
     public boolean hasInvoice;
 
     public Car(String model, String year, Airbags airbags, String color) {
-        this.id = UUID.randomUUID();
+        this.id = UUID.fromString("3c78d3d0-d753-474f-8e39-b64d77a19f8a");
         this.model = model;
         this.year = year;
         this.airbags = airbags;

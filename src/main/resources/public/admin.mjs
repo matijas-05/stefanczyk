@@ -5,6 +5,7 @@
  * @property {string} year
  * @property {Airbags} airbags
  * @property {string} color
+ * @property {boolean} hasInvoice
  */
 
 /**
@@ -81,8 +82,16 @@ async function fetchCars() {
                 alert("Error generating invoice");
                 return;
             }
+            fetchCars();
         });
         row.appendChild(generateInvoiceBtn);
+
+        if (car.hasInvoice) {
+            const downloadInvoiceA = document.createElement("a");
+            downloadInvoiceA.innerText = "pobierz fakturę VAT";
+            downloadInvoiceA.href = `/invoice/${car.id}`;
+            row.appendChild(downloadInvoiceA);
+        }
 
         main.appendChild(row);
     });
