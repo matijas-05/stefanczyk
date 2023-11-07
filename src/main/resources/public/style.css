@@ -17,12 +17,29 @@ body {
     gap: 1rem;
 }
 
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 nav {
     display: flex;
     list-style: none;
     gap: 1rem;
 }
+
 button {
     font-size: 1rem;
     padding: 0.125rem 0.25rem;
+    width: fit-content;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.row {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
 }

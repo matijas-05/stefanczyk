@@ -44,6 +44,8 @@ document.querySelector("#update-dialog button[type='reset']").addEventListener("
     updateDialog.close();
 });
 
+fetchCars();
+
 async function fetchCars() {
     const res = await fetch("/car");
     if (!res.ok) {
@@ -102,6 +104,8 @@ async function fetchCars() {
         updateCarBtn.addEventListener("click", () => {
             updateDialog.showModal();
             updateDialog.querySelector("input[name='id']").value = car.id;
+            updateDialog.querySelector("input[name='model']").value = car.model;
+            updateDialog.querySelector("input[name='year']").value = car.year;
         });
         updateCarBtn.textContent = "Update";
         row.appendChild(updateCarBtn);
@@ -109,5 +113,3 @@ async function fetchCars() {
         main.appendChild(row);
     });
 }
-
-fetchCars();
