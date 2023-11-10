@@ -1,7 +1,7 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList, Text, Switch, Animated, useAnimatedValue } from "react-native";
 
 import { Navigation } from "../../App";
@@ -9,16 +9,18 @@ import { Alarm as AlarmType, Database } from "../../Database";
 import CircleButton from "../CircleButton";
 
 export default function AlarmList() {
-    const { navigate } = useNavigation<Navigation>();
+    const navigation = useNavigation<Navigation>();
     const [alarms, setAlarms] = useState<AlarmType[]>([]);
-    const [selected, setSelected] = useState<Set<number>>(new Set());
+    const [selected, setSelected] = useState(new Set<number>());
 
-    useFocusEffect(() => {
-        (async () => {
-            const alarms = await Database.getAlarms();
-            setAlarms(alarms);
-        })();
-    });
+    React.useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", updateAlarms);
+        return unsubscribe;
+    }, []);
+    async function updateAlarms() {
+        const alarms = await Database.getAlarms();
+        setAlarms(alarms);
+    }
 
     return (
         <View style={styles.container}>
@@ -38,12 +40,13 @@ export default function AlarmList() {
                             }
                             setSelected(newSelected);
                         }}
+                        updateAlarms={updateAlarms}
                     />
                 )}
             />
 
-            <CircleButton style={styles.addButton} onPress={() => navigate("AddAlarm")}>
-                <AntDesign name="plus" size={36} />
+            <CircleButton style={styles.addButton} onPress={() => navigation.navigate("AddAlarm")}>
+                <AntDesign name="plus" size={32} />
             </CircleButton>
         </View>
     );
@@ -53,15 +56,27 @@ interface AlarmProps {
     data: AlarmType;
     selected: boolean;
     setSelected: (value: boolean) => void;
+    updateAlarms: () => void;
 }
 
 const HIDDEN = 0;
 const VISIBLE = 25;
-const days = ["PN", "WT", "ŚR", "CZ", "PT", "SB", "ND"];
+const DAYS = ["PN", "WT", "ŚR", "CZ", "PT", "SB", "ND"];
 
 function Alarm(props: AlarmProps) {
     const height = useAnimatedValue(HIDDEN);
     const [expanded, setExpanded] = useState(false);
+    const [daysSelected, setDaysSelected] = useState(new Set<number>());
+
+    useEffect(() => {
+        const newDays = new Set<number>();
+        for (let i = 0; i < props.data.days.length; i++) {
+            if (props.data.days[i] === "1") {
+                newDays.add(i);
+            }
+        }
+        setDaysSelected(newDays);
+    }, []);
 
     return (
         <View style={styles.alarm}>
@@ -73,7 +88,10 @@ function Alarm(props: AlarmProps) {
             <View style={styles.alarmRow}>
                 <CircleButton
                     style={{ width: 24, height: 24 }}
-                    onPress={() => Database.deleteAlarm(props.data.id)}
+                    onPress={async () => {
+                        await Database.deleteAlarm(props.data.id);
+                        props.updateAlarms();
+                    }}
                 >
                     <FontAwesome5 name="trash" size={16} />
                 </CircleButton>
@@ -92,8 +110,29 @@ function Alarm(props: AlarmProps) {
             </View>
 
             <Animated.View style={[styles.alarmDays, { height }]}>
-                {days.map((day, i) => (
-                    <CircleButton key={i} style={styles.alarmDay}>
+                {DAYS.map((day, i) => (
+                    <CircleButton
+                        key={i}
+                        style={[
+                            styles.alarmDay,
+                            { backgroundColor: daysSelected.has(i) ? "black" : "transparent" },
+                        ]}
+                        onPress={() => {
+                            const newDays = new Set(daysSelected);
+                            if (newDays.has(i)) {
+                                newDays.delete(i);
+                            } else {
+                                newDays.add(i);
+                            }
+                            setDaysSelected(newDays);
+
+                            let days = "0000000";
+                            for (const day of newDays) {
+                                days = days.substring(0, day) + "1" + days.substring(day + 1);
+                            }
+                            Database.updateAlarm(props.data.id, days);
+                        }}
+                    >
                         {day}
                     </CircleButton>
                 ))}
@@ -130,8 +169,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     alarmDay: {
-        width: 24,
-        height: 24,
+        width: 32,
+        height: 32,
         fontSize: 8,
     },
 });

@@ -16,7 +16,7 @@ export default function AddAlarm() {
                     alert("Dodano budzik");
                 }}
             >
-                <AntDesign name="plus" size={36} />
+                <AntDesign name="plus" size={32} />
             </CircleButton>
         </View>
     );
