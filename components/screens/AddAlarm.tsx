@@ -2,13 +2,21 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import React from "react";
 import { View, StyleSheet, Text } from "react-native";
 
+import { Database } from "../../Database";
 import CircleButton from "../CircleButton";
 
 export default function AddAlarm() {
     return (
         <View style={styles.container}>
             <Text>"+" dodaje do bazy budzik z godziną 00:00</Text>
-            <CircleButton style={styles.addButton} icon={<AntDesign name="plus" size={36} />} />
+            <CircleButton
+                style={styles.addButton}
+                icon={<AntDesign name="plus" size={36} />}
+                onPress={async () => {
+                    await Database.addAlarm();
+                    alert("Dodano budzik");
+                }}
+            />
         </View>
     );
 }

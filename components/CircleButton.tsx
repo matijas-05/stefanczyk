@@ -25,7 +25,6 @@ export default function CircleButton({ icon, ...props }: Props) {
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: "#EA1E63",
         width: 64,
         height: 64,
         borderRadius: 100,

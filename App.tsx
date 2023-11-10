@@ -1,9 +1,10 @@
 import { NavigationContainer, NavigationProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 
+import { Database } from "./Database";
 import AddAlarm from "./components/screens/AddAlarm";
 import AlarmList from "./components/screens/AlarmList";
 import Splash from "./components/screens/Splash";
@@ -20,6 +21,10 @@ export default function App() {
     const [fontsLoaded] = useFonts({
         "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
     });
+
+    useEffect(() => {
+        Database.init();
+    }, []);
 
     if (!fontsLoaded) {
         return null;
