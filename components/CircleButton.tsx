@@ -1,23 +1,26 @@
 import React from "react";
 import {
+    StyleProp,
     StyleSheet,
     Text,
+    TextStyle,
     TouchableNativeFeedback,
     TouchableOpacityProps,
     View,
 } from "react-native";
 
 interface Props extends TouchableOpacityProps {
-    icon: React.ReactNode;
+    children: React.ReactNode;
+    textStyle?: StyleProp<TextStyle>;
 }
-export default function CircleButton({ icon, ...props }: Props) {
+export default function CircleButton({ children, textStyle, ...rest }: Props) {
     return (
         <TouchableNativeFeedback
             background={TouchableNativeFeedback.Ripple("rgba(255,255,255,1)", true)}
-            {...props}
+            {...rest}
         >
-            <View style={StyleSheet.compose(styles.button, props.style)}>
-                <Text style={styles.text}>{icon}</Text>
+            <View style={StyleSheet.compose(styles.button, rest.style)}>
+                <Text style={StyleSheet.compose(styles.text, textStyle)}>{children}</Text>
             </View>
         </TouchableNativeFeedback>
     );
@@ -25,14 +28,12 @@ export default function CircleButton({ icon, ...props }: Props) {
 
 const styles = StyleSheet.create({
     button: {
-        width: 64,
-        height: 64,
         borderRadius: 100,
         alignItems: "center",
         justifyContent: "center",
     },
     text: {
-        fontSize: 32,
+        fontSize: 16,
         fontWeight: "bold",
         textAlign: "center",
     },

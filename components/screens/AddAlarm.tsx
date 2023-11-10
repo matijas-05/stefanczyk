@@ -11,12 +11,13 @@ export default function AddAlarm() {
             <Text>"+" dodaje do bazy budzik z godziną 00:00</Text>
             <CircleButton
                 style={styles.addButton}
-                icon={<AntDesign name="plus" size={36} />}
                 onPress={async () => {
                     await Database.addAlarm();
                     alert("Dodano budzik");
                 }}
-            />
+            >
+                <AntDesign name="plus" size={36} />
+            </CircleButton>
         </View>
     );
 }
@@ -31,5 +32,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#EA1E63",
         position: "absolute",
         bottom: 32,
+        width: 64,
+        height: 64,
     },
 });
