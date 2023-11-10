@@ -9,13 +9,13 @@ export default function SplashScreen() {
     return (
         <View style={styles.container}>
             <Text style={styles.logo} onPress={() => navigate("Gallery")}>
-                Camera Settings App
+                Camera App
             </Text>
             <View>
-                <Text style={styles.nav}>change camera white balance</Text>
-                <Text style={styles.nav}>change camera flash mode</Text>
-                <Text style={styles.nav}>change camera picture size</Text>
-                <Text style={styles.nav}>change camera camera ratio</Text>
+                <Text style={styles.nav}>take photos</Text>
+                <Text style={styles.nav}>upload photos</Text>
+                <Text style={styles.nav}>share photos</Text>
+                <Text style={styles.nav}>photo settings</Text>
             </View>
         </View>
     );
