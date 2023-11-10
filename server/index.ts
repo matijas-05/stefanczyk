@@ -12,7 +12,12 @@ app.use(bodyParser.json());
 app.get("/image", async (_, res) => {
     const files = await fs.readdir("./uploads/", { withFileTypes: true });
     const images = files
-        .filter((file) => file.name.endsWith(".jpg"))
+        .filter(
+            (file) =>
+                file.name.endsWith(".jpg") ||
+                file.name.endsWith(".jpeg") ||
+                file.name.endsWith(".png"),
+        )
         .map((file) => file.name)
         .sort((a, b) => a.localeCompare(b));
 
