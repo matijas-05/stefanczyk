@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     addButton: {
+        backgroundColor: "#EA1E63",
         position: "absolute",
         bottom: 32,
     },

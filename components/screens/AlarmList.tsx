@@ -1,7 +1,7 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
 import { View, StyleSheet, FlatList, Text, Switch } from "react-native";
 
 import { Navigation } from "../../App";
@@ -13,12 +13,12 @@ export default function AlarmList() {
     const [alarms, setAlarms] = useState<AlarmType[]>([]);
     const [selected, setSelected] = useState<Set<number>>(new Set());
 
-    useEffect(() => {
+    useFocusEffect(() => {
         (async () => {
             const alarms = await Database.getAlarms();
             setAlarms(alarms);
         })();
-    }, []);
+    });
 
     return (
         <View style={styles.container}>
@@ -65,8 +65,12 @@ function Alarm(props: AlarmProps) {
             </View>
             <View style={styles.alarmRow}>
                 <CircleButton
-                    style={{ width: 20, height: 20 }}
+                    style={{ width: 24, height: 24 }}
                     icon={<FontAwesome5 name="trash" size={16} />}
+                    onPress={async () => {
+                        await Database.deleteAlarm(props.data.id);
+                        alert("Usunięto alarm");
+                    }}
                 />
             </View>
             {/* <Text>{data.days}</Text> */}

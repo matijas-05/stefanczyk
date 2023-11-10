@@ -22,6 +22,21 @@ export class Database {
         );
     }
 
+    static getAlarms(): Promise<Alarm[]> {
+        return new Promise((resolve, reject) => {
+            this.db.transaction(
+                (tx) => {
+                    tx.executeSql("SELECT * FROM alarms;", [], (_, { rows }) => {
+                        resolve(rows._array as Alarm[]);
+                    });
+                },
+                (err) => {
+                    reject(err.message);
+                },
+            );
+        });
+    }
+
     static addAlarm(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.db.transaction(
@@ -35,14 +50,12 @@ export class Database {
             );
         });
     }
-
-    static getAlarms(): Promise<Alarm[]> {
+    static deleteAlarm(id: number): Promise<void> {
         return new Promise((resolve, reject) => {
             this.db.transaction(
                 (tx) => {
-                    tx.executeSql("SELECT * FROM alarms;", [], (_, { rows }) => {
-                        resolve(rows._array as Alarm[]);
-                    });
+                    tx.executeSql("DELETE FROM alarms WHERE id = ?;", [id]);
+                    resolve();
                 },
                 (err) => {
                     reject(err.message);
