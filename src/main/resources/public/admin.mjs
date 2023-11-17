@@ -5,7 +5,7 @@
  * @property {string} year
  * @property {Airbags} airbags
  * @property {string} color
- * @property {boolean} hasInvoice
+ * @property {boolean} hasSingleInvoice
  */
 
 /**
@@ -86,7 +86,7 @@ async function fetchCars() {
         });
         row.appendChild(generateInvoiceBtn);
 
-        if (car.hasInvoice) {
+        if (car.hasSingleInvoice) {
             const downloadInvoiceA = document.createElement("a");
             downloadInvoiceA.innerText = "pobierz fakturę VAT";
             downloadInvoiceA.href = `/invoice/${car.id}`;

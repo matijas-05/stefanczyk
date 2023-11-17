@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <script src="search.mjs" defer></script>
+        <style>
+            main {
+                display: flex;
+                flex-direction: row;
+                gap: 2rem;
+            }
+
+            #buttons {
+                display: flex;
+                flex-direction: column;
+                width: fit-content;
+                gap: 1.5rem;
+
+                & > div {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+                & input[type="number"] {
+                    height: 2rem;
+                    font-size: 1rem;
+                }
+            }
+            #invoice-all-cars-download {
+                display: flex;
+                gap: 1rem;
+            }
+        </style>
+
+        <title>Samochody</title>
+    </head>
+
+    <body>
+        <nav>
+            <a href="index.html">index</a>
+            <a href="cars.html">edit/update cars</a>
+            <a href="admin.html">generate invoice</a>
+            <a href="search.html">search invoices</a>
+        </nav>
+
+        <main>
+            <div id="buttons">
+                <button>generuj losowo listę samochodów</button>
+                <div>
+                    <button id="invoice-all-cars">faktura za wszystkie auta</button>
+                    <div id="invoice-all-cars-download"></div>
+                </div>
+                <div>
+                    <input type="number" id="year" />
+                    <button>faktura - auta z danego rocznika</button>
+                </div>
+                <div>
+                    <input type="number" id="price-min" />
+                    <input type="number" id="price-max" />
+                    <button>faktura - auta z danego zakresu cen</button>
+                </div>
+            </div>
+
+            <div id="cars"></div>
+        </main>
+    </body>
+</html>

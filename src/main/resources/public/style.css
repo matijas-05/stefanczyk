@@ -37,6 +37,9 @@ button {
         cursor: pointer;
     }
 }
+a:visited {
+    color: blue;
+}
 
 .row {
     display: flex;

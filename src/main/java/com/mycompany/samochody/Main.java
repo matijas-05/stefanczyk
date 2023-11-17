@@ -3,24 +3,27 @@ import static spark.Spark.*;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import com.itextpdf.text.DocumentException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import spark.Request;
 import spark.Response;
 
 public class Main {
     static ArrayList<Car> cars = new ArrayList<Car>();
+    static HashMap<String, SingleInvoice> singleInvoices = new HashMap<String, SingleInvoice>();
+    static ArrayList<MultiInvoice> invoicesAll = new ArrayList<MultiInvoice>();
+    static Gson gson = new Gson();
 
     public static void main(String[] args) {
         cars.add(new Car("Fiat", "1999", new Airbags(true, true, false, false), "#ff0000"));
+        cars.add(new Car("Skoda", "2012", new Airbags(true, true, true, true), "#ffffff"));
+
         port(3000);
         staticFiles.externalLocation("src/main/resources/public");
 
@@ -29,18 +32,20 @@ public class Main {
         delete("/car/:id", (req, res) -> deleteCar(req, res));
         patch("/car/:id", (req, res) -> updateCar(req, res));
 
-        get("/invoice/:id", (req, res) -> downloadInvoice(req, res));
-        post("/invoice/:id", (req, res) -> generateInvoice(req, res));
+        post("/invoice/all", (req, res) -> generateInvoiceAll(req, res));
+        get("/invoice/all", (req, res) -> getInvoicesAll(req, res));
+        get("/invoice/all/:filename", (req, res) -> downloadInvoiceAll(req, res));
+
+        post("/invoice/:id", (req, res) -> generateSingleInvoice(req, res));
+        get("/invoice/:id", (req, res) -> downloadSingleInvoice(req, res));
     }
 
     static String getCars(Request req, Response res) {
         res.type("application/json");
-        Gson gson = new Gson();
         return gson.toJson(cars);
     }
     static String addCar(Request req, Response res) {
         try {
-            Gson gson = new Gson();
             Car car = gson.fromJson(req.body(), Car.class);
             car.id = UUID.randomUUID();
             cars.add(car);
@@ -68,7 +73,6 @@ public class Main {
         }
 
         try {
-            Gson gson = new Gson();
             Car newCar = gson.fromJson(req.body(), Car.class);
             car.model = newCar.model;
             car.year = newCar.year;
@@ -81,19 +85,78 @@ public class Main {
         return "";
     }
 
-    static String downloadInvoice(Request req, Response res) {
+    static String generateSingleInvoice(Request req, Response res) {
         UUID id = UUID.fromString(req.params(":id"));
         Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
         if (car == null) {
             res.status(404);
             return "Car with id '" + id + "' not found";
         }
-        if (!car.hasInvoice) {
+
+        SingleInvoice invoice = new SingleInvoice(car);
+        try {
+            invoice.generate();
+            singleInvoices.put(car.id.toString(), invoice);
+        } catch (DocumentException | IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        car.hasSingleInvoice = true;
+        res.status(201);
+        return "";
+    }
+    static String downloadSingleInvoice(Request req, Response res) {
+        UUID id = UUID.fromString(req.params(":id"));
+        Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
+        if (car == null) {
+            res.status(404);
+            return "Car with id '" + id + "' not found";
+        }
+        if (!singleInvoices.containsKey(car.id.toString())) {
             res.status(404);
             return "Car with id '" + id + "' has no invoice";
         }
 
-        String fileName = car.id + ".pdf";
+        String fileName = singleInvoices.get(car.id.toString()).path;
+        res.type("application/octet-stream");
+        res.header("Content-Disposition", "attachment; filename=" + fileName);
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of(fileName)));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
+
+    static String generateInvoiceAll(Request req, Response res) {
+        MultiInvoice invoice = new MultiInvoice("Faktura za wszystkie auta",
+                                                "Firma sprzedająca auta", "Jan Kowalski", cars);
+        try {
+            invoice.generate();
+            invoicesAll.add(invoice);
+        } catch (DocumentException | IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        res.status(201);
+        return "";
+    }
+    static String getInvoicesAll(Request req, Response res) {
+        ArrayList<MultiInvoiceDownload> invoices = new ArrayList<MultiInvoiceDownload>();
+        for (MultiInvoice i : invoicesAll) {
+            invoices.add(new MultiInvoiceDownload(i.filename, i.date));
+        }
+
+        return gson.toJson(invoices);
+    }
+    static String downloadInvoiceAll(Request req, Response res) {
+        String fileName = req.params(":filename");
+
         res.type("application/octet-stream");
         res.header("Content-Disposition", "attachment; filename=" + fileName);
 
@@ -106,104 +169,14 @@ public class Main {
 
         return "";
     }
-    static String generateInvoice(Request req, Response res) {
-        UUID id = UUID.fromString(req.params(":id"));
-        Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
-        if (car == null) {
-            res.status(404);
-            return "Car with id '" + id + "' not found";
-        }
-
-        Document document = new Document();
-        try {
-            PdfWriter.getInstance(document, new FileOutputStream("invoices/" + car.id + ".pdf"));
-        } catch (FileNotFoundException | DocumentException e) {
-            res.status(500);
-            return e.getMessage();
-        }
-
-        document.open();
-        {
-            Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
-            Font bigFont = FontFactory.getFont(FontFactory.HELVETICA, 24, BaseColor.BLACK);
-            Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
-
-            Color color = new Color(car.color);
-            Font colorFont = FontFactory.getFont(FontFactory.HELVETICA, 16,
-                                                 new BaseColor(color.r, color.g, color.b));
-
-            try {
-                document.add(new Paragraph("FAKTURA dla: " + car.id, boldFont));
-                document.add(new Paragraph("model: " + car.model, bigFont));
-                document.add(new Paragraph("kolor: " + car.color, colorFont));
-                document.add(new Paragraph("rok: " + car.year, font));
-                document.add(new Paragraph("poduszka: kierowca -> " + car.airbags.driver, font));
-                document.add(new Paragraph("poduszka: pasażer -> " + car.airbags.passenger, font));
-                document.add(new Paragraph("poduszka: kanapa -> " + car.airbags.back, font));
-                document.add(new Paragraph("poduszka: boczne -> " + car.airbags.side, font));
-                try {
-                    document.add(Image.getInstance("car-image.png"));
-                } catch (IOException e) {
-                    res.status(500);
-                    return e.getMessage();
-                }
-            } catch (DocumentException e) {
-                res.status(500);
-                return e.getMessage();
-            }
-        }
-        document.close();
-
-        car.hasInvoice = true;
-
-        res.status(201);
-        return "";
-    }
 }
 
-class Car {
-    public UUID id;
-    public String model;
-    public String year;
-    public Airbags airbags;
-    public String color;
-    public boolean hasInvoice;
+class MultiInvoiceDownload {
+    public String filename;
+    public long date;
 
-    public Car(String model, String year, Airbags airbags, String color) {
-        this.id = UUID.fromString("3c78d3d0-d753-474f-8e39-b64d77a19f8a");
-        this.model = model;
-        this.year = year;
-        this.airbags = airbags;
-        this.color = color;
-    }
-}
-class Airbags {
-    public boolean driver;
-    public boolean passenger;
-    public boolean back;
-    public boolean side;
-
-    public Airbags(boolean driver, boolean passenger, boolean back, boolean side) {
-        this.driver = driver;
-        this.passenger = passenger;
-        this.back = back;
-        this.side = side;
-    }
-}
-
-class Color {
-    public int r;
-    public int g;
-    public int b;
-
-    public Color(int r, int g, int b) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-    }
-    public Color(String hex) {
-        this.r = Integer.parseInt(hex.substring(1, 3), 16);
-        this.g = Integer.parseInt(hex.substring(3, 5), 16);
-        this.b = Integer.parseInt(hex.substring(5, 7), 16);
+    public MultiInvoiceDownload(String filename, long date) {
+        this.filename = filename;
+        this.date = date;
     }
 }
