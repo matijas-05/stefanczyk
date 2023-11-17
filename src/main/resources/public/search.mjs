@@ -5,6 +5,7 @@
  * @property {string} year
  * @property {Airbags} airbags
  * @property {string} color
+ * @property {string} image
  * @property {number} price
  * @property {number} vat
  */
@@ -25,6 +26,16 @@
 
 fetchCars();
 fetchInvoicesAll();
+
+const randomizeBtn = document.getElementById("randomize");
+randomizeBtn.addEventListener("click", async () => {
+    const res = await fetch("/car/random", { method: "POST" });
+    if (res.ok) {
+        fetchCars();
+    } else {
+        alert("błąd generowania samochodów");
+    }
+});
 
 /** @type {HTMLButtonElement} */
 const invoiceAllCarsBtn = document.getElementById("invoice-all-cars");
@@ -76,8 +87,11 @@ async function fetchCars() {
         color.style.backgroundColor = car.color;
         row.appendChild(color);
 
-        // TODO:
-        // const picture = document.createElement("img");
+        const image = document.createElement("img");
+        image.src = `/car/image/${car.image}`;
+        image.style.width = "4rem";
+        image.style.height = "3rem";
+        row.appendChild(image);
 
         const price = document.createElement("div");
         price.textContent = car.price;

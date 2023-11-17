@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 import spark.Request;
 import spark.Response;
@@ -21,9 +22,6 @@ public class Main {
     static Gson gson = new Gson();
 
     public static void main(String[] args) {
-        cars.add(new Car("Fiat", "1999", new Airbags(true, true, false, false), "#ff0000"));
-        cars.add(new Car("Skoda", "2012", new Airbags(true, true, true, true), "#ffffff"));
-
         port(3000);
         staticFiles.externalLocation("src/main/resources/public");
 
@@ -31,6 +29,9 @@ public class Main {
         post("/car", (req, res) -> addCar(req, res));
         delete("/car/:id", (req, res) -> deleteCar(req, res));
         patch("/car/:id", (req, res) -> updateCar(req, res));
+
+        get("/car/image/:filename", (req, res) -> getCarImage(req, res));
+        post("/car/random", (req, res) -> randomCars(req, res));
 
         post("/invoice/all", (req, res) -> generateInvoiceAll(req, res));
         get("/invoice/all", (req, res) -> getInvoicesAll(req, res));
@@ -79,6 +80,42 @@ public class Main {
         } catch (JsonSyntaxException e) {
             res.status(400);
             return "";
+        }
+
+        res.status(200);
+        return "";
+    }
+
+    static String getCarImage(Request req, Response res) {
+        res.type("image/jpg");
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of("images/" + req.params(":filename"))));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
+    static String randomCars(Request req, Response res) {
+        String[] models = {"Fiat", "Skoda", "Ford", "Opel", "Audi", "BMW", "Mercedes"};
+        String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7",
+                        "8", "9", "a", "b", "c", "d", "e", "f"};
+        Random rand = new Random();
+
+        cars.clear();
+        for (int i = 0; i < 10; i++) {
+            String model = models[rand.nextInt(0, models.length)];
+            String year = String.valueOf(rand.nextInt(1990, 2023));
+            Airbags airbags = new Airbags(rand.nextBoolean(), rand.nextBoolean(),
+                                          rand.nextBoolean(), rand.nextBoolean());
+            String color = "#";
+            for (int j = 0; j < 6; j++) {
+                color += hex[rand.nextInt(0, hex.length)];
+            }
+
+            cars.add(new Car(model, year, airbags, color));
         }
 
         res.status(200);

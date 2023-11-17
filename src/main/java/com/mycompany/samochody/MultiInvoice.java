@@ -73,19 +73,6 @@ public class MultiInvoice {
                 double value = car.price * ((100 + car.vat) / 100.0);
                 table.addCell(String.valueOf(df.format(value)));
                 total += value;
-
-                // Color color = new Color(car.color);
-                // Font colorFont = FontFactory.getFont(FontFactory.HELVETICA, 16,
-                //                                      new BaseColor(color.r, color.g, color.b));
-                //
-                // document.add(new Paragraph("model: " + car.model, bigFont));
-                // document.add(new Paragraph("kolor: " + car.color, colorFont));
-                // document.add(new Paragraph("rok: " + car.year, font));
-                // document.add(new Paragraph("poduszka: kierowca -> " + car.airbags.driver, font));
-                // document.add(new Paragraph("poduszka: pasażer -> " + car.airbags.passenger,
-                // font)); document.add(new Paragraph("poduszka: kanapa -> " + car.airbags.back,
-                // font)); document.add(new Paragraph("poduszka: boczne -> " + car.airbags.side,
-                // font)); document.add(Image.getInstance("car-image.png"));
             }
 
             document.add(table);

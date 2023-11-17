@@ -16,16 +16,14 @@
  * @property {boolean} side
  */
 
-document.getElementById("random-cars").addEventListener("click", async () => {
-    const res = await fetch("/random", {
-        method: "POST",
-    });
-    if (!res.ok) {
-        alert("Error generating random cars");
-        return;
+const randomizeBtn = document.getElementById("randomize");
+randomizeBtn.addEventListener("click", async () => {
+    const res = await fetch("/car/random", { method: "POST" });
+    if (res.ok) {
+        fetchCars();
+    } else {
+        alert("błąd generowania samochodów");
     }
-
-    fetchCars();
 });
 
 fetchCars();

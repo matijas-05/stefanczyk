@@ -40,6 +40,9 @@ button {
 a:visited {
     color: blue;
 }
+img {
+    object-fit: cover;
+}
 
 .row {
     display: flex;

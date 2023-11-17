@@ -9,6 +9,7 @@ class Car {
     public String year;
     public Airbags airbags;
     public String color;
+    public String image;
     public int price;
     public int vat;
     public boolean hasSingleInvoice;
@@ -21,6 +22,7 @@ class Car {
         this.color = color;
 
         Random random = new Random();
+        this.image = "car" + random.nextInt(1, 3 + 1) + ".jpg";
         this.price = random.nextInt(0, 100_000);
         int[] vat = {0, 7, 22};
         this.vat = vat[random.nextInt(0, vat.length)];
