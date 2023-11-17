@@ -36,9 +36,10 @@ public class MultiInvoice {
 
         document.open();
         {
-            Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
-            Font bigFont = FontFactory.getFont(FontFactory.HELVETICA, 24, BaseColor.BLACK);
+            // Font font = FontFactory.getFont(FontFactory.HELVETICA, 16, BaseColor.BLACK);
+            // Font bigFont = FontFactory.getFont(FontFactory.HELVETICA, 24, BaseColor.BLACK);
             Font boldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.BLACK);
+            Font redBoldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.RED);
             Font bigBoldFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24, BaseColor.BLACK);
 
             LocalDateTime date = LocalDateTime.now();
@@ -50,6 +51,7 @@ public class MultiInvoice {
 
             document.add(new Paragraph("Nabywca: " + buyer, boldFont));
             document.add(new Paragraph("Sprzedawca: " + seller, boldFont));
+            document.add(new Paragraph(title, redBoldFont));
             document.add(new Paragraph(" "));
 
             PdfPTable table = new PdfPTable(5);
