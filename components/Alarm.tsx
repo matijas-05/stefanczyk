@@ -8,6 +8,7 @@ import { Alarm as AlarmType, Database } from "../Database";
 const HIDDEN = 0;
 const VISIBLE = 25;
 const DAYS = ["PN", "WT", "ŚR", "CZ", "PT", "SB", "ND"];
+const DAYS_LONG = ["Pon.", "Wt.", "Śr.", "Czw.", "Pt.", "Sob.", "Nd."];
 
 interface AlarmProps {
     data: AlarmType;
@@ -33,12 +34,12 @@ export function Alarm(props: AlarmProps) {
 
     return (
         <View style={styles.alarm}>
-            <View style={styles.alarmRow}>
+            <View style={styles.row}>
                 <Text style={{ fontSize: 48 }}>{props.data.time}</Text>
                 <Switch value={props.selected} onValueChange={props.setSelected} />
             </View>
 
-            <View style={styles.alarmRow}>
+            <View style={styles.row}>
                 <CircleButton
                     style={{ width: 24, height: 24 }}
                     onPress={async () => {
@@ -55,7 +56,7 @@ export function Alarm(props: AlarmProps) {
                             toValue: expanded ? HIDDEN : VISIBLE,
                             useNativeDriver: false,
                         }).start();
-                        setExpanded(!expanded);
+                        setExpanded((prev) => !prev);
                     }}
                 >
                     <FontAwesome5 name={expanded ? "angle-up" : "angle-down"} size={24} />
@@ -66,12 +67,12 @@ export function Alarm(props: AlarmProps) {
                 <FlatList
                     data={DAYS}
                     horizontal
-                    contentContainerStyle={styles.alarmDays}
+                    contentContainerStyle={styles.dayRow}
                     renderItem={({ item: day, index }) => (
                         <CircleButton
                             key={index}
                             style={[
-                                styles.alarmDay,
+                                styles.day,
                                 {
                                     backgroundColor: daysSelected.has(index)
                                         ? "black"
@@ -99,6 +100,14 @@ export function Alarm(props: AlarmProps) {
                     )}
                 />
             </Animated.View>
+
+            <View>
+                {!expanded && (
+                    <Text style={styles.dayLong}>
+                        {[...daysSelected].map((day) => DAYS_LONG[day]).join(", ")}
+                    </Text>
+                )}
+            </View>
         </View>
     );
 }
@@ -107,20 +116,24 @@ const styles = StyleSheet.create({
     alarm: {
         gap: 8,
     },
-    alarmRow: {
+    row: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
         gap: 64,
     },
-    alarmDays: {
+    dayRow: {
         flexDirection: "row",
         gap: 8,
         justifyContent: "space-between",
     },
-    alarmDay: {
+    day: {
         width: 32,
         height: 32,
         fontSize: 8,
+    },
+    dayLong: {
+        fontSize: 18,
+        fontWeight: "700",
     },
 });
