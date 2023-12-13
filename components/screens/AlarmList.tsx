@@ -1,5 +1,6 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
+import { Audio } from "expo-av";
 import React, { useEffect, useRef, useState } from "react";
 import { View, FlatList, StyleSheet, Vibration } from "react-native";
 
@@ -12,9 +13,14 @@ export default function AlarmList() {
     const navigation = useNavigation<Navigation>();
     const [alarms, setAlarms] = useState<AlarmType[]>([]);
     const [enabled, setEnabled] = useState(new Set<number>());
+
     const vibrating = useRef(false);
+    const audio = useRef<Audio.Sound>();
 
     useInterval(() => {
+        checkAlarms();
+    }, 500);
+    async function checkAlarms() {
         for (const alarm of alarms) {
             const now = new Date();
             const alarmTime = new Date(
@@ -33,6 +39,11 @@ export default function AlarmList() {
                 now.getMinutes() === alarmTime.getMinutes() &&
                 enabled.has(alarm.id)
             ) {
+                const { sound } = await Audio.Sound.createAsync(require("../../assets/alarm.mp3"));
+                audio.current = sound;
+                sound.setIsLoopingAsync(true);
+                sound.playAsync();
+
                 Vibration.vibrate([0, 10000], true);
                 vibrating.current = true;
             } else if (
@@ -41,11 +52,12 @@ export default function AlarmList() {
                     now.getMinutes() !== alarmTime.getMinutes() ||
                     !enabled.has(alarm.id))
             ) {
+                audio.current?.stopAsync();
                 Vibration.cancel();
                 vibrating.current = false;
             }
         }
-    }, 500);
+    }
 
     React.useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
