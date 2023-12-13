@@ -1,6 +1,6 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
-import React, { useState } from "react";
-import { View, StyleSheet, Text, useWindowDimensions } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Text, useWindowDimensions, Vibration } from "react-native";
 
 import { Database } from "../../Database";
 import CircleButton from "../CircleButton";
@@ -12,9 +12,18 @@ const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
 
 export default function AddAlarm() {
     const [timePart, setTimePart] = useState<"hour" | "minute">("hour");
-    const [hour, setHour] = useState(new Date().getHours().toString());
-    const [minute, setMinute] = useState(new Date().getMinutes().toString());
+    const [hour, setHour] = useState("");
+    const [minute, setMinute] = useState("");
     const dimensions = useWindowDimensions();
+
+    useEffect(() => {
+        const now = new Date();
+        const hours = now.getHours().toString();
+        const minutes = now.getMinutes().toString();
+
+        setHour(hours.length === 1 ? "0" + hours : hours);
+        setMinute(minutes.length === 1 ? "0" + minutes : minutes);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -73,24 +82,26 @@ export default function AddAlarm() {
                     />
                     <View style={styles.adjustTimeContainer}>
                         <CircleButton
-                            onPress={() =>
+                            onPress={() => {
+                                Vibration.vibrate(50);
                                 setMinute((prev) => {
                                     const num = Math.min(parseInt(prev) + 1, 59).toString();
                                     return num.length === 1 ? "0" + num : num;
-                                })
-                            }
+                                });
+                            }}
                             style={styles.adjustTimeButton}
                             textStyle={{ fontSize: 20 }}
                         >
                             +1
                         </CircleButton>
                         <CircleButton
-                            onPress={() =>
+                            onPress={() => {
+                                Vibration.vibrate(50);
                                 setMinute((prev) => {
                                     const num = Math.max(0, parseInt(prev) - 1).toString();
                                     return num.length === 1 ? "0" + num : num;
-                                })
-                            }
+                                });
+                            }}
                             style={styles.adjustTimeButton}
                             textStyle={{ fontSize: 20 }}
                         >

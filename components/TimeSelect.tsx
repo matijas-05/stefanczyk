@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, Vibration, View, ViewStyle } from "react-native";
 
 import CircleButton from "./CircleButton";
 
@@ -16,6 +16,7 @@ export default function TimeSelect(props: Props) {
             {props.inputs.map((num, i) => {
                 const angleDeg = i * (360 / props.inputs.length) - 90;
                 const angleRad = angleDeg * (Math.PI / 180);
+
                 return (
                     <CircleButton
                         key={i}
@@ -31,11 +32,12 @@ export default function TimeSelect(props: Props) {
                             props.buttonStyle,
                         )}
                         textStyle={{ fontSize: 20 }}
-                        onPress={() =>
+                        onPress={() => {
+                            Vibration.vibrate(50);
                             props.onChanged(
                                 num.toString().length === 1 ? "0" + num : num.toString(),
-                            )
-                        }
+                            );
+                        }}
                     >
                         {num}
                     </CircleButton>
