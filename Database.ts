@@ -35,11 +35,11 @@ export class Database {
         });
     }
 
-    static addAlarm(): Promise<void> {
+    static addAlarm(time: string): Promise<void> {
         return new Promise((resolve, reject) => {
             this.db.transaction(
                 (tx) => {
-                    tx.executeSql("INSERT INTO alarms (time, days) VALUES ('00:00', 0);");
+                    tx.executeSql("INSERT INTO alarms (time, days) VALUES (?, 0000000);", [time]);
                     resolve();
                 },
                 (err) => reject(err.message),

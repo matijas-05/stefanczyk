@@ -16,8 +16,7 @@ interface AlarmProps {
     setSelected: (value: boolean) => void;
     updateAlarms: () => void;
 }
-
-export function Alarm(props: AlarmProps) {
+export default function Alarm(props: AlarmProps) {
     const height = useAnimatedValue(HIDDEN);
     const [expanded, setExpanded] = useState(false);
     const [daysSelected, setDaysSelected] = useState(new Set<number>());

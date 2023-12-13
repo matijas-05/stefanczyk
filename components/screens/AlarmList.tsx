@@ -5,7 +5,7 @@ import { View, FlatList, StyleSheet } from "react-native";
 
 import { Navigation } from "../../App";
 import { Alarm as AlarmType, Database } from "../../Database";
-import { Alarm } from "../Alarm";
+import Alarm from "../Alarm";
 import CircleButton from "../CircleButton";
 
 export default function AlarmList() {
