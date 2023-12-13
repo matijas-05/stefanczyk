@@ -4,7 +4,7 @@ import { useFonts } from "expo-font";
 import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 
-import { Database } from "./Database";
+import { Database } from "./database";
 import AddAlarm from "./components/screens/AddAlarm";
 import AlarmList from "./components/screens/AlarmList";
 import Splash from "./components/screens/Splash";

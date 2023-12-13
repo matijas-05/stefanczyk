@@ -2,7 +2,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, useWindowDimensions, Vibration } from "react-native";
 
-import { Database } from "../../Database";
+import { Database } from "../../database";
 import CircleButton from "../CircleButton";
 import TimeSelect from "../TimeSelect";
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAnimatedValue, View, Switch, Animated, FlatList, Text, StyleSheet } from "react-native";
 
 import CircleButton from "./CircleButton";
-import { Alarm as AlarmType, Database } from "../Database";
+import { Alarm as AlarmType, Database } from "../database";
 
 const HIDDEN = 0;
 const VISIBLE = 25;
@@ -12,8 +12,10 @@ const DAYS_LONG = ["Pon.", "Wt.", "Śr.", "Czw.", "Pt.", "Sob.", "Nd."];
 
 interface AlarmProps {
     data: AlarmType;
-    selected: boolean;
-    setSelected: (value: boolean) => void;
+    vibration: boolean;
+    setVibration: (value: boolean) => void;
+    audio: boolean;
+    setAudio: (value: boolean) => void;
     updateAlarms: () => void;
 }
 export default function Alarm(props: AlarmProps) {
@@ -35,7 +37,14 @@ export default function Alarm(props: AlarmProps) {
         <View style={styles.alarm}>
             <View style={styles.row}>
                 <Text style={{ fontSize: 48 }}>{props.data.time}</Text>
-                <Switch value={props.selected} onValueChange={props.setSelected} />
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text>V</Text>
+                    <Switch value={props.vibration} onValueChange={props.setVibration} />
+                </View>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Text>A</Text>
+                    <Switch value={props.audio} onValueChange={props.setAudio} />
+                </View>
             </View>
 
             <View style={styles.row}>
@@ -91,7 +100,12 @@ export default function Alarm(props: AlarmProps) {
                                 for (const day of newDays) {
                                     days = days.substring(0, day) + "1" + days.substring(day + 1);
                                 }
-                                Database.updateAlarm(props.data.id, days);
+                                Database.updateAlarm(
+                                    props.data.id,
+                                    days,
+                                    props.vibration ? 1 : 0,
+                                    props.audio ? 1 : 0,
+                                );
                             }}
                         >
                             {day}
@@ -119,7 +133,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        gap: 64,
+        gap: 50,
     },
     dayRow: {
         flexDirection: "row",
