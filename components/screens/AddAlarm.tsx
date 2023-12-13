@@ -25,7 +25,9 @@ export default function AddAlarm() {
                 >
                     {hour}
                 </Text>
+
                 <Text style={styles.time}>:</Text>
+
                 <Text
                     style={[styles.time, { color: timePart === "minute" ? "red" : "white" }]}
                     onPress={() => setTimePart("minute")}
@@ -58,16 +60,44 @@ export default function AddAlarm() {
                     />
                 </>
             ) : (
-                <TimeSelect
-                    containerStyle={{
-                        position: "absolute",
-                        top: dimensions.height / 2 - 50,
-                        right: dimensions.width / 2 - 20,
-                    }}
-                    inputs={MINUTES}
-                    onChanged={setMinute}
-                    radius={160}
-                />
+                <>
+                    <TimeSelect
+                        containerStyle={{
+                            position: "absolute",
+                            top: dimensions.height / 2 - 50,
+                            right: dimensions.width / 2 - 20,
+                        }}
+                        inputs={MINUTES}
+                        onChanged={setMinute}
+                        radius={160}
+                    />
+                    <View style={styles.adjustTimeContainer}>
+                        <CircleButton
+                            onPress={() =>
+                                setMinute((prev) => {
+                                    const num = Math.min(parseInt(prev) + 1, 59).toString();
+                                    return num.length === 1 ? "0" + num : num;
+                                })
+                            }
+                            style={styles.adjustTimeButton}
+                            textStyle={{ fontSize: 20 }}
+                        >
+                            +1
+                        </CircleButton>
+                        <CircleButton
+                            onPress={() =>
+                                setMinute((prev) => {
+                                    const num = Math.max(0, parseInt(prev) - 1).toString();
+                                    return num.length === 1 ? "0" + num : num;
+                                })
+                            }
+                            style={styles.adjustTimeButton}
+                            textStyle={{ fontSize: 20 }}
+                        >
+                            -1
+                        </CircleButton>
+                    </View>
+                </>
             )}
 
             <CircleButton
@@ -99,6 +129,14 @@ const styles = StyleSheet.create({
     },
     time: {
         fontSize: 80,
+    },
+    adjustTimeContainer: {
+        gap: 8,
+    },
+    adjustTimeButton: {
+        backgroundColor: "white",
+        width: 54,
+        height: 54,
     },
     addButton: {
         backgroundColor: "#EA1E63",

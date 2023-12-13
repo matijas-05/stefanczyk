@@ -7,5 +7,6 @@ module.exports = {
             "warn",
             { ignoreRestSiblings: true, argsIgnorePattern: "^_$" },
         ],
+        radix: "off",
     },
 };
