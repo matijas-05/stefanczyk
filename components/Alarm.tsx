@@ -12,15 +12,13 @@ const DAYS_LONG = ["Pon.", "Wt.", "Śr.", "Czw.", "Pt.", "Sob.", "Nd."];
 
 interface AlarmProps {
     data: AlarmType;
-    vibration: boolean;
-    setVibration: (value: boolean) => void;
-    audio: boolean;
-    setAudio: (value: boolean) => void;
     updateAlarms: () => void;
 }
 export default function Alarm(props: AlarmProps) {
     const height = useAnimatedValue(HIDDEN);
     const [expanded, setExpanded] = useState(false);
+    const [vibrationAllowed, setVibrationAllowed] = useState(props.data.vibration === 1);
+    const [audioAllowed, setAudioAllowed] = useState(props.data.audio === 1);
     const [daysSelected, setDaysSelected] = useState(new Set<number>());
 
     useEffect(() => {
@@ -39,11 +37,35 @@ export default function Alarm(props: AlarmProps) {
                 <Text style={{ fontSize: 48 }}>{props.data.time}</Text>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Text>V</Text>
-                    <Switch value={props.vibration} onValueChange={props.setVibration} />
+                    <Switch
+                        value={vibrationAllowed}
+                        onValueChange={(value) => {
+                            setVibrationAllowed(value);
+                            Database.updateAlarm(
+                                props.data.id,
+                                props.data.days,
+                                value ? 1 : 0,
+                                audioAllowed ? 1 : 0,
+                            );
+                            props.updateAlarms();
+                        }}
+                    />
                 </View>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     <Text>A</Text>
-                    <Switch value={props.audio} onValueChange={props.setAudio} />
+                    <Switch
+                        value={audioAllowed}
+                        onValueChange={(value) => {
+                            setAudioAllowed(value);
+                            Database.updateAlarm(
+                                props.data.id,
+                                props.data.days,
+                                vibrationAllowed ? 1 : 0,
+                                value ? 1 : 0,
+                            );
+                            props.updateAlarms();
+                        }}
+                    />
                 </View>
             </View>
 
@@ -103,9 +125,10 @@ export default function Alarm(props: AlarmProps) {
                                 Database.updateAlarm(
                                     props.data.id,
                                     days,
-                                    props.vibration ? 1 : 0,
-                                    props.audio ? 1 : 0,
+                                    vibrationAllowed ? 1 : 0,
+                                    audioAllowed ? 1 : 0,
                                 );
+                                props.updateAlarms();
                             }}
                         >
                             {day}

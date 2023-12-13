@@ -56,13 +56,24 @@ export default function AlarmList() {
         checkAlarms();
     }, 500);
     async function checkAlarms() {
+        if (alarms.length === 0) {
+            audio.current?.stopAsync();
+            Vibration.cancel();
+            playingAudio.current = false;
+            playingVibration.current = false;
+        }
+
         for (const alarm of alarms) {
             const now = new Date();
             const hours = parseInt(alarm.time.split(":")[0]!);
             const minutes = parseInt(alarm.time.split(":")[1]!);
 
             // Play when right time
-            if (now.getHours() === hours && now.getMinutes() === minutes) {
+            if (
+                alarm.days.charAt(now.getDay() - 1) === "1" &&
+                now.getHours() === hours &&
+                now.getMinutes() === minutes
+            ) {
                 if (!playingAudio.current && audioAllowed.has(alarm.id)) {
                     const { sound } = await Audio.Sound.createAsync(
                         require("../../assets/alarm.mp3"),
@@ -101,44 +112,7 @@ export default function AlarmList() {
             <FlatList
                 data={alarms}
                 ItemSeparatorComponent={() => <View style={{ height: 24 }} />}
-                renderItem={({ item }) => (
-                    <Alarm
-                        data={item}
-                        vibration={vibrationAllowed.has(item.id)}
-                        setVibration={(value) => {
-                            const newVibration = new Set(vibrationAllowed);
-                            if (value) {
-                                newVibration.add(item.id);
-                            } else {
-                                newVibration.delete(item.id);
-                            }
-                            setVibrationAllowed(newVibration);
-                            Database.updateAlarm(
-                                item.id,
-                                item.days,
-                                value ? 1 : 0,
-                                audioAllowed.has(item.id) ? 1 : 0,
-                            );
-                        }}
-                        audio={audioAllowed.has(item.id)}
-                        setAudio={(value) => {
-                            const newAudio = new Set(audioAllowed);
-                            if (value) {
-                                newAudio.add(item.id);
-                            } else {
-                                newAudio.delete(item.id);
-                            }
-                            setAudioAllowed(newAudio);
-                            Database.updateAlarm(
-                                item.id,
-                                item.days,
-                                vibrationAllowed.has(item.id) ? 1 : 0,
-                                value ? 1 : 0,
-                            );
-                        }}
-                        updateAlarms={updateAlarms}
-                    />
-                )}
+                renderItem={({ item }) => <Alarm data={item} updateAlarms={updateAlarms} />}
             />
 
             <CircleButton style={styles.addButton} onPress={() => navigation.navigate("AddAlarm")}>
