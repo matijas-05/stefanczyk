@@ -30,9 +30,7 @@ export class Database {
                         resolve(rows._array as Alarm[]);
                     });
                 },
-                (err) => {
-                    reject(err.message);
-                },
+                (err) => reject(err.message),
             );
         });
     }
@@ -44,9 +42,7 @@ export class Database {
                     tx.executeSql("INSERT INTO alarms (time, days) VALUES ('00:00', 0);");
                     resolve();
                 },
-                (err) => {
-                    reject(err.message);
-                },
+                (err) => reject(err.message),
             );
         });
     }
@@ -57,9 +53,7 @@ export class Database {
                     tx.executeSql("DELETE FROM alarms WHERE id = ?;", [id]);
                     resolve();
                 },
-                (err) => {
-                    reject(err.message);
-                },
+                (err) => reject(err.message),
             );
         });
     }
@@ -70,9 +64,7 @@ export class Database {
                     tx.executeSql("UPDATE alarms SET days = ? WHERE id = ?;", [days, id]);
                     resolve();
                 },
-                (err) => {
-                    reject(err.message);
-                },
+                (err) => reject(err.message),
             );
         });
     }

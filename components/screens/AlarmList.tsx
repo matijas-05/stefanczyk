@@ -69,13 +69,13 @@ function Alarm(props: AlarmProps) {
     const [daysSelected, setDaysSelected] = useState(new Set<number>());
 
     useEffect(() => {
-        const newDays = new Set<number>();
+        const days = new Set<number>();
         for (let i = 0; i < props.data.days.length; i++) {
             if (props.data.days[i] === "1") {
-                newDays.add(i);
+                days.add(i);
             }
         }
-        setDaysSelected(newDays);
+        setDaysSelected(days);
     }, []);
 
     return (
@@ -109,33 +109,42 @@ function Alarm(props: AlarmProps) {
                 </CircleButton>
             </View>
 
-            <Animated.View style={[styles.alarmDays, { height }]}>
-                {DAYS.map((day, i) => (
-                    <CircleButton
-                        key={i}
-                        style={[
-                            styles.alarmDay,
-                            { backgroundColor: daysSelected.has(i) ? "black" : "transparent" },
-                        ]}
-                        onPress={() => {
-                            const newDays = new Set(daysSelected);
-                            if (newDays.has(i)) {
-                                newDays.delete(i);
-                            } else {
-                                newDays.add(i);
-                            }
-                            setDaysSelected(newDays);
+            <Animated.View style={[{ maxHeight: height }]}>
+                <FlatList
+                    data={DAYS}
+                    horizontal
+                    contentContainerStyle={styles.alarmDays}
+                    renderItem={({ item: day, index }) => (
+                        <CircleButton
+                            key={index}
+                            style={[
+                                styles.alarmDay,
+                                {
+                                    backgroundColor: daysSelected.has(index)
+                                        ? "black"
+                                        : "transparent",
+                                },
+                            ]}
+                            onPress={() => {
+                                const newDays = new Set(daysSelected);
+                                if (newDays.has(index)) {
+                                    newDays.delete(index);
+                                } else {
+                                    newDays.add(index);
+                                }
+                                setDaysSelected(newDays);
 
-                            let days = "0000000";
-                            for (const day of newDays) {
-                                days = days.substring(0, day) + "1" + days.substring(day + 1);
-                            }
-                            Database.updateAlarm(props.data.id, days);
-                        }}
-                    >
-                        {day}
-                    </CircleButton>
-                ))}
+                                let days = "0000000";
+                                for (const day of newDays) {
+                                    days = days.substring(0, day) + "1" + days.substring(day + 1);
+                                }
+                                Database.updateAlarm(props.data.id, days);
+                            }}
+                        >
+                            {day}
+                        </CircleButton>
+                    )}
+                />
             </Animated.View>
         </View>
     );
