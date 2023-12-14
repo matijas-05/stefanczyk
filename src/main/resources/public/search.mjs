@@ -27,6 +27,7 @@
 
 fetchCars();
 fetchInvoicesAll();
+fetchInvoicesYear();
 fetchInvoicesPriceRange();
 
 const randomizeBtn = document.getElementById("randomize");
@@ -46,6 +47,19 @@ invoiceAllCarsBtn.addEventListener("click", async () => {
     if (res.ok) {
         alert("faktura za wszytkie auta wygenerowana");
         fetchInvoicesAll();
+    } else {
+        alert("błąd generowania faktury");
+    }
+});
+
+const invoiceYearBtn = document.getElementById("invoice-year");
+/** @type {HTMLInputElement} */
+const year = document.getElementById("year");
+invoiceYearBtn.addEventListener("click", async () => {
+    const res = await fetch(`/invoice/year/${year.value}`, { method: "POST" });
+    if (res.ok) {
+        alert(`faktura za wszystkie auto z roku ${year.value} wygenerowana`);
+        fetchInvoicesYear();
     } else {
         alert("błąd generowania faktury");
     }
@@ -144,6 +158,23 @@ async function fetchInvoicesAll() {
         link.href = `/invoice/all/${invoice.filename}`;
         link.title = `${invoice.metadata} -> ${new Date(invoice.date).toLocaleString()}`;
         invoiceAllCarsDownload.appendChild(link);
+    }
+}
+async function fetchInvoicesYear() {
+    /** @type {HTMLDivElement} */
+    const invoiceYearDownload = document.getElementById("invoice-year-download");
+
+    const res = await fetch("/invoice/year");
+    /** @type {Invoice[]} */
+    const invoices = await res.json();
+
+    invoiceYearDownload.innerHTML = "";
+    for (const invoice of invoices) {
+        const link = document.createElement("a");
+        link.innerText = "pobierz";
+        link.href = `/invoice/year/${invoice.filename}`;
+        link.title = `${invoice.metadata} -> ${new Date(invoice.date).toLocaleDateString("pl-PL")}`;
+        invoiceYearDownload.appendChild(link);
     }
 }
 async function fetchInvoicesPriceRange() {

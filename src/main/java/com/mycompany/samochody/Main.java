@@ -20,6 +20,7 @@ public class Main {
     static HashMap<String, SingleInvoice> singleInvoices = new HashMap<String, SingleInvoice>();
     static ArrayList<MultiInvoice> invoicesAll = new ArrayList<MultiInvoice>();
     static ArrayList<MultiInvoice> invoicesPriceRange = new ArrayList<MultiInvoice>();
+    static ArrayList<MultiInvoice> invoicesYear = new ArrayList<MultiInvoice>();
     static Gson gson = new Gson();
 
     public static void main(String[] args) {
@@ -37,6 +38,10 @@ public class Main {
         post("/invoice/all", (req, res) -> generateInvoiceAll(req, res));
         get("/invoice/all", (req, res) -> getInvoices(req, res, invoicesAll));
         get("/invoice/all/:filename", (req, res) -> downloadInvoice(req, res));
+
+        post("/invoice/year/:year", (req, res) -> generateInvoiceYear(req, res));
+        get("/invoice/year", (req, res) -> getInvoices(req, res, invoicesYear));
+        get("/invoice/year/:filename", (req, res) -> downloadInvoice(req, res));
 
         post("/invoice/price-range", (req, res) -> generateInvoicePriceRange(req, res));
         get("/invoice/price-range", (req, res) -> getInvoices(req, res, invoicesPriceRange));
@@ -189,9 +194,33 @@ public class Main {
         res.status(201);
         return "";
     }
+    static String generateInvoiceYear(Request req, Response res) {
+        int year = Integer.parseInt(req.params(":year"));
 
+        ArrayList<Car> carsInYear = new ArrayList<Car>();
+        for (Car car : cars) {
+            if (car.year.equals(String.valueOf(year))) {
+                carsInYear.add(car);
+            }
+        }
+
+        MultiInvoice invoice =
+            new MultiInvoice("Faktura za auta z roku " + year, "Firma sprzedająca auta",
+                             "Jan Kowalski", carsInYear, "faktura za rok " + year);
+        try {
+            invoice.generate();
+            invoicesYear.add(invoice);
+        } catch (DocumentException | IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        res.status(201);
+        return "";
+    }
     static String generateInvoicePriceRange(Request req, Response res) {
-        InvoicePriceRange range = gson.fromJson(req.body(), InvoicePriceRange.class);
+        CreateInvoicePriceRangeBody range =
+            gson.fromJson(req.body(), CreateInvoicePriceRangeBody.class);
         if (range.from > range.to) {
             res.status(400);
             return "Min price cannot be greater than max price";
@@ -204,10 +233,10 @@ public class Main {
             }
         }
 
-        MultiInvoice invoice = new MultiInvoice(
-            "Faktura za auta w przedziale cenowym od " + range.from + "zł do " + range.to + "zł",
-            "Firma sprzedająca auta", "Jan Kowalski", carsInRange,
-            "faktura za ceny " + range.from + "-" + range.to);
+        MultiInvoice invoice =
+            new MultiInvoice("Faktura za auta w cenach: " + range.from + "-" + range.to + " PLN",
+                             "Firma sprzedająca auta", "Jan Kowalski", carsInRange,
+                             "faktura za ceny " + range.from + "-" + range.to);
 
         try {
             invoice.generate();
@@ -258,11 +287,11 @@ class MultiInvoiceDownload {
     }
 }
 
-class InvoicePriceRange {
+class CreateInvoicePriceRangeBody {
     public int from;
     public int to;
 
-    public InvoicePriceRange(int to, int from) {
+    public CreateInvoicePriceRangeBody(int to, int from) {
         this.to = to;
         this.from = from;
     }

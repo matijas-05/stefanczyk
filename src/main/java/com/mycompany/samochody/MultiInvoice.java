@@ -31,7 +31,7 @@ public class MultiInvoice {
 
     public void generate() throws DocumentException, FileNotFoundException, IOException {
         Document document = new Document();
-        filename = "invoice_" + System.currentTimeMillis() + ".pdf";
+        filename = "multi_invoice_" + System.currentTimeMillis() + ".pdf";
         try {
             PdfWriter.getInstance(document, new FileOutputStream("invoices/" + filename));
         } catch (FileNotFoundException | DocumentException e) {
