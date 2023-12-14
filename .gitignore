@@ -4,3 +4,5 @@ bin/
 invoices/*
 !.gitkeep
 .DS_Store
+.classpath
+.project
