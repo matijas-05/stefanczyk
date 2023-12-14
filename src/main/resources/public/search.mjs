@@ -22,10 +22,12 @@
  * @typedef {Object} Invoice
  * @property {string} filename
  * @property {number} date
+ * @property {string} metadata
  */
 
 fetchCars();
 fetchInvoicesAll();
+fetchInvoicesPriceRange();
 
 const randomizeBtn = document.getElementById("randomize");
 randomizeBtn.addEventListener("click", async () => {
@@ -44,6 +46,28 @@ invoiceAllCarsBtn.addEventListener("click", async () => {
     if (res.ok) {
         alert("faktura za wszytkie auta wygenerowana");
         fetchInvoicesAll();
+    } else {
+        alert("błąd generowania faktury");
+    }
+});
+
+/** @type {HTMLButtonElement} */
+const invoicePriceRangeBtn = document.getElementById("invoice-price-range");
+/** @type {HTMLInputElement} */
+const from = document.getElementById("price-min");
+/** @type {HTMLInputElement} */
+const to = document.getElementById("price-max");
+invoicePriceRangeBtn.addEventListener("click", async () => {
+    const res = await fetch("/invoice/price-range", {
+        method: "POST",
+        body: JSON.stringify({
+            from: from.value,
+            to: to.value,
+        }),
+    });
+    if (res.ok) {
+        alert(`faktura za wszystkie auto od ${from.value} do < ${to.value} PLN wygenerowana`);
+        fetchInvoicesPriceRange();
     } else {
         alert("błąd generowania faktury");
     }
@@ -118,7 +142,24 @@ async function fetchInvoicesAll() {
         const link = document.createElement("a");
         link.innerText = "pobierz";
         link.href = `/invoice/all/${invoice.filename}`;
-        link.title = `faktura za wszytkie auta -> ${new Date(invoice.date).toLocaleString()}`;
+        link.title = `${invoice.metadata} -> ${new Date(invoice.date).toLocaleString()}`;
         invoiceAllCarsDownload.appendChild(link);
+    }
+}
+async function fetchInvoicesPriceRange() {
+    /** @type {HTMLDivElement} */
+    const invoicePriceRangeDownload = document.getElementById("invoice-price-range-download");
+
+    const res = await fetch("/invoice/price-range");
+    /** @type {Invoice[]} */
+    const invoices = await res.json();
+
+    invoicePriceRangeDownload.innerHTML = "";
+    for (const invoice of invoices) {
+        const link = document.createElement("a");
+        link.innerText = "pobierz";
+        link.href = `/invoice/price-range/${invoice.filename}`;
+        link.title = `${invoice.metadata} -> ${new Date(invoice.date).toLocaleDateString("pl-PL")}`;
+        invoicePriceRangeDownload.appendChild(link);
     }
 }

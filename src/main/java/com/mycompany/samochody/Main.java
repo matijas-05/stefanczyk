@@ -19,6 +19,7 @@ public class Main {
     static ArrayList<Car> cars = new ArrayList<Car>();
     static HashMap<String, SingleInvoice> singleInvoices = new HashMap<String, SingleInvoice>();
     static ArrayList<MultiInvoice> invoicesAll = new ArrayList<MultiInvoice>();
+    static ArrayList<MultiInvoice> invoicesPriceRange = new ArrayList<MultiInvoice>();
     static Gson gson = new Gson();
 
     public static void main(String[] args) {
@@ -34,8 +35,12 @@ public class Main {
         post("/car/random", (req, res) -> randomCars(req, res));
 
         post("/invoice/all", (req, res) -> generateInvoiceAll(req, res));
-        get("/invoice/all", (req, res) -> getInvoicesAll(req, res));
-        get("/invoice/all/:filename", (req, res) -> downloadInvoiceAll(req, res));
+        get("/invoice/all", (req, res) -> getInvoices(req, res, invoicesAll));
+        get("/invoice/all/:filename", (req, res) -> downloadInvoice(req, res));
+
+        post("/invoice/price-range", (req, res) -> generateInvoicePriceRange(req, res));
+        get("/invoice/price-range", (req, res) -> getInvoices(req, res, invoicesPriceRange));
+        get("/invoice/price-range/:filename", (req, res) -> downloadInvoice(req, res));
 
         post("/invoice/:id", (req, res) -> generateSingleInvoice(req, res));
         get("/invoice/:id", (req, res) -> downloadSingleInvoice(req, res));
@@ -170,8 +175,9 @@ public class Main {
     }
 
     static String generateInvoiceAll(Request req, Response res) {
-        MultiInvoice invoice = new MultiInvoice("Faktura za wszystkie auta",
-                                                "Firma sprzedająca auta", "Jan Kowalski", cars);
+        MultiInvoice invoice =
+            new MultiInvoice("Faktura za wszystkie auta", "Firma sprzedająca auta", "Jan Kowalski",
+                             cars, "faktura za wszytkie auta");
         try {
             invoice.generate();
             invoicesAll.add(invoice);
@@ -183,15 +189,47 @@ public class Main {
         res.status(201);
         return "";
     }
-    static String getInvoicesAll(Request req, Response res) {
-        ArrayList<MultiInvoiceDownload> invoices = new ArrayList<MultiInvoiceDownload>();
-        for (MultiInvoice i : invoicesAll) {
-            invoices.add(new MultiInvoiceDownload(i.filename, i.date));
+
+    static String generateInvoicePriceRange(Request req, Response res) {
+        InvoicePriceRange range = gson.fromJson(req.body(), InvoicePriceRange.class);
+        if (range.from > range.to) {
+            res.status(400);
+            return "Min price cannot be greater than max price";
         }
 
-        return gson.toJson(invoices);
+        ArrayList<Car> carsInRange = new ArrayList<Car>();
+        for (Car car : cars) {
+            if (car.price >= range.from && car.price <= range.to) {
+                carsInRange.add(car);
+            }
+        }
+
+        MultiInvoice invoice = new MultiInvoice(
+            "Faktura za auta w przedziale cenowym od " + range.from + "zł do " + range.to + "zł",
+            "Firma sprzedająca auta", "Jan Kowalski", carsInRange,
+            "faktura za ceny " + range.from + "-" + range.to);
+
+        try {
+            invoice.generate();
+            invoicesPriceRange.add(invoice);
+        } catch (DocumentException | IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        res.status(201);
+        return "";
     }
-    static String downloadInvoiceAll(Request req, Response res) {
+
+    static String getInvoices(Request req, Response res, ArrayList<MultiInvoice> invoices) {
+        ArrayList<MultiInvoiceDownload> invoicesDownload = new ArrayList<MultiInvoiceDownload>();
+        for (MultiInvoice i : invoices) {
+            invoicesDownload.add(new MultiInvoiceDownload(i.filename, i.date, i.metadata));
+        }
+
+        return gson.toJson(invoicesDownload);
+    }
+    static String downloadInvoice(Request req, Response res) {
         String fileName = req.params(":filename");
 
         res.type("application/octet-stream");
@@ -211,9 +249,21 @@ public class Main {
 class MultiInvoiceDownload {
     public String filename;
     public long date;
+    public String metadata;
 
-    public MultiInvoiceDownload(String filename, long date) {
+    public MultiInvoiceDownload(String filename, long date, String metadata) {
         this.filename = filename;
         this.date = date;
+        this.metadata = metadata;
+    }
+}
+
+class InvoicePriceRange {
+    public int from;
+    public int to;
+
+    public InvoicePriceRange(int to, int from) {
+        this.to = to;
+        this.from = from;
     }
 }

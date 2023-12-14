@@ -14,20 +14,24 @@ public class MultiInvoice {
     public String seller;
     public String buyer;
     public ArrayList<Car> cars;
-    public String filename;
     public long date;
+    public String metadata;
 
-    public MultiInvoice(String title, String seller, String buyer, ArrayList<Car> cars) {
+    public String filename;
+
+    public MultiInvoice(String title, String seller, String buyer, ArrayList<Car> cars,
+                        String metadata) {
         this.title = title;
         this.seller = seller;
         this.buyer = buyer;
         this.cars = cars;
         this.date = System.currentTimeMillis();
+        this.metadata = metadata;
     }
 
     public void generate() throws DocumentException, FileNotFoundException, IOException {
         Document document = new Document();
-        filename = "invoice_all_cars_" + System.currentTimeMillis() + ".pdf";
+        filename = "invoice_" + System.currentTimeMillis() + ".pdf";
         try {
             PdfWriter.getInstance(document, new FileOutputStream("invoices/" + filename));
         } catch (FileNotFoundException | DocumentException e) {
