@@ -5,7 +5,7 @@
  * @property {string} year
  * @property {Airbags} airbags
  * @property {string} color
- * @property {string} image
+ * @property {string[]} images
  * @property {number} price
  * @property {number} vat
  */
@@ -124,12 +124,6 @@ async function fetchCars() {
         color.style.height = "2rem";
         color.style.backgroundColor = car.color;
         row.appendChild(color);
-
-        const image = document.createElement("img");
-        image.src = `/car/image/${car.image}`;
-        image.style.width = "4rem";
-        image.style.height = "3rem";
-        row.appendChild(image);
 
         const price = document.createElement("div");
         price.textContent = car.price;

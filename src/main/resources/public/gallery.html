@@ -5,10 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <link rel="stylesheet" type="text/css" href="style.css" />
-        <script src="admin.mjs" type="module" defer></script>
+        <script src="gallery.mjs" type="module" defer></script>
+        <style>
+            main {
+                flex-direction: row;
+            }
+            img {
+                width: 300px;
+            }
+        </style>
 
         <title>Samochody</title>
     </head>
+
     <body>
         <nav>
             <a href="index.html">index</a>
@@ -16,8 +25,6 @@
             <a href="admin.html">generate invoice</a>
             <a href="search.html">search invoices</a>
         </nav>
-
-        <button id="randomize">generuj losowo listę samochodów</button>
 
         <main></main>
     </body>

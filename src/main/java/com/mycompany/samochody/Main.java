@@ -4,7 +4,9 @@ import static spark.Spark.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.itextpdf.text.DocumentException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,6 +14,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletException;
+import javax.servlet.http.Part;
 import spark.Request;
 import spark.Response;
 
@@ -31,9 +36,11 @@ public class Main {
         post("/car", (req, res) -> addCar(req, res));
         delete("/car/:id", (req, res) -> deleteCar(req, res));
         patch("/car/:id", (req, res) -> updateCar(req, res));
-
-        get("/car/image/:filename", (req, res) -> getCarImage(req, res));
         post("/car/random", (req, res) -> randomCars(req, res));
+
+        get("/car/:id/images", (req, res) -> getCarImagePaths(req, res));
+        post("/car/:id/images", (req, res) -> postCarImages(req, res));
+        get("/car/image/:filename", (req, res) -> getCarImage(req, res));
 
         post("/invoice/all", (req, res) -> generateInvoiceAll(req, res));
         get("/invoice/all", (req, res) -> getInvoices(req, res, invoicesAll));
@@ -96,6 +103,17 @@ public class Main {
         return "";
     }
 
+    static String getCarImagePaths(Request req, Response res) {
+        UUID id = UUID.fromString(req.params(":id"));
+        Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
+        if (car == null) {
+            res.status(404);
+            return "Car not found";
+        }
+
+        res.type("application/json");
+        return gson.toJson(car.images);
+    }
     static String getCarImage(Request req, Response res) {
         res.type("image/jpg");
 
@@ -108,6 +126,35 @@ public class Main {
 
         return "";
     }
+    static String postCarImages(Request req, Response res) {
+        req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("./images/"));
+
+        UUID id = UUID.fromString(req.params("id"));
+        Car car = cars.stream().filter(c -> c.id.equals(id)).findFirst().orElse(null);
+        if (car == null) {
+            res.status(404);
+            return "Car not found";
+        }
+
+        try {
+            for (Part p : req.raw().getParts()) {
+                InputStream is = p.getInputStream();
+                byte[] buffer = is.readAllBytes();
+                String filename = UUID.randomUUID().toString() + ".jpg";
+                FileOutputStream os = new FileOutputStream("./images/" + filename);
+                os.write(buffer);
+                os.close();
+                car.images.add(filename);
+            }
+        } catch (IOException | ServletException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        res.status(201);
+        return "";
+    }
+
     static String randomCars(Request req, Response res) {
         String[] models = {"Fiat", "Skoda", "Ford", "Opel", "Audi", "BMW", "Mercedes"};
         String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7",

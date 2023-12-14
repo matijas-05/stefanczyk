@@ -15,6 +15,16 @@
  * @property {boolean} side
  */
 
+const randomizeBtn = document.getElementById("randomize");
+randomizeBtn.addEventListener("click", async () => {
+    const res = await fetch("/car/random", { method: "POST" });
+    if (res.ok) {
+        fetchCars();
+    } else {
+        alert("błąd generowania samochodów");
+    }
+});
+
 /** @type {HTMLDialogElement} */
 const updateDialog = document.getElementById("update-dialog");
 document.querySelector("#update-dialog form").addEventListener("submit", async (e) => {
@@ -109,6 +119,16 @@ async function fetchCars() {
         });
         updateCarBtn.textContent = "Update";
         row.appendChild(updateCarBtn);
+
+        const uploadLink = document.createElement("a");
+        uploadLink.href = "/upload.html?carId=" + car.id;
+        uploadLink.textContent = "upload";
+        row.appendChild(uploadLink);
+
+        const galleryLink = document.createElement("a");
+        galleryLink.href = "/gallery.html?carId=" + car.id;
+        galleryLink.textContent = "gallery";
+        row.appendChild(galleryLink);
 
         main.appendChild(row);
     });
