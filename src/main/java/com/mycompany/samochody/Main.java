@@ -4,6 +4,8 @@ import static spark.Spark.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.itextpdf.text.DocumentException;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,9 +16,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
+import javax.imageio.ImageIO;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.http.Part;
+import org.imgscalr.Scalr;
 import spark.Request;
 import spark.Response;
 
@@ -56,6 +60,11 @@ public class Main {
 
         post("/invoice/:id", (req, res) -> generateSingleInvoice(req, res));
         get("/invoice/:id", (req, res) -> downloadSingleInvoice(req, res));
+
+        // put("/image/:filename/crop", (req, res) -> cropImage(req, res));
+        put("/image/:filename/rotate", (req, res) -> rotateImage(req, res));
+        put("/image/:filename/flip-horizontal", (req, res) -> flipHorizontalImage(req, res));
+        put("/image/:filename/flip-vertical", (req, res) -> flipVerticalImage(req, res));
     }
 
     static String getCars(Request req, Response res) {
@@ -313,6 +322,85 @@ public class Main {
 
         try (OutputStream os = res.raw().getOutputStream()) {
             os.write(Files.readAllBytes(Path.of("invoices/" + fileName)));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
+
+    // static String cropImage(Request req, Response res) {
+    //
+    // }
+    static String rotateImage(Request req, Response res) {
+        String filename = req.params(":filename");
+        File img = new File("images/" + filename);
+
+        try {
+            BufferedImage original = ImageIO.read(img);
+            BufferedImage result = Scalr.rotate(original, Scalr.Rotation.CW_90);
+
+            ImageIO.write(result, "jpg", img);
+            original.flush();
+            result.flush();
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of("images/" + filename)));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
+    static String flipHorizontalImage(Request req, Response res) {
+        String filename = req.params(":filename");
+        File img = new File("images/" + filename);
+
+        try {
+            BufferedImage original = ImageIO.read(img);
+            BufferedImage result = Scalr.rotate(original, Scalr.Rotation.FLIP_HORZ);
+
+            ImageIO.write(result, "jpg", img);
+            original.flush();
+            result.flush();
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of("images/" + filename)));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
+    static String flipVerticalImage(Request req, Response res) {
+        String filename = req.params(":filename");
+        File img = new File("images/" + filename);
+
+        try {
+            BufferedImage original = ImageIO.read(img);
+            BufferedImage result = Scalr.rotate(original, Scalr.Rotation.FLIP_VERT);
+
+            ImageIO.write(result, "jpg", img);
+            original.flush();
+            result.flush();
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of("images/" + filename)));
         } catch (IOException e) {
             res.status(500);
             return e.getMessage();
