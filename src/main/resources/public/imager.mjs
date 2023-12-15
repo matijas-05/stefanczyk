@@ -62,8 +62,10 @@ const cropBtn = document.getElementById("crop");
 cropBtn.addEventListener("click", async () => {
     isCropping = !isCropping;
     selection.hidden = !isCropping;
+    img.style.cursor = isCropping ? "crosshair" : "auto";
+
     if (isCropping) {
-        alert("Click and drag to select, then click crop again to crop");
+        alert("Click and drag to select, then click the crop button again to crop");
     } else {
         const ratio = img.naturalWidth / img.width;
         body = {
