@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="stylesheet" type="text/css" href="style.css" />
+        <script src="imager.mjs" type="module" defer></script>
+        <style>
+            main {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            img {
+                width: 75%;
+                margin: 0 auto;
+            }
+            #actions {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+
+                & > * {
+                    width: 100%;
+                }
+
+                & #flip {
+                    display: flex;
+                    flex-direction: row;
+                }
+            }
+        </style>
+
+        <title>Samochody</title>
+    </head>
+
+    <body>
+        <nav>
+            <a href="index.html">index</a>
+            <a href="cars.html">edit/update cars</a>
+            <a href="admin.html">generate invoice</a>
+            <a href="search.html">search invoices</a>
+        </nav>
+
+        <main>
+            <div id="actions">
+                <button id="crop">crop image</button>
+                <button id="rotate">rotate image</button>
+                <div id="flip">
+                    <button id="flip-horizontal">flip<br />horizontal</button>
+                    <button id="flip-vertical">flip<br />vertical</button>
+                </div>
+            </div>
+            <img
+                src="https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=1440"
+            />
+        </main>
+    </body>
+</html>
