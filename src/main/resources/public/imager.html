@@ -31,12 +31,23 @@
                     flex-direction: row;
                 }
             }
+            #selection-box {
+                position: absolute;
+                width: 0px;
+                height: 0px;
+                background-color: cornflowerblue;
+                opacity: 0.5;
+                border: 2px dashed white;
+                pointer-events: none;
+            }
         </style>
 
         <title>Samochody</title>
     </head>
 
     <body>
+        <div id="selection-box" hidden></div>
+
         <nav>
             <a href="index.html">index</a>
             <a href="cars.html">edit/update cars</a>

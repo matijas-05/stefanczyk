@@ -61,10 +61,10 @@ public class Main {
         post("/invoice/:id", (req, res) -> generateSingleInvoice(req, res));
         get("/invoice/:id", (req, res) -> downloadSingleInvoice(req, res));
 
-        // put("/image/:filename/crop", (req, res) -> cropImage(req, res));
-        put("/image/:filename/rotate", (req, res) -> rotateImage(req, res));
-        put("/image/:filename/flip-horizontal", (req, res) -> flipHorizontalImage(req, res));
-        put("/image/:filename/flip-vertical", (req, res) -> flipVerticalImage(req, res));
+        post("/image/:filename/crop", (req, res) -> cropImage(req, res));
+        post("/image/:filename/rotate", (req, res) -> rotateImage(req, res));
+        post("/image/:filename/flip-horizontal", (req, res) -> flipHorizontalImage(req, res));
+        post("/image/:filename/flip-vertical", (req, res) -> flipVerticalImage(req, res));
     }
 
     static String getCars(Request req, Response res) {
@@ -330,9 +330,33 @@ public class Main {
         return "";
     }
 
-    // static String cropImage(Request req, Response res) {
-    //
-    // }
+    static String cropImage(Request req, Response res) {
+        String filename = req.params(":filename");
+        File img = new File("images/" + filename);
+        CropImageBody body = gson.fromJson(req.body(), CropImageBody.class);
+
+        try {
+            BufferedImage original = ImageIO.read(img);
+            BufferedImage result =
+                Scalr.crop(original, body.left, body.top, body.width, body.height);
+
+            ImageIO.write(result, "jpg", img);
+            original.flush();
+            result.flush();
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        try (OutputStream os = res.raw().getOutputStream()) {
+            os.write(Files.readAllBytes(Path.of("images/" + filename)));
+        } catch (IOException e) {
+            res.status(500);
+            return e.getMessage();
+        }
+
+        return "";
+    }
     static String rotateImage(Request req, Response res) {
         String filename = req.params(":filename");
         File img = new File("images/" + filename);
@@ -429,5 +453,19 @@ class CreateInvoicePriceRangeBody {
     public CreateInvoicePriceRangeBody(int to, int from) {
         this.to = to;
         this.from = from;
+    }
+}
+
+class CropImageBody {
+    public int left;
+    public int top;
+    public int width;
+    public int height;
+
+    public CropImageBody(int left, int top, int width, int height) {
+        this.left = left;
+        this.top = top;
+        this.width = width;
+        this.height = height;
     }
 }
