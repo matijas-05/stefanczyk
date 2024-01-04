@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Accelerometer } from "expo-sensors";
+import { Accelerometer, AccelerometerMeasurement } from "expo-sensors";
 import type { Subscription } from "expo-sensors/build/Pedometer";
 
 const socket = new WebSocket("ws://192.168.0.106:8082");
+const ALPHA = 0.8;
+const gravity = { x: 0, y: 0, z: 0 };
 
 export default function App() {
-    const [acc, setData] = useState({
+    const [acc, setAcc] = useState<AccelerometerMeasurement>({
         x: 0,
         y: 0,
         z: 0,
@@ -16,7 +18,8 @@ export default function App() {
 
     const [subscription, setSubscription] = useState<Subscription | null>(null);
     const _subscribe = () => {
-        setSubscription(Accelerometer.addListener(setData));
+        Accelerometer.setUpdateInterval(16);
+        setSubscription(Accelerometer.addListener(setAcc));
     };
     const _unsubscribe = () => {
         subscription?.remove();
@@ -37,10 +40,21 @@ export default function App() {
         };
     }, []);
 
+    // https://developer.android.com/develop/sensors-and-location/sensors/sensors_motion#kotlin
     useEffect(() => {
-        console.log(acc);
+        // Isolate the force of gravity with the low-pass filter.
+        gravity.x = ALPHA * gravity.x + (1 - ALPHA) * acc.x;
+        gravity.y = ALPHA * gravity.y + (1 - ALPHA) * acc.y;
+        gravity.z = ALPHA * gravity.z + (1 - ALPHA) * acc.z;
+
+        // Remove the gravity contribution with the high-pass filter.
+        acc.x = acc.x - gravity.x;
+        acc.y = acc.y - gravity.y;
+        acc.z = acc.z - gravity.z;
+
         if (isOpen.current && sendData) {
             socket.send(JSON.stringify(acc));
+            console.log(JSON.stringify(acc));
         }
     }, [acc]);
 

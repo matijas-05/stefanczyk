@@ -2,15 +2,22 @@ Bun.serve({
     fetch: (req, server) => {
         if (server.upgrade(req)) {
             console.log("Upgraded");
-            return;
+        } else {
+            return new Response("Upgrade failed", { status: 500 });
         }
-        return new Response("Upgrade failed", { status: 500 });
     },
     websocket: {
-        open: () => console.log("Socket opened"),
-        close: () => console.log("Socket closed"),
-        message: (_, message) => {
+        open: (ws) => {
+            ws.subscribe("acceleration");
+            console.log("Socket opened");
+        },
+        close: (ws) => {
+            ws.unsubscribe("acceleration");
+            console.log("Socket closed");
+        },
+        message: (ws, message) => {
             console.log(message);
+            ws.publish("acceleration", message);
         },
     },
     port: 8082,
