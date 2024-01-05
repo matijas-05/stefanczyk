@@ -72,8 +72,9 @@ public class Main {
         return gson.toJson(cars);
     }
     static String addCar(Request req, Response res) {
+        Car car;
         try {
-            Car car = gson.fromJson(req.body(), Car.class);
+            car = gson.fromJson(req.body(), Car.class);
             car.id = UUID.randomUUID();
             cars.add(car);
         } catch (JsonSyntaxException e) {
@@ -82,7 +83,7 @@ public class Main {
         }
 
         res.status(201);
-        return "";
+        return gson.toJson(car);
     }
     static String deleteCar(Request req, Response res) {
         UUID id = UUID.fromString(req.params(":id"));
@@ -181,7 +182,9 @@ public class Main {
                 color += hex[rand.nextInt(0, hex.length)];
             }
 
-            cars.add(new Car(model, year, airbags, color));
+            Car car = new Car(model, year, airbags, color);
+            car.images.add("car" + rand.nextInt(1, 3 + 1) + ".jpg");
+            cars.add(car);
         }
 
         res.status(200);

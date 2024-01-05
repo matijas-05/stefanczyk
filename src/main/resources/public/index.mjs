@@ -35,6 +35,7 @@ submitBtn.addEventListener("click", async () => {
     if (!res.ok) {
         alert("Błąd podczas dodawania samochodu");
     } else {
-        alert("Dodano samochód");
+        const json = await res.json();
+        alert(JSON.stringify(json, null, 4));
     }
 });

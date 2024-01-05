@@ -9,7 +9,7 @@ const input = document.querySelector("input[type=file]");
 input.addEventListener("change", (e) => {
     /** @type {HTMLInputElement} **/
     const target = e.currentTarget;
-    files = [...target.files];
+    files = [...files, ...target.files];
     drawImages();
 });
 
@@ -45,7 +45,6 @@ function drawImages() {
         removeButton.textContent = "X";
         removeButton.addEventListener("click", () => {
             files.splice(files.indexOf(file), 1);
-            console.log(files);
             drawImages();
         });
         div.appendChild(removeButton);

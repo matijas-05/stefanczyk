@@ -42,7 +42,7 @@ public class SingleInvoice {
             document.add(new Paragraph("poduszka: kanapa -> " + car.airbags.back, font));
             document.add(new Paragraph("poduszka: boczne -> " + car.airbags.side, font));
 
-            Image image = Image.getInstance("images/" + car.images);
+            Image image = Image.getInstance("images/" + car.images.get(0));
             image.scaleToFit(document.getPageSize());
             document.add(image);
         }
