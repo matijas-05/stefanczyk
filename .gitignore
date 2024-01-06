@@ -3,6 +3,7 @@ bin/
 
 invoices/*
 images/*
+!images/car*.jpg
 !.gitkeep
 
 .settings/
