@@ -1,8 +1,13 @@
 package com.mycompany.samochody.controller;
 
-import spark.Request;
+import com.mycompany.samochody.model.Photo;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 import spark.Response;
 
 public interface PhotoService {
-    String getPhotos(Request req, Response res);
+    ArrayList<Photo> getPhotos(Response res) throws IOException;
+    Photo getPhotoByCarId(Response res, UUID carId) throws NoSuchElementException;
 }

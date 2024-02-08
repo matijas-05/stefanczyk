@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
-class Car {
+public class Car {
     public String model;
     public String year;
     public Airbags airbags;
     public String color;
 
     public UUID id;
+    /**
+     * List of image filenames.
+     */
     public ArrayList<String> images;
     public int price;
     public int vat;

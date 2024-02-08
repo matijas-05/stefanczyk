@@ -6,8 +6,8 @@ import spark.Response;
 public class ErrorResponse {
     @Expose private final String message;
 
-    public ErrorResponse(Response res, String message) {
-        res.status(500);
+    public ErrorResponse(Response res, int statusCode, String message) {
+        res.status(statusCode);
         this.message = message;
     }
 }

@@ -1,0 +1,11 @@
+GET localhost:7777/api/photos
+Accept: application/json
+
+> ./isSuccess.js
+
+###
+
+GET localhost:7777/api/photos/01d8366b-6aef-441a-a9c5-3c2b022cf34d
+Accept: application/json
+
+> ./isSuccess.js

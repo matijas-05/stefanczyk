@@ -1,2 +1,0 @@
-GET localhost:7777/api/photos
-Accept: application/json
