@@ -16,3 +16,9 @@ GET localhost:7777/api/photos/name/car1.jpg
 Accept: application/json
 
 > ./isSuccess.js
+
+###
+
+DELETE localhost:7777/api/photos/id/2
+
+> ./isNoContent.js

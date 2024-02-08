@@ -51,6 +51,7 @@ public class AppREST {
         get("/api/photos", AppREST::getPhotos);
         get("/api/photos/id/:photoId", AppREST::getPhotoById);
         get("/api/photos/name/:photoName", AppREST::getPhotoByName);
+        delete("/api/photos/id/:photoId", AppREST::deletePhotoById);
     }
 
     private static String getPhotos(Request req, Response res) {
@@ -85,6 +86,25 @@ public class AppREST {
                                                  "Photo with name "
                                                      + "'" + photoName + "'"
                                                      + " not found."));
+        }
+    }
+    private static String deletePhotoById(Request req, Response res) {
+        res.type("application/json");
+
+        int photoId = Integer.parseInt(req.params(":photoId"));
+        try {
+            photoService.deletePhotoById(photoId);
+            res.status(204);
+            return "";
+        } catch (NoSuchElementException e) {
+            return gson.toJson(new ErrorResponse(res, 404,
+                                                 "Photo with id "
+                                                     + "'" + photoId + "'"
+                                                     + " not found."));
+        } catch (IOException e) {
+            return gson.toJson(new ErrorResponse(res, 500,
+                                                 "Error deleting photo with id "
+                                                     + "'" + photoId + "'."));
         }
     }
 }
