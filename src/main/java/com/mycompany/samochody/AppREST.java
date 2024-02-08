@@ -50,7 +50,7 @@ public class AppREST {
 
         get("/api/photos", AppREST::getPhotos);
         get("/api/photos/id/:photoId", AppREST::getPhotoById);
-        get("/api/photos/name/:carName", AppREST::getPhotoById);
+        get("/api/photos/name/:photoName", AppREST::getPhotoByName);
     }
 
     private static String getPhotos(Request req, Response res) {
@@ -70,6 +70,20 @@ public class AppREST {
             return gson.toJson(new ErrorResponse(res, 404,
                                                  "Photo with id "
                                                      + "'" + photoId + "'"
+                                                     + " not found."));
+        }
+    }
+    private static String getPhotoByName(Request req, Response res) {
+        res.type("application/json");
+
+        String photoName = req.params(":photoName");
+        try {
+            Photo photo = photoService.getPhotoByName(photoName);
+            return gson.toJson(photo);
+        } catch (NoSuchElementException e) {
+            return gson.toJson(new ErrorResponse(res, 404,
+                                                 "Photo with name "
+                                                     + "'" + photoName + "'"
                                                      + " not found."));
         }
     }

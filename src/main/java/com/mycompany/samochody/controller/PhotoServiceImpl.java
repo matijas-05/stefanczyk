@@ -21,4 +21,10 @@ public class PhotoServiceImpl implements PhotoService {
         Photo photo = photos.stream().filter(p -> p.getId() == id).findFirst().get();
         return photo;
     }
+
+    @Override
+    public Photo getPhotoByName(String name) throws NoSuchElementException {
+        Photo photo = photos.stream().filter(p -> p.getName().equals(name)).findFirst().get();
+        return photo;
+    }
 }

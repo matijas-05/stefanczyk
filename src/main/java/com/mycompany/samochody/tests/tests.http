@@ -9,3 +9,10 @@ GET localhost:7777/api/photos/id/0
 Accept: application/json
 
 > ./isSuccess.js
+
+###
+
+GET localhost:7777/api/photos/name/car1.jpg
+Accept: application/json
+
+> ./isSuccess.js
