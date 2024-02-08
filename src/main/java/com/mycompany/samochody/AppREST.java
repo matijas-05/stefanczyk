@@ -9,10 +9,12 @@ import com.mycompany.samochody.controller.PhotoServiceImpl;
 import com.mycompany.samochody.model.Photo;
 import com.mycompany.samochody.response.ErrorResponse;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
-import java.util.Random;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 import spark.Request;
 import spark.Response;
 
@@ -20,64 +22,54 @@ public class AppREST {
     private static final Gson gson =
         new GsonBuilder().excludeFieldsWithoutExposeAnnotation().setPrettyPrinting().create();
 
-    private static final ArrayList<Car> cars = new ArrayList<>();
+    private static ArrayList<Photo> photos = new ArrayList<>();
+    private static PhotoService photoService;
 
-    private static final PhotoService photoService = new PhotoServiceImpl(cars);
+    private static void seedData() throws IOException {
+        try (Stream<Path> paths = Files.walk(Path.of("images"))) {
+            AtomicInteger i = new AtomicInteger(0); // Java XD
 
-    private static void seedData() {
-        String[] models = {"Fiat", "Skoda", "Ford", "Opel", "Audi", "BMW", "Mercedes"};
-        String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7",
-                        "8", "9", "a", "b", "c", "d", "e", "f"};
-        Random rand = new Random();
-
-        for (int i = 0; i < 10; i++) {
-            String model = models[rand.nextInt(0, models.length)];
-            String year = String.valueOf(rand.nextInt(1990, 2023));
-            Airbags airbags = new Airbags(rand.nextBoolean(), rand.nextBoolean(),
-                                          rand.nextBoolean(), rand.nextBoolean());
-            String color = "#";
-            for (int j = 0; j < 6; j++) {
-                color += hex[rand.nextInt(0, hex.length)];
-            }
-
-            Car car = new Car(model, year, airbags, color);
-            if (i == 0) {
-                car.id = UUID.fromString("01d8366b-6aef-441a-a9c5-3c2b022cf34d");
-            }
-
-            car.images.add("car" + rand.nextInt(1, 3 + 1) + ".jpg");
-            cars.add(car);
+            AppREST.photos =
+                paths.filter(path -> path.toFile().isFile() && path.toString().endsWith(".jpg"))
+                    .map(path
+                         -> new Photo(i.getAndIncrement(), path.getFileName().toString(),
+                                      path.toString()))
+                    .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         }
     }
-    public static void main(String[] args) {
-        seedData();
+    public static void main(String[] args) throws IOException {
+        try {
+            seedData();
+        } catch (IOException e) {
+            throw new IOException("Error reading photos directory.");
+        }
+
+        photoService = new PhotoServiceImpl(photos);
+
         port(7777);
 
         get("/api/photos", AppREST::getPhotos);
-        get("/api/photos/:carId", AppREST::getPhotoByCarId);
+        get("/api/photos/id/:photoId", AppREST::getPhotoById);
+        get("/api/photos/name/:carName", AppREST::getPhotoById);
     }
 
     private static String getPhotos(Request req, Response res) {
         res.type("application/json");
 
-        try {
-            ArrayList<Photo> photos = photoService.getPhotos(res);
-            return gson.toJson(photos);
-        } catch (IOException e) {
-            return gson.toJson(new ErrorResponse(res, 500, "Error reading photos directory."));
-        }
+        ArrayList<Photo> photos = photoService.getPhotos();
+        return gson.toJson(photos);
     }
-    private static String getPhotoByCarId(Request req, Response res) {
+    private static String getPhotoById(Request req, Response res) {
         res.type("application/json");
 
-        UUID carId = UUID.fromString(req.params(":carId"));
+        int photoId = Integer.parseInt(req.params(":photoId"));
         try {
-            Photo photo = photoService.getPhotoByCarId(res, carId);
+            Photo photo = photoService.getPhotoById(photoId);
             return gson.toJson(photo);
         } catch (NoSuchElementException e) {
             return gson.toJson(new ErrorResponse(res, 404,
-                                                 "Car with id "
-                                                     + "'" + carId.toString() + "'"
+                                                 "Photo with id "
+                                                     + "'" + photoId + "'"
                                                      + " not found."));
         }
     }

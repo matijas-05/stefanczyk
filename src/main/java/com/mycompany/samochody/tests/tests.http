@@ -5,7 +5,7 @@ Accept: application/json
 
 ###
 
-GET localhost:7777/api/photos/01d8366b-6aef-441a-a9c5-3c2b022cf34d
+GET localhost:7777/api/photos/id/0
 Accept: application/json
 
 > ./isSuccess.js
