@@ -22,3 +22,10 @@ Accept: application/json
 DELETE localhost:7777/api/photos/id/2
 
 > ./isNoContent.js
+
+###
+
+GET localhost:7777/api/photos/data/id/0
+Accept: image/jpeg
+
+> ./isSuccess.js

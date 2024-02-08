@@ -9,6 +9,7 @@ import com.mycompany.samochody.controller.PhotoServiceImpl;
 import com.mycompany.samochody.model.Photo;
 import com.mycompany.samochody.response.ErrorResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class AppREST {
         get("/api/photos/id/:photoId", AppREST::getPhotoById);
         get("/api/photos/name/:photoName", AppREST::getPhotoByName);
         delete("/api/photos/id/:photoId", AppREST::deletePhotoById);
+        get("/api/photos/data/id/:photoId", AppREST::getPhotoDataById);
     }
 
     private static String getPhotos(Request req, Response res) {
@@ -105,6 +107,29 @@ public class AppREST {
             return gson.toJson(new ErrorResponse(res, 500,
                                                  "Error deleting photo with id "
                                                      + "'" + photoId + "'."));
+        }
+    }
+    private static String getPhotoDataById(Request req, Response res) {
+        res.type("image/jpg");
+
+        int photoId = Integer.parseInt(req.params(":photoId"));
+        try {
+            Photo photo = photoService.getPhotoById(photoId);
+
+            try (OutputStream os = res.raw().getOutputStream()) {
+                os.write(Files.readAllBytes(Path.of(photo.getPath())));
+                res.status(200);
+                return "";
+            } catch (IOException e) {
+                return gson.toJson(new ErrorResponse(res, 500,
+                                                     "Error reading photo with id "
+                                                         + "'" + photoId + "'."));
+            }
+        } catch (NoSuchElementException e) {
+            return gson.toJson(new ErrorResponse(res, 404,
+                                                 "Photo with id "
+                                                     + "'" + photoId + "'"
+                                                     + " not found."));
         }
     }
 }
