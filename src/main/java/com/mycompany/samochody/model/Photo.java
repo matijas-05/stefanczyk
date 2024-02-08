@@ -4,8 +4,8 @@ import com.google.gson.annotations.Expose;
 
 public class Photo {
     @Expose private int id;
-    @Expose private final String name;
-    @Expose private final String path;
+    @Expose private String name;
+    @Expose private String path;
 
     public Photo(int id, String name, String path) {
         this.id = id;
@@ -16,9 +16,6 @@ public class Photo {
     public int getId() {
         return id;
     }
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -26,5 +23,17 @@ public class Photo {
 
     public String getPath() {
         return path;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

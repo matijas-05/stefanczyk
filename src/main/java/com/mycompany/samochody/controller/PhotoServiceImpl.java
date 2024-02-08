@@ -3,6 +3,7 @@ package com.mycompany.samochody.controller;
 import com.mycompany.samochody.model.Photo;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
@@ -39,5 +40,23 @@ public class PhotoServiceImpl implements PhotoService {
             throw new IOException("Error deleting file with path "
                                   + "'" + path + "'.");
         }
+    }
+
+    @Override
+    public void renamePhoto(int id, String newName) throws NoSuchElementException, IOException {
+        Photo photo = this.getPhotoById(id);
+        String oldPath = photo.getPath();
+        Path newPath = Path.of(oldPath).resolveSibling(newName);
+
+        File file = new File(oldPath);
+        if (!file.renameTo(new File(newPath.toString()))) {
+            throw new IOException("Error renaming file with path "
+                                  + "'" + oldPath + "'"
+                                  + " to "
+                                  + "'" + newPath + "'.");
+        }
+
+        photo.setName(newName);
+        photo.setPath(newPath.toString());
     }
 }

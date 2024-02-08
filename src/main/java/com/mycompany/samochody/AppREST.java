@@ -4,9 +4,11 @@ import static spark.Spark.*;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.mycompany.samochody.controller.PhotoService;
 import com.mycompany.samochody.controller.PhotoServiceImpl;
 import com.mycompany.samochody.model.Photo;
+import com.mycompany.samochody.model.RenamePhotoRequestBody;
 import com.mycompany.samochody.response.ErrorResponse;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -52,8 +54,9 @@ public class AppREST {
         get("/api/photos", AppREST::getPhotos);
         get("/api/photos/id/:photoId", AppREST::getPhotoById);
         get("/api/photos/name/:photoName", AppREST::getPhotoByName);
-        delete("/api/photos/id/:photoId", AppREST::deletePhotoById);
-        get("/api/photos/data/id/:photoId", AppREST::getPhotoDataById);
+        delete("/api/photos/:photoId", AppREST::deletePhotoById);
+        get("/api/photos/data/:photoId", AppREST::getPhotoDataById);
+        put("/api/photos/:photoId", AppREST::renamePhoto);
     }
 
     private static String getPhotos(Request req, Response res) {
@@ -130,6 +133,32 @@ public class AppREST {
                                                  "Photo with id "
                                                      + "'" + photoId + "'"
                                                      + " not found."));
+        }
+    }
+    private static String renamePhoto(Request req, Response res) {
+        res.type("application/json");
+
+        int photoId = Integer.parseInt(req.params(":photoId"));
+        try {
+            RenamePhotoRequestBody body = gson.fromJson(req.body(), RenamePhotoRequestBody.class);
+            if (body.getNewName() == null || body.getNewName().isEmpty()) {
+                return gson.toJson(new ErrorResponse(res, 400, "Invalid request body."));
+            }
+
+            photoService.renamePhoto(photoId, body.getNewName());
+            res.status(204);
+            return "";
+        } catch (NoSuchElementException e) {
+            return gson.toJson(new ErrorResponse(res, 404,
+                                                 "Photo with id "
+                                                     + "'" + photoId + "'"
+                                                     + " not found."));
+        } catch (IOException e) {
+            return gson.toJson(new ErrorResponse(res, 500,
+                                                 "Error renaming photo with id "
+                                                     + "'" + photoId + "'."));
+        } catch (JsonSyntaxException e) {
+            return gson.toJson(new ErrorResponse(res, 400, "Invalid request body."));
         }
     }
 }

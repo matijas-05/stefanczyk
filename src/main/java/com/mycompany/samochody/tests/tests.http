@@ -19,13 +19,24 @@ Accept: application/json
 
 ###
 
-DELETE localhost:7777/api/photos/id/2
+DELETE localhost:7777/api/photos/2
 
 > ./isNoContent.js
 
 ###
 
-GET localhost:7777/api/photos/data/id/0
+GET localhost:7777/api/photos/data/0
 Accept: image/jpeg
 
 > ./isSuccess.js
+
+###
+
+PUT localhost:7777/api/photos/0
+Content-Type: application/json
+
+{
+  "newName": "newName.jpg"
+}
+
+> ./isNoContent.js
