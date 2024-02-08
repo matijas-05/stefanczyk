@@ -104,7 +104,7 @@
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.1.0</version>
           <configuration>
-            <mainClass>com.mycompany.samochody.Main</mainClass>
+            <mainClass>com.mycompany.samochody.AppREST</mainClass>
           </configuration>
         </plugin>
       </plugins>
